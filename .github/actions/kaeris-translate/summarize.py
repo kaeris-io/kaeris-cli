@@ -45,6 +45,21 @@ def parse_overflow_count(log_path):
     return total
 
 
+# The last line of the summary: a plain link to the site. ?utm_source= is the only parameter the
+# site reads for the source of a visit (not ?ref=). One line, in the summary only; off with
+# KAERIS_NO_CTA=1. `check` needs no key and costs nothing, `translate` does not say so.
+SITE_URL = "https://kaeris.dev/?utm_source=action"
+
+
+def site_footer(mode, env=None):
+    env = os.environ if env is None else env
+    if env.get("KAERIS_NO_CTA", "").strip().lower() not in ("", "0", "false", "no"):
+        return None
+    if mode == "check":
+        return f"<sub>Checked by [KAERIS]({SITE_URL}) · free check, no key</sub>"
+    return f"<sub>Translated by [KAERIS]({SITE_URL})</sub>"
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--mode", default="translate", choices=["translate", "check"])
@@ -140,6 +155,10 @@ def main():
     lines.append("")
     lines.append("_Generated from `kaeris check --json`" +
                   ("" if overflow is None else " and the translate log") + " — no fabricated numbers._")
+    footer = site_footer(args.mode)
+    if footer:
+        lines.append("")
+        lines.append(footer)
 
     write(args, "\n".join(lines) + "\n", missing=total_missing, ph=total_ph)
 

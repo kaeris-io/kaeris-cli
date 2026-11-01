@@ -2,6 +2,7 @@
 // and the exit code (0 clean, 1 a problem was found, 2 bad usage or an unreadable file).
 import fs from "node:fs";
 import { checkLocales } from "./check.js";
+import { checkLine } from "./cta.js";
 import { readText, UnknownEncoding } from "./encoding.js";
 import { ValueError } from "./errors.js";
 import * as fm from "./formats.js";
@@ -147,8 +148,9 @@ options:
                         source, or any warning
   --json                Machine-readable JSON output instead of the human report
   --sarif PATH          Also write a SARIF 2.1.0 report to PATH, for github/codeql-action/upload-sarif
-  --ci                  No functional difference from plain \`check\`: the exit code already gates a
-                        merge (0 clean, 1 missing/placeholder problem found, 2 bad usage)
+  --ci                  Same check and exit code as plain \`check\`: the exit code already gates a
+                        merge (0 clean, 1 missing/placeholder problem found, 2 bad usage); the
+                        occasional site link after a clean run is never printed with it
 `;
 
 const MAIN_USAGE = "usage: kaeris [-h] [--version] [--config CONFIG] {check,translate,fix,languages,init,quota} ...";
@@ -558,7 +560,11 @@ function cmdCheck(args, globals) {
       if (args.strict && nExtra) parts.push(`${nExtra} extra ${plural(nExtra, "key", "keys")} (--strict)`);
       err(parts.join(", "));
     } else if (nWarn) warn(`${nWarn} warning(s) — non-blocking (use --strict to fail on them)`);
-    else ok("all locales complete & placeholder-safe");
+    else {
+      ok("all locales complete & placeholder-safe");
+      const line = checkLine({ machine: Boolean(args.sarif), ci: Boolean(args.ci) });
+      if (line) out(line);
+    }
   }
 
   if (args.json) process.stdout.write(dumps(result, 2, false) + "\n");

@@ -24,6 +24,7 @@ from . import fixes as fx
 from . import glossary as gl
 from . import estimate as est
 from . import mdformat as mdf
+from . import cta
 
 CONFIG_FILENAME = "kaeris.json"
 
@@ -75,6 +76,16 @@ def info(msg):  print(_c("→", "36"), msg, file=sys.stderr)
 def ok(msg):    print(_c("✓", "32"), msg, file=sys.stderr)
 def warn(msg):  print(_c("!", "33"), msg, file=sys.stderr)
 def err(msg):   print(_c("✗", "31"), msg, file=sys.stderr)
+
+
+def refused(message, prefix=""):
+    """A server refusal, on stderr. On a plan limit it is followed by one line with the
+    pricing page (kaeris/cta.py); the API's own pricing link is shown as this CLI's."""
+    message = str(message)
+    err(prefix + cta.retag(message))
+    line = cta.limit_line(message)
+    if line:
+        print(line, file=sys.stderr)
 
 
 # ── Monthly volume ────────────────────────────────────────────────────────────
@@ -864,6 +875,10 @@ def cmd_check(args):
             warn(f"{n_warn} warning(s) — non-blocking (use --strict to fail on them)")
         else:
             ok("all locales complete & placeholder-safe")
+            line = cta.check_line(machine=bool(getattr(args, "sarif", None)),
+                                  ci=bool(getattr(args, "ci", False)))
+            if line:
+                print(line, file=sys.stderr)
 
     if args.json:
         # A cp1251/cp1252 console (PowerShell 5.1, cmd, windows-latest) cannot encode "→" or
@@ -1133,7 +1148,7 @@ def cmd_translate(args):
                 code = (_finish_one(client, ticket, args) if ticket is not None
                         else _translate_one(client, path, langs, args))
             except KaerisError as e:
-                err(str(e))
+                refused(e)
                 code = 1
             exit_code = max(exit_code, code)
     vpath = _write_verify(args, files)
@@ -1949,7 +1964,7 @@ def _translate_incremental(client, path, out_dir, langs, args):
             # One language's job failing no longer takes the others down with it: they were
             # already translated (and paid for) side by side, so they are merged; this one
             # keeps its keys stale-locked for the next run.
-            err(f"{lang}: {error}")
+            refused(error, prefix=f"{lang}: ")
             job_failed = True
             broken.update(todo)
             broken_by_lang.setdefault(lang, set()).update(todo)
@@ -2337,9 +2352,10 @@ def build_parser():
                         "github/codeql-action/upload-sarif and every finding appears as an "
                         "annotation on the exact line in the pull request.")
     c.add_argument("--ci", action="store_true",
-                   help="No functional difference from plain `check` — the exit code already gates a "
+                   help="Same check and exit code as plain `check` — the exit code already gates a "
                         "merge (0 clean, 1 missing/placeholder problem found, 2 bad usage). A stable, "
-                        "self-documenting flag name for CI workflows/i18n-firewall gates.")
+                        "self-documenting flag name for CI workflows/i18n-firewall gates; the "
+                        "occasional site link after a clean run is never printed with it.")
     c.set_defaults(func=cmd_check)
 
     i = sub.add_parser(
@@ -2382,7 +2398,7 @@ def main(argv=None):
         _update_hint(args)
         return code
     except KaerisError as e:
-        err(str(e))
+        refused(e)
         return 2
     except TooDeep as e:
         # Слишком глубокий файл раньше печатал в чужой CI питоновский трейсбек

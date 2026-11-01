@@ -579,6 +579,7 @@ Anything not passed falls back to `kaeris.json`, then to the built-in default.
 - `KAERIS_API_URL` — override the API base URL
 - `NO_COLOR` — disable coloured output
 - `KAERIS_NO_UPDATE_CHECK=1` — turn off the once-a-day "new version available" line on stderr (it is already silent in CI, in `--json` mode and when stderr is not a terminal)
+- `KAERIS_NO_CTA=1` — turn off the two site links on stderr: the pricing page after a run refused on a plan limit, and the line after every tenth clean `check` (that one is already silent in CI, with `--ci`, `--json` or `--sarif`, and when stderr is not a terminal). Nothing is sent anywhere either way.
 
 ## License
 
