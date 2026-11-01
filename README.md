@@ -195,6 +195,7 @@ locales/en.json  (json, only new and edited; 240 keys, 11,820 characters)
 
 Total: 12,394 characters will be charged.
 Pro: 10,800,000 of 12,000,000 left this month; after this run 10,787,606 left, resets 2026-12-01.
+This run is 0.10% of this month's volume. No extra charge: it is inside your plan.
 ```
 
 It reads your files, your lock (`--lock`), your project memory (`--tm`) and your settings, works
@@ -207,6 +208,11 @@ lines that never passed verify; with `--verify-all`, the whole file.
 - Nothing is translated and no file is sent. It asks the server only for your plan, the same
   call as `kaeris quota`. Without a key, or with the server out of reach, you still get the
   character count, and what is left is reported as unknown.
+- In money: a monthly plan has no price per run, so the estimate says what share of the month
+  the run uses and, when it fits, that nothing is added to the bill. A run that does not fit
+  gets no such promise. On Lifetime you pay OpenRouter for the tokens, and the estimate says so.
+  The `--json` field is `volume.share_percent` and `volume.extra_charge_usd` (`0`, or `null`
+  when it is not known).
 - It names what the server would refuse (a file over your plan's size, too many languages,
   more than is left this month). The exit code stays 0: the estimate is the result.
 - `--json` prints the same as JSON on stdout (per file and language: keys, characters sent,

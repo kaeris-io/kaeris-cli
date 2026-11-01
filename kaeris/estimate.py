@@ -51,13 +51,20 @@ def limits_for(key, config, own_model_key=False):
     return out
 
 
+def share_percent(total, cap):
+    """How much of the month's volume a run of `total` characters is; None without a cap."""
+    if not cap:
+        return None
+    return round(total * 100.0 / cap, 4)
+
+
 def volume(key, lim, total):
     """The month's volume against this run: {remaining, after, cap, used, resets, note}.
 
     `remaining` is None when the answer is not known, and `note` says why in words. 'Unknown'
     is never rounded to zero or to 'plenty': a number the server did not give is not ours."""
     out = {"cap": None, "used": None, "remaining": None, "after": None, "resets": None,
-           "note": ""}
+           "share_percent": None, "extra_charge_usd": None, "note": ""}
     if key is None:
         out["note"] = "the server could not be asked, remaining unknown"
     elif lim["own_key"]:
@@ -67,7 +74,12 @@ def volume(key, lim, total):
         used = int(key.get("month_used") or 0)
         left = int(key.get("month_remaining", max(0, cap - used)))
         out.update(cap=cap, used=used, remaining=left, after=left - total,
-                   resets=key.get("month_resets") or None)
+                   resets=key.get("month_resets") or None,
+                   share_percent=share_percent(total, cap))
+        # A monthly plan has no price per run: inside the volume the bill does not move.
+        # Past it the server refuses the jobs, so nothing is promised.
+        if left - total >= 0:
+            out["extra_charge_usd"] = 0
     elif lim["tier"] == "anonymous":
         out["note"] = ("no API key, remaining unknown (the keyless demo has a daily allowance "
                        "the server does not report)")
@@ -158,6 +170,13 @@ def render(rep):
         out.append(f"{plan + ': ' if plan else ''}{vol['remaining']:,} of {vol['cap']:,} left this month; "
                    f"after this run {max(vol['after'], 0):,} left"
                    + (f", resets {vol['resets']}" if vol["resets"] else "") + ".")
+        pct = vol["share_percent"]
+        if pct is not None:
+            share = "less than 0.01%" if pct < 0.01 else f"{pct:.2f}%"
+            line = f"This run is {share} of this month's volume."
+            if vol["extra_charge_usd"] == 0:
+                line += " No extra charge: it is inside your plan."
+            out.append(line)
     else:
         out.append(f"{plan + ': ' if plan else ''}{vol['note']}.")
     for p in rep["problems"]:
