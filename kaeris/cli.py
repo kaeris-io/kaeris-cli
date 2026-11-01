@@ -1402,7 +1402,8 @@ def _fix_records(done):
     return applied, skipped
 
 
-def _apply_verify(vpath, glossary=None, only=None, dry_run=False, as_json=False):
+def _apply_verify(vpath, glossary=None, only=None, dry_run=False, as_json=False,
+                  decided_only=False, extra=None):
     """Write the fixes verify.json carries into the translated files (kaeris/fixes.py). Offline:
     nothing here talks to the server, and nothing is charged. Records what was done in
     verify.json itself (`_applied`, `_skipped` of each section) so nothing has to read the log.
@@ -1418,12 +1419,18 @@ def _apply_verify(vpath, glossary=None, only=None, dry_run=False, as_json=False)
     for name, section in fx.sections(body):
         if only and name and not any(os.path.relpath(o).replace(os.sep, "/") == name for o in only):
             continue
-        rows = fx.plan(section.get("_review"), section.get("_files"), base, glossary)
+        review = section.get("_review")
+        if decided_only:
+            # A reviewed file: a line nobody decided stays as it is, even if verify suggested a fix.
+            said = section.get("_reviewer") or {}
+            review = {lang: {k: v for k, v in (lines or {}).items() if k in (said.get(lang) or {})}
+                      for lang, lines in (review or {}).items()}
+        rows = fx.plan(review, section.get("_files"), base, glossary)
         result = fx.apply(rows, dry_run=dry_run)
         done += result
         sections.append((name, section, result))
     report = {"verify": vpath.replace(os.sep, "/"), "dry_run": dry_run, "applied": [], "skipped": [],
-              "counts": {"applied": 0, "already": 0, "skipped": 0}}
+              "counts": {"applied": 0, "already": 0, "skipped": 0}, **(extra or {})}
     for name, section, result in sections:
         applied, skipped = _fix_records(result)
         report["applied"] += applied
@@ -1463,6 +1470,97 @@ def _apply_verify(vpath, glossary=None, only=None, dry_run=False, as_json=False)
             print(f"    [{lang}] {key}: {why}", file=sys.stderr)
         if len(skipped) > 30:
             print(f"    … and {len(skipped) - 30} more — all of them in {vpath}", file=sys.stderr)
+    return 0
+
+
+REVIEW_URL = "https://kaeris.dev/review"
+REVIEWED_FILE = "verify.reviewed.json"
+
+
+def _read_verify(path):
+    """(body, None) or (None, exit code) after saying why verify.json cannot be read."""
+    if not os.path.isfile(path):
+        err(f"No file at {path} — run `kaeris translate … --verify` first, it writes verify.json")
+        return None, 2
+    try:
+        return json.loads(read_text(path)), None
+    except (OSError, ValueError) as e:
+        err(f"Cannot read {path}: {getattr(e, 'strerror', None) or e}")
+        return None, 2
+
+
+def _review_counts(body):
+    """{lang: {status: n}} over every line a human is asked to read, all sections together."""
+    by_lang = {}
+    for _name, sec in fx.sections(body):
+        for lang, lines in (sec.get("_review") or {}).items():
+            for entry in (lines or {}).values():
+                st = entry.get("status") if isinstance(entry, dict) else None
+                one = by_lang.setdefault(lang, {})
+                one[st] = one.get(st, 0) + 1
+    return {lang: dict(sorted(v.items())) for lang, v in sorted(by_lang.items())}
+
+
+def _decision_counts(body):
+    """What the reviewer did, from the reviewed file: lines decided by kind, lines left open.
+    A kept line leaves `_review`; every other line stays there, decided or not."""
+    n = {"fix": 0, "own": 0, "keep": 0, "undecided": 0}
+    for _name, sec in fx.sections(body):
+        said = sec.get("_reviewer") or {}
+        for lang, lines in said.items():
+            for d in (lines or {}).values():
+                kind = d.get("decision") if isinstance(d, dict) else None
+                if kind in n:
+                    n[kind] += 1
+        for lang, lines in (sec.get("_review") or {}).items():
+            n["undecided"] += sum(1 for k in (lines or {}) if k not in (said.get(lang) or {}))
+    return n
+
+
+def cmd_review(args):
+    """Hand verify.json to a reviewer without an account, or take their answer back (free, offline)."""
+    if args.apply:
+        path = args.path or REVIEWED_FILE
+        body, bad = _read_verify(path)
+        if bad:
+            return bad
+        n = _decision_counts(body)
+        decided = n["fix"] + n["own"] + n["keep"]
+        info(f"{decided} of {decided + n['undecided']} decided: {n['keep']} kept, "
+             f"{n['fix']} suggested, {n['own']} own")
+        if n["undecided"]:
+            warn(f"{n['undecided']} not decided: left as they are")
+        config, _ = _load_config(args)
+        keep = args.keep if args.keep else ",".join(config.get("keep") or config.get("glossary") or [])
+        glossary = [t.strip() for t in keep.split(",") if t.strip()] or None
+        return _apply_verify(path, glossary=glossary, dry_run=args.dry_run, as_json=args.json,
+                             decided_only=True, extra={"decisions": n})
+    path = args.path or "verify.json"
+    body, bad = _read_verify(path)
+    if bad:
+        return bad
+    counts = _review_counts(body)
+    total = sum(sum(v.values()) for v in counts.values())
+    if args.json:
+        print(json.dumps({"verify": path.replace(os.sep, "/"), "to_review": total,
+                          "by_lang": counts, "url": REVIEW_URL}, ensure_ascii=False, indent=2))
+    if not total:
+        ok(f"Nothing to review: {path} lists no lines for a person to read")
+        return 0
+    if any(sec.get("_applied") for _n, sec in fx.sections(body)):
+        warn("fixes were already applied from this file: send a verify.json from before "
+             "`kaeris fix`, or the lines will not match and will be skipped")
+    ok(f"{total} line(s) for a person to read, in {len(counts)} language(s)")
+    for lang, st in counts.items():
+        print(f"    [{lang}] " + ", ".join(f"{v} {k}" for k, v in st.items()), file=sys.stderr)
+    info(f"1. Send {path} to your reviewer (mail, chat, anything). They need no account")
+    info(f"2. They open {REVIEW_URL}, drop the file in and decide each line. "
+         "The file is read in their browser and goes nowhere")
+    info(f"3. They send back {REVIEWED_FILE}; you put it next to {path} and run: "
+         "kaeris review --apply")
+    if args.open:
+        import webbrowser
+        webbrowser.open(REVIEW_URL)
     return 0
 
 
@@ -2309,6 +2407,26 @@ def build_parser():
                          "{lang, key, how, why}. The same lists are written into verify.json as "
                          "_applied and _skipped (not with --dry-run).")
     fp.set_defaults(func=cmd_fix)
+
+    rv = sub.add_parser(
+        "review", help="Hand verify.json to a reviewer without an account, take their answer back",
+        description="After `kaeris translate --verify`: say what is waiting for a person and how to "
+                    "send it (the reviewer opens kaeris.dev/review, no account, the file stays in "
+                    "their browser). With --apply: read the verify.reviewed.json they send back "
+                    "and write their decisions into the translated files. Free, offline; a line "
+                    "nobody decided is left alone.",
+    )
+    rv.add_argument("path", nargs="?", default=None,
+                    help="verify.json to send (default: ./verify.json); with --apply, the reviewed "
+                         f"file (default: ./{REVIEWED_FILE})")
+    rv.add_argument("--apply", action="store_true",
+                    help="Write the reviewer's decisions into the translated files")
+    rv.add_argument("--open", action="store_true", help="Open kaeris.dev/review in your browser")
+    rv.add_argument("--dry-run", action="store_true", help="With --apply: say what would be written")
+    rv.add_argument("--keep", "--glossary", dest="keep", default=None,
+                    help="With --apply: terms a line must keep verbatim (default: 'keep' in kaeris.json)")
+    rv.add_argument("--json", action="store_true", help="Print the result as JSON on stdout")
+    rv.set_defaults(func=cmd_review)
 
     ls = sub.add_parser("languages", help="List supported target languages")
     ls.set_defaults(func=cmd_languages)

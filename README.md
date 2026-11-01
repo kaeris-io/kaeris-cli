@@ -294,6 +294,30 @@ kaeris fix --from locales/verify.json --dry-run  # only say what would change
              "by_lang": {"de": {"lines": 40, "to_review": 3, "error": 2, "review": 1, "unchecked": 0}}}
 ```
 
+## `kaeris review` — a person checks the lines, no account needed
+
+Machine translation still wants a native reader for the lines `--verify` flagged. `kaeris review`
+turns `verify.json` into a hand-over you can send to anyone:
+
+```bash
+kaeris review                       # what waits for a person, per language, and the three steps
+kaeris review --open                # also open kaeris.dev/review
+kaeris review --apply               # take verify.reviewed.json back and write the decisions
+kaeris review --apply --dry-run     # say what would be written, write nothing
+```
+
+1. Send `verify.json` to the reviewer by mail or chat. They need no account and pay nothing.
+2. They open [kaeris.dev/review](https://kaeris.dev/review), drop the file in and decide each line:
+   keep the translation, take the suggested one, or write their own. The file is read in their
+   browser and is not uploaded. They download `verify.reviewed.json`.
+3. Put it next to `verify.json` and run `kaeris review --apply`. Their own lines pass the same
+   checks as a suggested fix (placeholders, tags, ICU, line breaks); a line that fails is listed,
+   not written. A line nobody decided is left as it is. Free, offline.
+
+Send the `verify.json` from before `kaeris fix` or `--apply-fixes`: once fixes are written, the
+lines no longer match and are skipped. `--json` prints the counts (`to_review`, `by_lang`, and with
+`--apply` also `decisions`).
+
 ## `kaeris check` — the i18n firewall
 
 A **local, static, no-API** check: compares your source file against each target locale and
