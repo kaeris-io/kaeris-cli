@@ -1,8 +1,11 @@
-name: "KAERIS i18n Translate"
-description: "Translate new/changed i18n keys with AI, or gate CI on translation completeness — 46 languages, incremental, placeholder-safe."
+# Name, description and branding match kaeris-io/kaeris-action v2.1.0, the Marketplace listing
+# ("KAERIS i18n Check and Translate"). Keep them equal: publishing an older header from here
+# would roll the listing back to the old name.
+name: "KAERIS i18n Check and Translate"
+description: "Fail CI on missing keys or broken placeholders in locale files, or translate new keys into 46 languages. 13 formats."
 branding:
-  icon: globe
-  color: purple
+  icon: check-circle
+  color: gray-dark
 
 inputs:
   mode:
@@ -20,7 +23,7 @@ inputs:
     required: false
     default: ""
   api-key:
-    description: "KAERIS API key (Pro/Team). Omit for the free anonymous tier. Unused in check mode."
+    description: "KAERIS API key, e.g. the free key from kaeris.dev/docs/key (no account). Omit for the free demo. Unused in check mode."
     required: false
     default: ""
   openrouter-key:
