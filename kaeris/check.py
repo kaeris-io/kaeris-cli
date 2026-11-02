@@ -153,6 +153,8 @@ def diff_locale(source_flat, target_flat, pair=True, optional=()):
     for key, src_val, tgt_val in _pairs(source_flat, target_flat, optional):
         if not isinstance(src_val, str) or not isinstance(tgt_val, str):
             continue
+        if not src_val.strip():
+            continue                    # an empty source has nothing to compare against
         src_ph = find_placeholders(src_val)
         tgt_ph = find_placeholders(tgt_val)
         if src_ph != tgt_ph:

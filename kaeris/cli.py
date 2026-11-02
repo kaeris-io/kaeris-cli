@@ -464,6 +464,12 @@ _target_path.warned = False
 LANG_CASES = ("keep", "lower")
 
 
+def _lang_fold(text):
+    """A file or folder name as it is compared with a language code: lower case, `_` read as
+    `-`, so pt_BR.json and zh_Hans/ are the files of pt-BR and zh-Hans."""
+    return text.lower().replace("_", "-")
+
+
 def _existing_case(path, lang):
     """`path`, with each part that names `lang` spelled the way it already is on disk. The
     server names its files after the language code as the API spells it (`zh-Hant.json`,
@@ -473,9 +479,9 @@ def _existing_case(path, lang):
     only in case are never confused and nobody's other folders change."""
     drive, rest = os.path.splitdrive(os.path.normpath(path))
     parts = rest.split(os.sep)
-    want = lang.lower()
+    want = _lang_fold(lang)
     for i, part in enumerate(parts):
-        if not part or want not in part.lower():
+        if not part or want not in _lang_fold(part):
             continue
         parent = drive + (os.sep.join(parts[:i]) or (os.sep if rest.startswith(os.sep) else "."))
         try:
@@ -484,7 +490,7 @@ def _existing_case(path, lang):
             break                      # nothing below a folder that does not exist yet
         if part in names:
             continue
-        same = [n for n in names if n.lower() == part.lower()]
+        same = [n for n in names if _lang_fold(n) == _lang_fold(part)]
         if len(same) == 1:
             parts[i] = same[0]
     return drive + os.sep.join(parts)
