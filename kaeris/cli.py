@@ -692,13 +692,12 @@ def cmd_check(args):
         if args.pattern:
             return os.path.join(out_dir or os.path.dirname(os.path.abspath(path)),
                                 args.pattern.format(lang=lang))
-        found = _out_path(path, lang, out_dir, source_lang)
-        if not os.path.isfile(found):
-            # Xcode keeps one folder per language: en.lproj/Localizable.strings -> de.lproj/.
-            sibling = _lproj_sibling(path, lang, source_lang, out_dir)
-            if sibling and os.path.isfile(sibling):
-                return sibling
-        return found
+        # Xcode keeps one folder per language: en.lproj/Localizable.strings -> de.lproj/.
+        # Asked first: the generic layout lookup warns "no known layout" for it.
+        sibling = _lproj_sibling(path, lang, source_lang, out_dir)
+        if sibling and os.path.isfile(sibling):
+            return sibling
+        return _out_path(path, lang, out_dir, source_lang)
 
     # One file holds the source AND every language (a String Catalog, a CSV with a column per
     # language): there is no per-language file to resolve — both sides come out of one parse.

@@ -1093,10 +1093,14 @@ _CURRENCY_NEAR_NUMBER = [
 ]
 
 
+# The "$" of a positional specifier (%1$@, %2$s, %1$d) is argument syntax, not a dollar.
+_POSITIONAL_RE = re.compile(r"%(\d+)\$")
+
+
 def _currencies_in(text: str) -> set:
     """Which currencies this string quotes a price in. Longest token wins, so R$ never
     registers as $."""
-    text = _magnitudes(text or "")
+    text = _magnitudes(_POSITIONAL_RE.sub(r"%:", text or ""))
     found = set()
     # Claimed positions as a flat map, not a growing list of spans. The list version asked
     # `any(a <= start < b for a, b in seen)` for EVERY match, so a string full of prices cost
@@ -1139,7 +1143,7 @@ _CODE_CURRENCY = {"R$": "BRL", "US$": "USD", "CA$": "CAD", "NZ$": "NZD", "HK$": 
 
 def _currencies_named(text: str) -> set:
     """Every currency the string names anywhere — symbol, ISO code or word."""
-    text = text or ""
+    text = _POSITIONAL_RE.sub(r"%:", text or "")
     found = set()
     claimed = bytearray(len(text))
     for rx, cur in _CURRENCY_ANYWHERE:
