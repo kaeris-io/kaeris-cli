@@ -164,6 +164,46 @@ def diff_locale(source_flat, target_flat, pair=True, optional=()):
     return missing, extra, issues
 
 
+_I18N_SUFFIX_RE = re.compile(r"^(.+)_(zero|one|two|few|many|other)$")
+
+
+def _i18next_plural_bases(source_flat):
+    """Keys of the source that are an i18next plural set: `item_one` + `item_other` become the
+    base `item`. Needs both one and other, so a lone `thing_other` key is not taken for one."""
+    forms = {}
+    for key in source_flat:
+        m = _I18N_SUFFIX_RE.match(key)
+        if m:
+            forms.setdefault(m.group(1), set()).add(m.group(2))
+    return {b for b, f in forms.items() if {"one", "other"} <= f}
+
+
+def _i18next_plural_faults(source_flat, target_flat, extra, lang):
+    """(missing forms as faults, extra keys without the forms the language owns). A Polish
+    `item_one`/`item_other` pair is incomplete: CLDR gives Polish one/few/many/other, so
+    `item_few` and `item_many` are required — and not "stale" when present. Only languages
+    in det._CLDR_REQUIRED are judged, the same conservative table the ICU check uses."""
+    base_lang = (lang or "").replace("_", "-").split("-")[0].lower()
+    required = det._CLDR_REQUIRED.get(base_lang)
+    bases = _i18next_plural_bases(source_flat)
+    if not required or not bases:
+        return [], extra
+    forms = required | {"other"}
+    faults = []
+    owned = set()
+    for base in sorted(bases):
+        for cat in sorted(forms):
+            key = f"{base}_{cat}"
+            owned.add(key)
+            if key not in source_flat and key not in target_flat:
+                faults.append(f"plural form missing: {key} — {base_lang} needs the "
+                              f"{'/'.join(c for c in CLDR_ORDER_LOCAL if c in forms)} forms of '{base}'")
+    return faults, [k for k in extra if k not in owned]
+
+
+CLDR_ORDER_LOCAL = ("zero", "one", "two", "few", "many", "other")
+
+
 def check_locales(source_obj, langs, load_target, glossary=None, terms=None):
     """Run the check across every target language.
 
@@ -219,6 +259,10 @@ def check_locales(source_obj, langs, load_target, glossary=None, terms=None):
         missing, extra, issues = diff_locale(source_flat, target_flat, pair, optional)
         if missing:
             result["missing"][lang] = missing
+            result["ok"] = False
+        plural_faults, extra = _i18next_plural_faults(source_flat, target_flat, extra, lang)
+        for msg in plural_faults:
+            result["faults"].append({"lang": lang, "key": "", "msg": msg, "severity": "error"})
             result["ok"] = False
         if extra:
             result["extra"][lang] = extra

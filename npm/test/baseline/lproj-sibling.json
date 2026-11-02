@@ -10,12 +10,12 @@
    "faults": [],
    "warnings": []
   },
-  "stderr": "! Could not detect a known locale-file layout for 'en.lproj/L.strings' (source_lang='en') — nesting output by language instead\n"
+  "stderr": ""
  },
  "human": {
   "code": 0,
   "stdout": "",
-  "stderr": "! Could not detect a known locale-file layout for 'en.lproj/L.strings' (source_lang='en') — nesting output by language instead\n✓ de: complete & placeholder-safe\n✓ all locales complete & placeholder-safe\n"
+  "stderr": "✓ de: complete & placeholder-safe\n✓ all locales complete & placeholder-safe\n"
  },
  "sarif": null
 }

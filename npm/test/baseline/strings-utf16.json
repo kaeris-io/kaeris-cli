@@ -26,12 +26,12 @@
    ],
    "warnings": []
   },
-  "stderr": "! Could not detect a known locale-file layout for 'en.lproj/L.strings' (source_lang='en') — nesting output by language instead\n"
+  "stderr": ""
  },
  "human": {
   "code": 1,
   "stdout": "",
-  "stderr": "! Could not detect a known locale-file layout for 'en.lproj/L.strings' (source_lang='en') — nesting output by language instead\n✗ de: 1 placeholder mismatch(es):\n    a: missing ['%@'], added -\n✗ de: 1 translation fault(s):\n    a: lost placeholder %@\n✗ 1 placeholder mismatch, 1 translation fault\n"
+  "stderr": "✗ de: 1 placeholder mismatch(es):\n    a: missing ['%@'], added -\n✗ de: 1 translation fault(s):\n    a: lost placeholder %@\n✗ 1 placeholder mismatch, 1 translation fault\n"
  },
  "sarif": null
 }
