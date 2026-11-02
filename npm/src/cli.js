@@ -2,7 +2,8 @@
 // and the exit code (0 clean, 1 a problem was found, 2 bad usage or an unreadable file).
 import fs from "node:fs";
 import { checkLocales } from "./check.js";
-import { checkLine } from "./cta.js";
+import { checkLine, fixCommand, fixLine, gapUnits } from "./cta.js";
+import { flattenAll } from "./flatten.js";
 import { readText, UnknownEncoding } from "./encoding.js";
 import { ValueError } from "./errors.js";
 import * as fm from "./formats.js";
@@ -561,6 +562,16 @@ function cmdCheck(args, globals) {
       if (args.strict && nWarn) parts.push(`${nWarn} ${plural(nWarn, "warning", "warnings")} (--strict)`);
       if (args.strict && nExtra) parts.push(`${nExtra} extra ${plural(nExtra, "key", "keys")} (--strict)`);
       err(parts.join(", "));
+      if (nMissing) {
+        // The command that fills the gaps, about how many characters and which plan covers it.
+        const missing = new Map([...result.missing].filter(([, keys]) => keys && keys.length));
+        const incremental = jsonLike && !merged;
+        const [total, largest] = gapUnits(flattenAll(sourceObj), missing, incremental);
+        const line = fixLine(total, largest,
+          fixCommand([...missing.keys()], { path: args.source || null, out: args.out || null, incremental }),
+          { machine: Boolean(args.sarif), ci: Boolean(args.ci) });
+        if (line) out(line);
+      }
     } else if (nWarn) warn(`${nWarn} warning(s) — non-blocking (use --strict to fail on them)`);
     else {
       ok("all locales complete & placeholder-safe");

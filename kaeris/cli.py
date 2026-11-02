@@ -876,6 +876,11 @@ def cmd_check(args):
             if args.strict and n_extra:
                 parts.append(f"{n_extra} extra key{'s' if n_extra != 1 else ''} (--strict)")
             err(", ".join(parts))
+            if n_missing:
+                _fix_hint(result, source_obj, path=args.source, out=args.out,
+                          incremental=json_like and not merged,
+                          machine=bool(getattr(args, "sarif", None)),
+                          ci=bool(getattr(args, "ci", False)))
         elif n_warn:
             warn(f"{n_warn} warning(s) — non-blocking (use --strict to fail on them)")
         else:
@@ -892,6 +897,18 @@ def cmd_check(args):
         print(json.dumps(result, ensure_ascii=not utf8, indent=2))
 
     return 1 if fail else 0
+
+
+def _fix_hint(result, source_obj, *, path, out, incremental, machine, ci):
+    """After missing keys: the command that fills them, about how many characters that is and
+    which plan covers it (kaeris/cta.py). Nothing is sent anywhere to work it out."""
+    missing = {lang: keys for lang, keys in result["missing"].items() if keys}
+    total, largest = cta.gap_units(inc.flatten_all(source_obj), missing, incremental)
+    line = cta.fix_line(total, largest,
+                        cta.fix_command(list(missing), path=path, out=out, incremental=incremental),
+                        machine=machine, ci=ci)
+    if line:
+        print(line, file=sys.stderr)
 
 
 def _progress_printer(label=""):
