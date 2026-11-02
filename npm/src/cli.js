@@ -383,12 +383,11 @@ function cmdCheck(args, globals) {
     if (args.pattern) {
       return pp.join(outDir || pp.dirname(pp.abspath(path)), args.pattern.replace(/\{lang\}/g, lang));
     }
-    const found = outPath(path, lang, outDir, sourceLang);
-    if (!pp.isfile(found)) {
-      const sibling = lprojSibling(path, lang, sourceLang, outDir);
-      if (sibling && pp.isfile(sibling)) return sibling;
-    }
-    return found;
+    // Xcode keeps one folder per language. Asked first: the generic layout lookup warns
+    // "no known layout" for it.
+    const sibling = lprojSibling(path, lang, sourceLang, outDir);
+    if (sibling && pp.isfile(sibling)) return sibling;
+    return outPath(path, lang, outDir, sourceLang);
   };
 
   // One file holds the source AND every language (a String Catalog, a CSV with a column per

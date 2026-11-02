@@ -390,7 +390,7 @@ function lineBreakFaults(original, translated, softBreaks = false) {
 
 // ── ICU plural/select validation ──────────────────────────────────────────────
 
-const CLDR_REQUIRED = new Map(Object.entries(T.CLDR_REQUIRED).map(([k, v]) => [k, new Set(v)]));
+export const CLDR_REQUIRED = new Map(Object.entries(T.CLDR_REQUIRED).map(([k, v]) => [k, new Set(v)]));
 
 // Top-level ICU plural/select/selectordinal blocks as [type, full segment].
 function icuBlocks(text) {
@@ -603,9 +603,12 @@ function computeConsistency(sourceFlat, translatedFlat) {
 const CURRENCY_NEAR_NUMBER = T.CURRENCY_NEAR_NUMBER.map(([p, cur], i) => [re(p, "g"), cur, T.CURRENCY_TOKENS[i % T.CURRENCY_TOKENS.length][0]]);
 const CURRENCY_ANYWHERE = T.CURRENCY_ANYWHERE.map(([p, cur]) => [re(p, "g"), cur]);
 
+// The "$" of a positional specifier (%1$@, %2$s, %1$d) is argument syntax, not a dollar.
+const POSITIONAL_RE = /%(\d+)\$/g;
+
 // Which currencies this string quotes a price in. Longest token wins, so R$ never registers as $.
 function currenciesIn(text) {
-  text = magnitudes(text || "");
+  text = magnitudes((text || "").replace(POSITIONAL_RE, "%:"));
   const found = new Set();
   const claimed = new Uint8Array(text.length + 1);
   for (const [r, cur, token] of CURRENCY_NEAR_NUMBER) {
@@ -621,7 +624,7 @@ function currenciesIn(text) {
 
 // Every currency the string names anywhere — symbol, ISO code or word.
 function currenciesNamed(text) {
-  text = text || "";
+  text = (text || "").replace(POSITIONAL_RE, "%:");
   const found = new Set();
   const claimed = new Uint8Array(text.length + 1);
   for (const [r, cur] of CURRENCY_ANYWHERE) {

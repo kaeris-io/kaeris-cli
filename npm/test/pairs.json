@@ -1,6 +1,37 @@
 {
  "pairs": [
   {
+   "src": "%1$@ sent you %2$@",
+   "tgt": "%1$@ hat dir %2$@ gesendet",
+   "lang": "de",
+   "glossary": null,
+   "expect": []
+  },
+  {
+   "src": "Pay $79",
+   "tgt": "Zahle 79",
+   "lang": "de",
+   "glossary": null,
+   "expect": [
+    {
+     "severity": "error",
+     "msg": "currency dropped — the source priced this in USD, the translation has no currency"
+    }
+   ]
+  },
+  {
+   "src": "Pay %1$@ or $79",
+   "tgt": "Zahle %1$@",
+   "lang": "de",
+   "glossary": null,
+   "expect": [
+    {
+     "severity": "error",
+     "msg": "currency dropped — the source priced this in USD, the translation has no currency"
+    }
+   ]
+  },
+  {
    "src": "Hello {name}",
    "tgt": "Bonjour {name}",
    "lang": "fr",

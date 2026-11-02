@@ -268,6 +268,13 @@ case("json-numbers-and-currency", {"en.json": J({"a": "Only $79 once", "b": "15k
      "pt.json": J({"a": "Apenas R$79", "b": "15 mil usuários", "c": "pelo menos uma língua", "d": "Excluir 50 arquivos", "e": "Noventa segundos",
                    "f": "1.000 EUR", "g": "uma hora"})},
      ["--source", "en.json", "--langs", "ja,pt"])
+case("json-i18next-plural-pl", {"en.json": J({"item_one": "{{count}} file", "item_other": "{{count}} files", "title": "Files"}),
+     "pl.json": J({"item_one": "{{count}} plik", "item_other": "{{count}} pliku", "title": "Pliki", "stray_few": "x"}),
+     "de.json": J({"item_one": "{{count}} Datei", "item_other": "{{count}} Dateien", "title": "Dateien"})},
+     ["--source", "en.json", "--langs", "pl,de"])
+case("json-i18next-plural-pl-complete", {"en.json": J({"item_one": "{{count}} file", "item_other": "{{count}} files"}),
+     "pl.json": J({"item_one": "{{count}} plik", "item_few": "{{count}} pliki", "item_many": "{{count}} plikow", "item_other": "{{count}} pliku"})},
+     ["--source", "en.json", "--langs", "pl"])
 case("json-answered-instead", {"en.json": J({"q": "How do I get my API key?"}),
      "fr.json": J({"q": "Vous pouvez obtenir votre clé API en vous inscrivant sur le site web du fournisseur de services. " * 3})},
      ["--source", "en.json", "--langs", "fr"])
@@ -408,6 +415,7 @@ case("pretty-keys-xcstrings", {"L.xcstrings": catalog({"cart": {"localizations":
 
 # ── pairs ───────────────────────────────────────────────────────────────────────────────────────
 HAND = [
+    ("%1$@ sent you %2$@", "%1$@ hat dir %2$@ gesendet", "de", None), ("Pay $79", "Zahle 79", "de", None), ("Pay %1$@ or $79", "Zahle %1$@", "de", None),
     ("Hello {name}", "Bonjour {name}", "fr", None), ("Hello {name}", "Bonjour {nom}", "fr", None), ("Hello {name}", "Bonjour", "fr", None),
     ("Hello {{name}}", "Hallo {{ name }}", "de", None), ("Hello %s", "Hallo %d", "de", None), ("Hello %1$s %2$d", "Hallo %2$d %1$s", "de", None),
     ("Rate 100%", "Bewerten Sie 100%", "de", None), ("Hi ${name}", "Hallo {name}", "de", None), ("See $t(a.b)", "Siehe a.b", "de", None),

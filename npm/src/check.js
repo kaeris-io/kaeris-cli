@@ -113,6 +113,47 @@ export function diffLocale(sourceFlat, targetFlat, pair = true, optional = new S
   return [missing, extra, issues];
 }
 
+const I18N_SUFFIX_RE = /^(.+)_(zero|one|two|few|many|other)$/;
+const CLDR_ORDER_LOCAL = ["zero", "one", "two", "few", "many", "other"];
+
+// Keys of the source that are an i18next plural set: `item_one` + `item_other` become the base
+// `item`. Needs both one and other, so a lone `thing_other` key is not taken for one.
+function i18nextPluralBases(sourceFlat) {
+  const forms = new Map();
+  for (const key of sourceFlat.keys()) {
+    const m = I18N_SUFFIX_RE.exec(key);
+    if (m) {
+      if (!forms.has(m[1])) forms.set(m[1], new Set());
+      forms.get(m[1]).add(m[2]);
+    }
+  }
+  return new Set([...forms].filter(([, f]) => f.has("one") && f.has("other")).map(([b]) => b));
+}
+
+// [missing forms as faults, extra keys without the forms the language owns]. A Polish
+// `item_one`/`item_other` pair is incomplete: CLDR gives Polish one/few/many/other, so `item_few`
+// and `item_many` are required, and not "stale" when present. Only languages in CLDR_REQUIRED
+// are judged, the same conservative table the ICU check uses.
+function i18nextPluralFaults(sourceFlat, targetFlat, extra, lang) {
+  const baseLang = (lang || "").replace(/_/g, "-").split("-")[0].toLowerCase();
+  const required = det.CLDR_REQUIRED.get(baseLang);
+  const bases = i18nextPluralBases(sourceFlat);
+  if (!required || !required.size || !bases.size) return [[], extra];
+  const forms = new Set([...required, "other"]);
+  const faults = [];
+  const owned = new Set();
+  for (const base of sorted(bases)) {
+    for (const cat of sorted(forms)) {
+      const key = `${base}_${cat}`;
+      owned.add(key);
+      if (!sourceFlat.has(key) && !targetFlat.has(key)) {
+        faults.push(`plural form missing: ${key} — ${baseLang} needs the ${CLDR_ORDER_LOCAL.filter((c) => forms.has(c)).join("/")} forms of '${base}'`);
+      }
+    }
+  }
+  return [faults, extra.filter((k) => !owned.has(k))];
+}
+
 const onlyText = (flat) => new Map([...flat].filter(([, v]) => typeof v === "string"));
 
 // Run the check across every target language. `loadTarget(lang)` returns the parsed locale for
@@ -153,7 +194,12 @@ export function checkLocales(sourceObj, langs, loadTarget, glossary = null) {
       result.missing.set(lang, missing);
       result.ok = false;
     }
-    if (extra.length) result.extra.set(lang, extra);
+    const [pluralFaults, extraLeft] = i18nextPluralFaults(sourceFlat, targetFlat, extra, lang);
+    for (const msg of pluralFaults) {
+      result.faults.push({ lang, key: "", msg, severity: "error" });
+      result.ok = false;
+    }
+    if (extraLeft.length) result.extra.set(lang, extraLeft);
     for (const issue of issues) result.placeholder_issues.push({ lang, ...issue });
     if (issues.length) result.ok = false;
     // Per-string detectors on shared keys (RED faults + YELLOW warnings).

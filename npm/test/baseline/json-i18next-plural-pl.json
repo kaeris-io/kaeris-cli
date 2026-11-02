@@ -1,0 +1,38 @@
+{
+ "json": {
+  "code": 1,
+  "stdout": {
+   "ok": false,
+   "missing": {},
+   "extra": {
+    "pl": [
+     "stray_few"
+    ]
+   },
+   "placeholder_issues": [],
+   "missing_files": [],
+   "faults": [
+    {
+     "lang": "pl",
+     "key": "",
+     "msg": "plural form missing: item_few — pl needs the one/few/many/other forms of 'item'",
+     "severity": "error"
+    },
+    {
+     "lang": "pl",
+     "key": "",
+     "msg": "plural form missing: item_many — pl needs the one/few/many/other forms of 'item'",
+     "severity": "error"
+    }
+   ],
+   "warnings": []
+  },
+  "stderr": ""
+ },
+ "human": {
+  "code": 1,
+  "stdout": "",
+  "stderr": "✗ pl: 2 translation fault(s):\n    plural form missing: item_few — pl needs the one/few/many/other forms of 'item'\n    plural form missing: item_many — pl needs the one/few/many/other forms of 'item'\n! pl: 1 extra/stale key(s): stray_few\n✓ de: complete & placeholder-safe\n✗ 2 translation faults\n"
+ },
+ "sarif": null
+}
