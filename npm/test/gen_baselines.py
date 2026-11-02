@@ -409,6 +409,14 @@ case("config-not-object", {"kaeris.json": "[1]", "en.json": J({"a": "x"})}, ["--
 case("config-flags-win", {"en.json": J({"a": "Hello"}), "de.json": J({"a": "Hallo"}), "kaeris.json": J({"source": "nope.json", "langs": ["fr"]})},
      ["--source", "en.json", "--langs", "de"])
 case("lproj-sibling", {"en.lproj/L.strings": '"a" = "Hello %@";\n', "de.lproj/L.strings": '"a" = "Hallo %@";\n'}, ["--source", "en.lproj/L.strings", "--langs", "de"])
+case("underscore-region-file", {"locales/en.json": '{"a": "Hello {name}"}', "locales/pt_BR.json": '{"a": "Olá {name}"}'},
+     ["--source", "locales/en.json", "--langs", "pt-BR"])
+case("underscore-script-file", {"locales/en.json": '{"a": "Hello {name}"}', "locales/zh_Hans.json": '{"a": "你好 {name}"}'},
+     ["--source", "locales/en.json", "--langs", "zh-Hans"])
+case("prefixed-underscore-arb", {"l10n/app_en.arb": '{"a": "Hello {name}"}', "l10n/app_pt_BR.arb": '{"a": "Olá {name}"}'},
+     ["--source", "l10n/app_en.arb", "--langs", "pt-BR"])
+case("empty-source-text-as-key", {"en.json": '{"{{name}} exists": ""}', "zh-CN.json": '{"{{name}} exists": "{{name}}已存在"}'},
+     ["--source", "en.json", "--langs", "zh-CN"])
 case("pretty-keys-xcstrings", {"L.xcstrings": catalog({"cart": {"localizations": {"en": plural("%lld item", "%lld items"), "de": {}}}})},
      ["--source", "L.xcstrings", "--langs", "de"])
 
@@ -455,7 +463,20 @@ HAND = [
     ("{count, plural, one {# item} other {# items}} {name}", "{count, plural, one {# Element} other {# Elemente}}", "de", None),
     ("a {b} c {d} e", "a {d} c {b} e", "de", None), ("{a}{a}", "{a}", "de", None), ("{a}", "{a}{a}", "de", None),
     ("Hello World Friend", "Hallo Welt Freund Mensch Dame Herr Sie du", "de", None),
-    ("Hello Du", "Hallo Sie", "de", None), ("Ünïcode ß ſ K", "ünïcode SS s k", "de", ["ß"]),
+    ("Hello Du", "Hallo Sie", "de", None),
+    ("", "{{name}}已存在", "zh-CN", None), ("  ", "x {a}", "de", None),
+    ("{count} script | {count} scripts", "{count} سكربت | سكربت واحد | سكربتان | {count} سكربتات | {count} سكربت | {count} سكربت", "ar", None),
+    ("{count} script | {count} scripts", "{count} 個のスクリプト", "ja", None),
+    ("{count} script | {count} scripts", "скрипт | скрипта | скриптов", "ru", None),
+    ("{count} script | {count} scripts", "{count} Skript | {total} Skripte", "de", None),
+    ("{count} script | {count} scripts", "{count} {count} Skript | {count} Skripte", "de", None),
+    ("{count} script", "{count} {count} Skript", "de", None), ("{n, plural, one {a} other {b | c}} | {n} x", "{n} y | {n} z", "de", None),
+    ("{kind, plural, =1{A} =2{B} other{}}", "{kind, plural, =1{А} =2{Б} other{}}", "ru", None),
+    ("{kind, plural, =1{A} =2{B} other{}}", "{kind, plural, =1{A} =2{B} other{}}", "ar", None),
+    ("{n, plural, =0 {none} one {# file} other {# files}}", "{n, plural, =0 {нет} one {# файл} other {# файла}}", "ru", None),
+    ("Check for updates", "#-#-#-#-#  pt-PT.po (App 2.3.0)  #-#-#-#-#\nVerificar\n#-#-#-#-#  pt-PT.po (App 2.3.0)  #-#-#-#-#\nProcurar", "pt", None),
+    ("Delete 5 files", "#-#-#-#-#  pt-PT.po (App 2.3.0)  #-#-#-#-#\nExcluir 50 arquivos", "pt", None),
+    ("Check for updates", "#-#-#-#-#  a.po  #-#-#-#-#", "pt", None), ("Ünïcode ß ſ K", "ünïcode SS s k", "de", ["ß"]),
 ]
 WORDS = {
     "de": ["Speichern", "Abbrechen", "Datei", "Einstellungen", "Willkommen", "Sie", "du", "dein", "Ihnen", "Konto", "löschen", "Weiter"],

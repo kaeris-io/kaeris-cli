@@ -257,15 +257,18 @@ function targetPath(srcPath, lang, outDir, sourceLang) {
   return pp.join(baseDir, lang, pp.basename(srcPath));
 }
 
+// A file or folder name as it is compared with a language code: lower case, `_` read as `-`.
+const langFold = (text) => text.toLowerCase().replace(/_/g, "-");
+
 // `path`, with each part that names `lang` spelled the way it already is on disk (zh-Hant.json
-// next to a requested zh-hant.json). An exact match always wins.
+// next to a requested zh-hant.json, pt_BR.json for pt-BR). An exact match always wins.
 function existingCase(path, lang) {
   const [drive, rest] = pp.splitdrive(pp.normpath(path));
   const parts = rest.split(pp.sep);
-  const want = lang.toLowerCase();
+  const want = langFold(lang);
   for (let i = 0; i < parts.length; i++) {
     const part = parts[i];
-    if (!part || !part.toLowerCase().includes(want)) continue;
+    if (!part || !langFold(part).includes(want)) continue;
     const parent = drive + (parts.slice(0, i).join(pp.sep) || (rest.startsWith(pp.sep) ? pp.sep : "."));
     let names;
     try {
@@ -274,7 +277,7 @@ function existingCase(path, lang) {
       break;
     }
     if (names.includes(part)) continue;
-    const same = names.filter((n) => n.toLowerCase() === part.toLowerCase());
+    const same = names.filter((n) => langFold(n) === langFold(part));
     if (same.length === 1) parts[i] = same[0];
   }
   return drive + parts.join(pp.sep);

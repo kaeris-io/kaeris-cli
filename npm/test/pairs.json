@@ -1079,6 +1079,173 @@
    "expect": []
   },
   {
+   "src": "",
+   "tgt": "{{name}}已存在",
+   "lang": "zh-CN",
+   "glossary": null,
+   "expect": []
+  },
+  {
+   "src": "  ",
+   "tgt": "x {a}",
+   "lang": "de",
+   "glossary": null,
+   "expect": []
+  },
+  {
+   "src": "{count} script | {count} scripts",
+   "tgt": "{count} سكربت | سكربت واحد | سكربتان | {count} سكربتات | {count} سكربت | {count} سكربت",
+   "lang": "ar",
+   "glossary": null,
+   "expect": []
+  },
+  {
+   "src": "{count} script | {count} scripts",
+   "tgt": "{count} 個のスクリプト",
+   "lang": "ja",
+   "glossary": null,
+   "expect": []
+  },
+  {
+   "src": "{count} script | {count} scripts",
+   "tgt": "скрипт | скрипта | скриптов",
+   "lang": "ru",
+   "glossary": null,
+   "expect": [
+    {
+     "severity": "error",
+     "msg": "lost placeholder {count}"
+    }
+   ]
+  },
+  {
+   "src": "{count} script | {count} scripts",
+   "tgt": "{count} Skript | {total} Skripte",
+   "lang": "de",
+   "glossary": null,
+   "expect": [
+    {
+     "severity": "error",
+     "msg": "invented placeholder {total} (not in source)"
+    }
+   ]
+  },
+  {
+   "src": "{count} script | {count} scripts",
+   "tgt": "{count} {count} Skript | {count} Skripte",
+   "lang": "de",
+   "glossary": null,
+   "expect": [
+    {
+     "severity": "error",
+     "msg": "placeholder {count} appears 2× vs 1× in source (duplicated)"
+    }
+   ]
+  },
+  {
+   "src": "{count} script",
+   "tgt": "{count} {count} Skript",
+   "lang": "de",
+   "glossary": null,
+   "expect": [
+    {
+     "severity": "error",
+     "msg": "placeholder {count} appears 2× vs 1× in source (duplicated)"
+    }
+   ]
+  },
+  {
+   "src": "{n, plural, one {a} other {b | c}} | {n} x",
+   "tgt": "{n} y | {n} z",
+   "lang": "de",
+   "glossary": null,
+   "expect": [
+    {
+     "severity": "error",
+     "msg": "ICU plural/select construct dropped or broken (1 in source, 0 in translation)"
+    }
+   ]
+  },
+  {
+   "src": "{kind, plural, =1{A} =2{B} other{}}",
+   "tgt": "{kind, plural, =1{А} =2{Б} other{}}",
+   "lang": "ru",
+   "glossary": null,
+   "expect": []
+  },
+  {
+   "src": "{kind, plural, =1{A} =2{B} other{}}",
+   "tgt": "{kind, plural, =1{A} =2{B} other{}}",
+   "lang": "ar",
+   "glossary": null,
+   "expect": [
+    {
+     "severity": "warn",
+     "msg": "may be untranslated — no target-language script, still reads as source text"
+    }
+   ]
+  },
+  {
+   "src": "{n, plural, =0 {none} one {# file} other {# files}}",
+   "tgt": "{n, plural, =0 {нет} one {# файл} other {# файла}}",
+   "lang": "ru",
+   "glossary": null,
+   "expect": [
+    {
+     "severity": "error",
+     "msg": "ICU plural is missing the few/many form(s) ru requires"
+    }
+   ]
+  },
+  {
+   "src": "Check for updates",
+   "tgt": "#-#-#-#-#  pt-PT.po (App 2.3.0)  #-#-#-#-#\nVerificar\n#-#-#-#-#  pt-PT.po (App 2.3.0)  #-#-#-#-#\nProcurar",
+   "lang": "pt",
+   "glossary": null,
+   "expect": [
+    {
+     "severity": "error",
+     "msg": "gettext merge markers (#-#-#-#-# file.po #-#-#-#-#) are left in the translation — two .po files were merged and the conflict never resolved"
+    },
+    {
+     "severity": "warn",
+     "msg": "line breaks changed: 0 in the source, 1 in the translation"
+    }
+   ]
+  },
+  {
+   "src": "Delete 5 files",
+   "tgt": "#-#-#-#-#  pt-PT.po (App 2.3.0)  #-#-#-#-#\nExcluir 50 arquivos",
+   "lang": "pt",
+   "glossary": null,
+   "expect": [
+    {
+     "severity": "error",
+     "msg": "gettext merge markers (#-#-#-#-# file.po #-#-#-#-#) are left in the translation — two .po files were merged and the conflict never resolved"
+    },
+    {
+     "severity": "error",
+     "msg": "number 50 appears in the translation but not the source"
+    },
+    {
+     "severity": "error",
+     "msg": "number 5 from the source is missing or changed in the translation"
+    }
+   ]
+  },
+  {
+   "src": "Check for updates",
+   "tgt": "#-#-#-#-#  a.po  #-#-#-#-#",
+   "lang": "pt",
+   "glossary": null,
+   "expect": [
+    {
+     "severity": "error",
+     "msg": "gettext merge markers (#-#-#-#-# file.po #-#-#-#-#) are left in the translation — two .po files were merged and the conflict never resolved"
+    }
+   ]
+  },
+  {
    "src": "Ünïcode ß ſ K",
    "tgt": "ünïcode SS s k",
    "lang": "de",
@@ -12496,10 +12663,6 @@
    "expect": [
     {
      "severity": "error",
-     "msg": "number 10 appears in the translation but not the source"
-    },
-    {
-     "severity": "error",
      "msg": "double-encoded entity &amp;amp; — the & was re-escaped (renders literally)"
     }
    ]
@@ -13713,20 +13876,7 @@
    "tgt": "10,&amp;é}%d</b>千2",
    "lang": "pl",
    "glossary": null,
-   "expect": [
-    {
-     "severity": "error",
-     "msg": "invented placeholder %d (not in source)"
-    },
-    {
-     "severity": "error",
-     "msg": "number 10 appears in the translation but not the source"
-    },
-    {
-     "severity": "error",
-     "msg": "number 2 appears in the translation but not the source"
-    }
-   ]
+   "expect": []
   },
   {
    "src": "千${v}@:k.s{g, select, a {A} other {B}}'…mln(доллар _한국어",
@@ -13955,12 +14105,7 @@
    "glossary": [
     "KAERIS"
    ],
-   "expect": [
-    {
-     "severity": "error",
-     "msg": "invented placeholder %1$s (not in source)"
-    }
-   ]
+   "expect": []
   },
   {
    "src": "ไทย<a href=\"x\">( 1'*/é@:k.sEURKAERIS😀",
@@ -16363,12 +16508,7 @@
    "tgt": "0mln",
    "lang": "es",
    "glossary": null,
-   "expect": [
-    {
-     "severity": "error",
-     "msg": "number 0 appears in the translation but not the source"
-    }
-   ]
+   "expect": []
   },
   {
    "src": "an{0}and15kשלוםworld/\\u0041%%{n, plural, one {# a} other {# b}}1 ",
@@ -16413,12 +16553,7 @@
     "github",
     "ß"
    ],
-   "expect": [
-    {
-     "severity": "error",
-     "msg": "number 1.000 appears in the translation but not the source"
-    }
-   ]
+   "expect": []
   },
   {
    "src": "KAERIS%d",
@@ -17192,12 +17327,7 @@
    "tgt": "$t(a.b)",
    "lang": "ro",
    "glossary": null,
-   "expect": [
-    {
-     "severity": "error",
-     "msg": "invented placeholder $t(a.b) (not in source)"
-    }
-   ]
+   "expect": []
   },
   {
    "src": "10&amp;amp;مرحبا*-",
@@ -18125,12 +18255,7 @@
    "tgt": "千:sym:",
    "lang": "he",
    "glossary": null,
-   "expect": [
-    {
-     "severity": "error",
-     "msg": "invented placeholder :sym: (not in source)"
-    }
-   ]
+   "expect": []
   },
   {
    "src": "\"${v}one<a href=\"x\">two\"/",
@@ -18551,16 +18676,7 @@
    "tgt": "</b>-)EUR{0}éa<b>%d",
    "lang": "fr",
    "glossary": null,
-   "expect": [
-    {
-     "severity": "error",
-     "msg": "invented placeholder %d (not in source)"
-    },
-    {
-     "severity": "error",
-     "msg": "invented placeholder {0} (not in source)"
-    }
-   ]
+   "expect": []
   },
   {
    "src": "долларSave' 2Mhundred{name}andßSpeichernEUR/world",
@@ -18938,10 +19054,6 @@
    "lang": "ro",
    "glossary": null,
    "expect": [
-    {
-     "severity": "error",
-     "msg": "number 2 appears in the translation but not the source"
-    },
     {
      "severity": "error",
      "msg": "broken \\u escape — a unicode escape was mangled to non-hex"

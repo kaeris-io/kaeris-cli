@@ -1,0 +1,8 @@
+{
+ "args": [
+  "--source",
+  "locales/en.json",
+  "--langs",
+  "zh-Hans"
+ ]
+}

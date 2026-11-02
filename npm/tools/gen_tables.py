@@ -46,6 +46,7 @@ def build():
         "DOUBLE_ENC_RE": pat(d._DOUBLE_ENC_RE),
         "BROKEN_UNICODE_ESC_RE": pat(d._BROKEN_UNICODE_ESC_RE),
         "TAG_RE": pat(d._TAG_RE),
+        "MERGE_MARKER_RE": pat(d._MERGE_MARKER_RE),
         "EMPHASIS_RE": pat(d._EMPHASIS_RE),
         "CLDR_REQUIRED": {k: sorted(v) for k, v in d._CLDR_REQUIRED.items()},
         "REGISTER_MARKERS": {k: [pat(a), pat(b)] for k, (a, b) in d._REGISTER_MARKERS.items()},
