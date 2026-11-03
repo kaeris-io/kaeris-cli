@@ -131,3 +131,39 @@ class TestNextStep:
             note = json.loads((tmp_path / "kaeris.json").read_text(encoding="utf-8"))["//"]
             assert len(note) <= 160, note
             assert "https://kaeris.dev/docs/cli" in note, note
+
+
+# ── 4. a cp1251 console ───────────────────────────────────────────────────────
+
+_STUB = r"""
+import sys
+from kaeris import cli as K
+K.KaerisClient.languages = lambda self: {"de": "German", "ja": "日本語", "uk": "Українська", "ar": "العربية"}
+sys.exit(K.main(sys.argv[1:]))
+"""
+
+
+def _legacy(argv, cwd):
+    env = {**os.environ, "PYTHONIOENCODING": "cp1251", "PYTHONUTF8": "0",
+           "PYTHONPATH": ROOT, "KAERIS_NO_UPDATE_CHECK": "1", "KAERIS_NO_CTA": "1"}
+    env.pop("KAERIS_API_KEY", None)
+    return subprocess.run([sys.executable, "-c", _STUB, *argv], capture_output=True, env=env,
+                          cwd=str(cwd))
+
+
+class TestLegacyConsole:
+
+    def test_languages_prints_every_line(self, tmp_path):
+        p = _legacy(["languages"], tmp_path)
+        assert b"Traceback" not in p.stderr, p.stderr.decode("cp1251", "replace")
+        assert p.returncode == 0
+        out = p.stdout.decode("cp1251")
+        assert "Українська" in out and "German" in out, out
+        assert out.count("\n") == 4, out
+
+    def test_marks_are_plain_not_escapes(self, tmp_path):
+        p = _legacy(["init"], tmp_path)
+        err = p.stderr.decode("cp1251")
+        assert p.returncode == 0, err
+        assert "\\u" not in err and "\ufffd" not in err, err
+        assert "Wrote kaeris.json" in err, err

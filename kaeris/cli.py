@@ -72,10 +72,36 @@ def _c(text, code):
     return f"\033[{code}m{text}\033[0m"
 
 
-def info(msg):  print(_c("→", "36"), msg, file=sys.stderr)
-def ok(msg):    print(_c("✓", "32"), msg, file=sys.stderr)
+_ASCII_MARKS = {"→": "->", "✓": "ok", "✗": "x"}
+
+
+def _mark(glyph):
+    """The glyph, or a plain one when stderr cannot encode it (a cp1251/cp1252 console printed
+    a literal \\u2713 before every line, newcomer run 03.11)."""
+    try:
+        glyph.encode(getattr(sys.stderr, "encoding", None) or "utf-8")
+        return glyph
+    except (UnicodeEncodeError, LookupError):
+        return _ASCII_MARKS.get(glyph, "?")
+
+
+def _safe_console():
+    """On a console that is not UTF-8, a character it cannot show becomes "?" instead of a
+    UnicodeEncodeError (`kaeris languages` died on the first non-cp1251 name) or an escape."""
+    for stream in (sys.stdout, sys.stderr):
+        enc = (getattr(stream, "encoding", None) or "").lower().replace("-", "").replace("_", "")
+        if enc in ("utf8", "utf8sig") or not hasattr(stream, "reconfigure"):
+            continue
+        try:
+            stream.reconfigure(errors="replace")
+        except (ValueError, OSError):
+            pass
+
+
+def info(msg):  print(_c(_mark("→"), "36"), msg, file=sys.stderr)
+def ok(msg):    print(_c(_mark("✓"), "32"), msg, file=sys.stderr)
 def warn(msg):  print(_c("!", "33"), msg, file=sys.stderr)
-def err(msg):   print(_c("✗", "31"), msg, file=sys.stderr)
+def err(msg):   print(_c(_mark("✗"), "31"), msg, file=sys.stderr)
 
 
 def refused(message, prefix=""):
@@ -2575,6 +2601,7 @@ def _update_hint(args):
 
 
 def main(argv=None):
+    _safe_console()
     args = build_parser().parse_args(argv)
     if not getattr(args, "command", None):
         build_parser().print_help()
