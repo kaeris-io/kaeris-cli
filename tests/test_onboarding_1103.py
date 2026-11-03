@@ -49,3 +49,49 @@ class TestNoAbbreviations:
         assert "unrecognized arguments: --ton" in out, out
         code, out = _run(["--ver"], capsys)
         assert code == 2, out
+
+
+# ── 2. review and fix look where translate --verify wrote ────────────────────
+
+def _project(tmp_path, monkeypatch, config=True):
+    monkeypatch.chdir(tmp_path)
+    (tmp_path / "locales").mkdir()
+    (tmp_path / "locales" / "en.json").write_text('{"a": "Hello"}', encoding="utf-8")
+    if config:
+        (tmp_path / "kaeris.json").write_text(
+            json.dumps({"source": "locales/en.json", "langs": ["de"], "out": "locales"}),
+            encoding="utf-8")
+    (tmp_path / "locales" / "verify.json").write_text('{"de": {"a": "Hello"}}', encoding="utf-8")
+    return os.path.join("locales", "verify.json")
+
+
+class TestVerifyIsFound:
+
+    @pytest.mark.parametrize("config", [True, False])
+    def test_review_finds_it(self, tmp_path, monkeypatch, capsys, config):
+        where = _project(tmp_path, monkeypatch, config)
+        code, out = _run(["review"], capsys)
+        assert code == 0, out
+        assert where in out, out
+
+    @pytest.mark.parametrize("config", [True, False])
+    def test_fix_finds_it(self, tmp_path, monkeypatch, capsys, config):
+        where = _project(tmp_path, monkeypatch, config)
+        code, out = _run(["fix"], capsys)
+        assert code == 0, out
+        assert where in out, out
+
+    def test_translate_and_review_agree_on_the_place(self, tmp_path, monkeypatch):
+        _project(tmp_path, monkeypatch)
+        cfg, _ = K._load_config(type("A", (), {"config": None})())
+        assert K.verify_path(cfg.get("out"), ["locales/en.json"]) == os.path.join("locales", "verify.json")
+        assert K.verify_path(None, ["locales/en.json"]) == os.path.join(
+            os.path.abspath("locales"), "verify.json")
+
+    def test_none_yet_names_the_expected_path(self, tmp_path, monkeypatch, capsys):
+        where = _project(tmp_path, monkeypatch)
+        os.remove(where)
+        for argv in (["review"], ["fix"]):
+            code, out = _run(argv, capsys)
+            assert code == 2, out
+            assert where in out and "--verify" in out, out

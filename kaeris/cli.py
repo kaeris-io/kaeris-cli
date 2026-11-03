@@ -1340,6 +1340,48 @@ def _cmd_dry_run(client, files, langs, args):
     return exit_code
 
 
+VERIFY_FILE = "verify.json"
+
+
+def verify_path(out, files):
+    """Where `translate --verify` writes verify.json: in --out (or 'out' in kaeris.json), else
+    next to the one source file, else in the current folder for a run over several. `review`
+    and `fix` look here too, so the three never disagree."""
+    if out:
+        return os.path.join(out, VERIFY_FILE)
+    if len(files) == 1:
+        return os.path.join(os.path.dirname(os.path.abspath(files[0])), VERIFY_FILE)
+    return os.path.join(os.getcwd(), VERIFY_FILE)
+
+
+def _find_verify(args):
+    """(path, found) for `review` and `fix` without a path: ./verify.json, then where translate
+    wrote it for this kaeris.json, then one verify.json a folder or two down. Not found: the
+    path translate would write, so the message can name it (newcomer run, 03.11: review looked
+    in ./ while translate had written locales/verify.json)."""
+    expected = VERIFY_FILE
+    candidates = [VERIFY_FILE]
+    try:
+        config, _ = _load_config(args)
+    except KaerisError:
+        config = {}
+    if config.get("source"):
+        sources = _resolve_sources(config["source"]) or [str(config["source"])]
+        expected = verify_path(config.get("out"), sources)
+        if os.path.isabs(expected):
+            expected = os.path.relpath(expected)
+        candidates.append(expected)
+    for p in candidates:
+        if os.path.isfile(p):
+            return p, True
+    below = sorted(set(glob.glob(os.path.join("*", VERIFY_FILE))
+                       + glob.glob(os.path.join("*", "*", VERIFY_FILE))))
+    below = [p for p in below if "node_modules" not in p.split(os.sep)]
+    if len(below) == 1:
+        return below[0], True
+    return expected, False
+
+
 def _write_verify(args, files):
     """One verify.json per run. It used to be written once per file and once per job, so a run
     over several Markdown pages kept only the last page's back-translations (client report 8)."""
@@ -1348,10 +1390,8 @@ def _write_verify(args, files):
         return None
     reviews = getattr(args, "verify_review", None) or {}
     targets = getattr(args, "verify_files", None) or {}
-    if len(files) == 1:
-        out_dir = args.out or os.path.dirname(os.path.abspath(files[0]))
-    else:
-        out_dir = args.out or os.getcwd()
+    vpath = verify_path(args.out, files)
+    out_dir = os.path.dirname(vpath) or "."
 
     def one(f):
         # Back-translations keep their old place ({lang: {key: text}}) so a script that read
@@ -1375,7 +1415,6 @@ def _write_verify(args, files):
         body = one(files[0])
     else:
         body = {os.path.relpath(f).replace(os.sep, "/"): one(f) for f in back}
-    vpath = os.path.join(out_dir, "verify.json")
     write_atomic(vpath, json.dumps(body, ensure_ascii=False, indent=2))
     ok(f"Back-translations (→ {args.back_lang}) and the lines to review written to {vpath}")
     return vpath
@@ -1479,7 +1518,7 @@ REVIEWED_FILE = "verify.reviewed.json"
 def _read_verify(path):
     """(body, None) or (None, exit code) after saying why verify.json cannot be read."""
     if not os.path.isfile(path):
-        err(f"No file at {path} — run `kaeris translate … --verify` first, it writes verify.json")
+        err(f"No file at {path}: run `kaeris translate --verify` first, it writes it there")
         return None, 2
     try:
         return json.loads(read_text(path)), None
@@ -1519,7 +1558,13 @@ def _decision_counts(body):
 def cmd_review(args):
     """Hand verify.json to a reviewer without an account, or take their answer back (free, offline)."""
     if args.apply:
-        path = args.path or REVIEWED_FILE
+        path = args.path
+        if not path:
+            # "Put it next to verify.json": the reviewed file is looked for there too.
+            path = REVIEWED_FILE
+            if not os.path.isfile(path):
+                beside = os.path.join(os.path.dirname(_find_verify(args)[0]), REVIEWED_FILE)
+                path = beside if os.path.isfile(beside) else path
         body, bad = _read_verify(path)
         if bad:
             return bad
@@ -1534,7 +1579,7 @@ def cmd_review(args):
         glossary = [t.strip() for t in keep.split(",") if t.strip()] or None
         return _apply_verify(path, glossary=glossary, dry_run=args.dry_run, as_json=args.json,
                              decided_only=True, extra={"decisions": n})
-    path = args.path or "verify.json"
+    path = args.path or _find_verify(args)[0]
     body, bad = _read_verify(path)
     if bad:
         return bad
@@ -1567,10 +1612,11 @@ def cmd_fix(args):
     config, _ = _load_config(args)
     keep = args.keep if args.keep else ",".join(config.get("keep") or config.get("glossary") or [])
     glossary = [t.strip() for t in keep.split(",") if t.strip()] or None
-    if not os.path.isfile(args.source):
-        err(f"No verify file at {args.source} — run `kaeris translate … --verify` first")
+    source = args.source or _find_verify(args)[0]
+    if not os.path.isfile(source):
+        err(f"No verify file at {source}: run `kaeris translate --verify` first, it writes it there")
         return 2
-    return _apply_verify(args.source, glossary=glossary, only=args.files or None,
+    return _apply_verify(source, glossary=glossary, only=args.files or None,
                          dry_run=args.dry_run, as_json=args.json)
 
 
@@ -2404,8 +2450,10 @@ def build_parser():
     fp.add_argument("files", nargs="*",
                     help="Only these source files, for a verify.json written by a run over "
                          "several (default: all of them)")
-    fp.add_argument("--from", dest="source", default="verify.json", metavar="PATH",
-                    help="The verify.json to apply (default: ./verify.json)")
+    fp.add_argument("--from", dest="source", default=None, metavar="PATH",
+                    help="The verify.json to apply (default: where `translate --verify` "
+                         "writes it: --out or 'out' in kaeris.json, else next to the source; "
+                         "./verify.json first)")
     fp.add_argument("--keep", "--glossary", dest="keep", default=None,
                     help="Terms a fix must keep verbatim (default: 'keep' in kaeris.json)")
     fp.add_argument("--dry-run", action="store_true",
@@ -2425,8 +2473,9 @@ def build_parser():
                     "nobody decided is left alone.",
     )
     rv.add_argument("path", nargs="?", default=None,
-                    help="verify.json to send (default: ./verify.json); with --apply, the reviewed "
-                         f"file (default: ./{REVIEWED_FILE})")
+                    help="verify.json to send (default: where `translate --verify` writes it, "
+                         "./verify.json first); with --apply, the reviewed "
+                         f"file (default: ./{REVIEWED_FILE}, else next to verify.json)")
     rv.add_argument("--apply", action="store_true",
                     help="Write the reviewer's decisions into the translated files")
     rv.add_argument("--open", action="store_true", help="Open kaeris.dev/review in your browser")
