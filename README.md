@@ -552,7 +552,7 @@ Anything not passed falls back to `kaeris.json`, then to the built-in default.
 
 | Flag | What it does |
 |------|--------------|
-| `--langs es,fr,ja` | target languages (`kaeris languages` lists all 46) |
+| `--langs es,fr,ja` / `--to es,fr,ja` | target languages (`kaeris languages` lists all 46) |
 | `--out DIR` | where to write; default is next to the source |
 | `--only-new` / `--no-only-new` | translate only new/changed keys (JSON, ARB) — or force a full run |
 | `--lock PATH` | where `kaeris.lock` lives (default: next to the source) |

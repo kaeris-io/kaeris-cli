@@ -2253,8 +2253,17 @@ def _write_members(members, src_path, out_dir, source_lang, digits="native", lan
     return written
 
 
+class _Parser(argparse.ArgumentParser):
+    """No flag is ever guessed from a prefix: `--to de,fr` was taken for `--tone` and refused
+    with the whole usage (newcomer run, 03.11). Subcommand parsers are built from this class too."""
+
+    def __init__(self, *a, **kw):
+        kw.setdefault("allow_abbrev", False)
+        super().__init__(*a, **kw)
+
+
 def build_parser():
-    p = argparse.ArgumentParser(
+    p = _Parser(
         prog="kaeris",
         description="AI localization from your terminal — translate strings files into 46 languages.",
     )
@@ -2281,7 +2290,7 @@ def build_parser():
                    help="Source file(s) (.json/.yml/.strings/.xcstrings/.md/.mdx/.po/.arb/.xml/.csv/.xliff/.properties/.resx/.ftl) — accepts several "
                         "paths and/or glob patterns (e.g. 'locales/en/*.json') for multi-namespace "
                         "projects; optional if 'source' is set in kaeris.json (string or list)")
-    t.add_argument("--langs", "-l",
+    t.add_argument("--langs", "--to", "-l",
                    help="Comma-separated target languages, e.g. es,fr,de; optional if 'langs' is set in kaeris.json")
     t.add_argument("--out", "-o", help="Output directory (default: alongside each source, or 'out' in kaeris.json)")
     t.add_argument("--source-lang", dest="source_lang", default=None,
@@ -2442,7 +2451,7 @@ def build_parser():
                                     "(JSON, ARB, YAML, .strings, .xcstrings, .po, Android XML, CSV, "
                                     "XLIFF, .properties, .resx, Fluent, Markdown); optional if "
                                     "'source' is set in kaeris.json")
-    c.add_argument("--langs", "-l", help="Comma-separated target languages, e.g. es,fr,de; "
+    c.add_argument("--langs", "--to", "-l", help="Comma-separated target languages, e.g. es,fr,de; "
                                         "optional if 'langs' is set in kaeris.json")
     c.add_argument("--out", "-o", help="Directory containing target locale files "
                                        "(default: where `translate` writes them, next to the source, "
