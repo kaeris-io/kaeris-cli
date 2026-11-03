@@ -43,7 +43,7 @@
  "human": {
   "code": 1,
   "stdout": "",
-  "stderr": "✗ de: 1 missing key(s): b\n✗ de: 1 placeholder mismatch(es):\n    c: missing ['{n}'], added ['{m}']\n✗ de: 2 translation fault(s):\n    c: lost placeholder {n}\n    c: invented placeholder {m} (not in source)\n✗ 1 missing key, 1 placeholder mismatch, 2 translation faults\nNext: kaeris translate en.xlf --langs de\n"
+  "stderr": "✗ de: 1 missing key(s): b\n✗ de: 1 placeholder mismatch(es):\n    c: missing ['{n}'], added ['{m}']\n✗ de: 2 translation fault(s):\n    c: lost placeholder {n}\n    c: invented placeholder {m} (not in source)\n✗ 1 missing key, 1 placeholder mismatch, 2 translation faults\n"
  },
  "sarif": null
 }

@@ -38,7 +38,7 @@
  "human": {
   "code": 1,
   "stdout": "",
-  "stderr": "✗ de: 1 missing key(s): blank\n✗ fr: 1 missing key(s): greeting\n! fr: 1 warning(s):\n    multi: line breaks changed: 1 in the source, 0 in the translation\n✗ es: no translations in t.csv\n✗ 7 missing keys\nNext: kaeris translate t.csv --langs de,fr,es\n"
+  "stderr": "✗ de: 1 missing key(s): blank\n✗ fr: 1 missing key(s): greeting\n! fr: 1 warning(s):\n    multi: line breaks changed: 1 in the source, 0 in the translation\n✗ es: no translations in t.csv\n✗ 7 missing keys\n"
  },
  "sarif": null
 }

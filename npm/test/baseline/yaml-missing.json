@@ -19,7 +19,7 @@
  "human": {
   "code": 1,
   "stdout": "",
-  "stderr": "✗ de: 1 missing key(s): cart.items\n✗ 1 missing key\nNext: kaeris translate en.yml --langs de\n"
+  "stderr": "✗ de: 1 missing key(s): cart.items\n✗ 1 missing key\n"
  },
  "sarif": null
 }

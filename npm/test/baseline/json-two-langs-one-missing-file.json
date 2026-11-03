@@ -21,7 +21,7 @@
  "human": {
   "code": 1,
   "stdout": "",
-  "stderr": "✓ de: complete & placeholder-safe\n✗ fr: locale file not found (fr.json)\n✗ 1 missing key\nNext: kaeris translate en.json --langs fr --only-new\n"
+  "stderr": "✓ de: complete & placeholder-safe\n✗ fr: locale file not found (fr.json)\n✗ 1 missing key\n"
  },
  "sarif": null
 }

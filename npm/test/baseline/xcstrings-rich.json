@@ -55,7 +55,7 @@
  "human": {
   "code": 1,
   "stdout": "",
-  "stderr": "✗ de: 3 missing key(s): bare key, sub, sub (sub n, plural)\n✗ fr: 5 missing key(s): bare key, device (device iphone), device (device mac), sub, sub (sub n, plural)\n✗ fr: 1 placeholder mismatch(es):\n    greeting: missing ['%@'], added -\n✗ fr: 1 translation fault(s):\n    greeting: lost placeholder %@\n✗ es: no translations in L.xcstrings\n✗ 15 missing keys, 1 placeholder mismatch, 1 translation fault\nNext: kaeris translate L.xcstrings --langs de,fr,es\n"
+  "stderr": "✗ de: 3 missing key(s): bare key, sub, sub (sub n, plural)\n✗ fr: 5 missing key(s): bare key, device (device iphone), device (device mac), sub, sub (sub n, plural)\n✗ fr: 1 placeholder mismatch(es):\n    greeting: missing ['%@'], added -\n✗ fr: 1 translation fault(s):\n    greeting: lost placeholder %@\n✗ es: no translations in L.xcstrings\n✗ 15 missing keys, 1 placeholder mismatch, 1 translation fault\n"
  },
  "sarif": null
 }
