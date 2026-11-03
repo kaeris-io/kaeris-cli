@@ -517,6 +517,12 @@ _target_path.warned = False
 LANG_CASES = ("keep", "lower")
 
 
+def _lang_fold(text):
+    """A file or folder name as it is compared with a language code: lower case, `_` read as
+    `-`, so pt_BR.json and zh_Hans/ are the files of pt-BR and zh-Hans."""
+    return text.lower().replace("_", "-")
+
+
 def _existing_case(path, lang):
     """`path`, with each part that names `lang` spelled the way it already is on disk. The
     server names its files after the language code as the API spells it (`zh-Hant.json`,
@@ -526,9 +532,9 @@ def _existing_case(path, lang):
     only in case are never confused and nobody's other folders change."""
     drive, rest = os.path.splitdrive(os.path.normpath(path))
     parts = rest.split(os.sep)
-    want = lang.lower()
+    want = _lang_fold(lang)
     for i, part in enumerate(parts):
-        if not part or want not in part.lower():
+        if not part or want not in _lang_fold(part):
             continue
         parent = drive + (os.sep.join(parts[:i]) or (os.sep if rest.startswith(os.sep) else "."))
         try:
@@ -537,7 +543,7 @@ def _existing_case(path, lang):
             break                      # nothing below a folder that does not exist yet
         if part in names:
             continue
-        same = [n for n in names if n.lower() == part.lower()]
+        same = [n for n in names if _lang_fold(n) == _lang_fold(part)]
         if len(same) == 1:
             parts[i] = same[0]
     return drive + os.sep.join(parts)
@@ -930,13 +936,10 @@ def cmd_check(args):
                 parts.append(f"{n_extra} extra key{'s' if n_extra != 1 else ''} (--strict)")
             err(", ".join(parts))
             if n_missing:
-                todo = [lang for lang in langs if result["missing"].get(lang)]
-                cmd = ["kaeris", "translate", _shell_arg(path), "--langs", ",".join(todo)]
-                if args.out:
-                    cmd += ["--out", _shell_arg(args.out)]
-                if json_like and not merged:
-                    cmd.append("--only-new")
-                print("Next: " + " ".join(cmd), file=sys.stderr)
+                _fix_hint(result, source_obj, path=args.source, out=args.out,
+                          incremental=json_like and not merged,
+                          machine=bool(getattr(args, "sarif", None)),
+                          ci=bool(getattr(args, "ci", False)))
         elif n_warn:
             warn(f"{n_warn} warning(s) — non-blocking (use --strict to fail on them)")
         else:
@@ -959,6 +962,20 @@ def _shell_arg(s):
     """A path as it can be pasted back into a shell: quoted only when it has to be."""
     s = str(s)
     return f'"{s}"' if not s or any(ch.isspace() for ch in s) else s
+
+
+def _fix_hint(result, source_obj, *, path, out, incremental, machine, ci):
+    """After missing keys: the command that fills them, about how many characters that is and
+    which plan covers it (kaeris/cta.py). Nothing is sent anywhere to work it out."""
+    missing = {lang: keys for lang, keys in result["missing"].items() if keys}
+    total, largest = cta.gap_units(inc.flatten_all(source_obj), missing, incremental)
+    cmd = cta.fix_command(list(missing), path=path, out=out, incremental=incremental)
+    line = cta.fix_line(total, largest, cmd, machine=machine, ci=ci)
+    if line:
+        print(line, file=sys.stderr)
+    elif missing and not (machine or ci or os.environ.get("CI")):
+        # Where the priced line stays quiet (a pipe, opt-out) the next command is still said, once.
+        print("Next: " + cmd, file=sys.stderr)
 
 
 def _progress_printer(label=""):

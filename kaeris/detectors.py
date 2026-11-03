@@ -163,6 +163,35 @@ def _placeholder_arity(text: str, _depth: int = 0) -> tuple[collections.Counter,
     return flat + arm_max, flat + arm_min
 
 
+def _pipe_parts(text: str) -> list[str] | None:
+    """The forms of a vue-i18n pipe plural (`{count} car | {count} cars`), or None when the
+    text is not one. Only a `|` outside braces separates forms, so ICU arms and `{a|b}` stay
+    whole. How many forms a translation has is the TARGET language's business (Arabic six,
+    Japanese one), so the parts are never counted against the source's."""
+    parts, depth, start = [], 0, 0
+    for i, ch in enumerate(text):
+        if ch == "{":
+            depth += 1
+        elif ch == "}" and depth:
+            depth -= 1
+        elif ch == "|" and depth == 0:
+            parts.append(text[start:i])
+            start = i + 1
+    if not parts:
+        return None
+    parts.append(text[start:])
+    return parts
+
+
+def _pipe_arity(parts: list[str]) -> collections.Counter:
+    """The most times each placeholder shows in any ONE form: the forms are alternatives."""
+    best: collections.Counter = collections.Counter()
+    for part in parts:
+        for ph, n in _placeholder_arity(part)[0].items():
+            best[ph] = max(best[ph], n)
+    return best
+
+
 def _placeholder_type_faults(original: str, translated: str) -> list[str]:
     """Deterministic placeholder faults a SET-based check (_lost_placeholders) cannot express:
       1. a placeholder the model INVENTED — present in the translation, absent from the
@@ -175,6 +204,14 @@ def _placeholder_type_faults(original: str, translated: str) -> list[str]:
     checks don't double-report."""
     src_max, src_min = _placeholder_arity(original)
     tr_max, tr_min = _placeholder_arity(translated)
+    src_parts = _pipe_parts(original)
+    if src_parts:
+        # A pipe plural: forms are alternatives, and a form may leave the count out on purpose
+        # ("one script", "two scripts" in Arabic). Only repeats inside one form and invented
+        # placeholders are faults; a lost one is _lost_placeholders' business.
+        src_max = _pipe_arity(src_parts)
+        tr_max = _pipe_arity(_pipe_parts(translated) or [translated])
+        src_min = tr_min = collections.Counter()
     faults: list[str] = []
     for ph in sorted(set(src_max) | set(tr_max)):
         if ph == "%%":                       # literal percent, not an argument
@@ -787,14 +824,16 @@ def _icu_faults(original: str, translated: str, lang: str) -> list[str]:
         arms = _icu_arms(seg)
         if not arms:
             continue
-        _, kws, _exacts = arms
+        _, kws, exact_set = arms
         if "other" not in kws:
             faults.append(f"ICU {typ} is missing the required 'other' branch")
         # Only cardinal `plural`. _CLDR_REQUIRED holds CARDINAL categories; ordinal ones
         # differ, so applying them to `selectordinal` false-flags a correct ordinal (Russian
         # ordinals need only `other`). We have no ordinal table, so skip completeness for
         # selectordinal rather than warn wrongly (the 'other'-branch check above still applies).
-        if typ == "plural":
+        # A block that spells its cases out (`=1{..} =2{..} other{..}`) and uses no category
+        # keyword besides `other` decided its own cases; CLDR forms are not owed there.
+        if typ == "plural" and not (exact_set and kws <= {"other"}):
             missing = _CLDR_REQUIRED.get(base, set()) - kws
             if missing:
                 faults.append(f"ICU plural is missing the {'/'.join(sorted(missing))} form(s) {base} requires")
@@ -1335,12 +1374,27 @@ def warning_group(message: str) -> str:
     return "meaning" if _MEANING_WARNING_RE.search(message or "") else "break"
 
 
+# `msgcat` writes `#-#-#-#-#  file.po (Project 1.2)  #-#-#-#-#` before each variant when it
+# merges .po files whose translations differ, and leaves it to a human to pick one.
+_MERGE_MARKER_RE = re.compile(r"#-#-#-#-#[^\n]*?#-#-#-#-#[ \t]*\n?")
+
+
 def string_faults(src, tgt, lang, glossary=None):
     """All per-string faults between one source value and one target value,
     each tagged error (breaks build) or warn (advisory). Pure/offline."""
     if not isinstance(src, str) or not isinstance(tgt, str):
         return []
     out = []
+    if _MERGE_MARKER_RE.search(tgt):
+        out.append({"severity": ERROR,
+                    "msg": "gettext merge markers (#-#-#-#-# file.po #-#-#-#-#) are left in the "
+                           "translation — two .po files were merged and the conflict never resolved"})
+        tgt = _MERGE_MARKER_RE.sub("", tgt).strip()   # the rest is judged without the marker text
+    if not src.strip():
+        # An empty source (the key is the text) leaves nothing to compare a placeholder, number
+        # or tag against; only what is wrong in the translation by itself is still reported.
+        out.extend({"severity": ERROR, "msg": msg} for msg in _entity_faults(src, tgt))
+        return out
     for ph in _lost_placeholders(src, tgt):
         out.append({"severity": ERROR, "msg": f"lost placeholder {ph}"})
     for msg in _placeholder_type_faults(src, tgt):

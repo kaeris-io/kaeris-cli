@@ -15,6 +15,8 @@ const PH_RE = re(T.PH_RE, "g");
 const ICU_HEAD_RE = rx("^" + T.ICU_HEAD_RE.source);
 const ICU_SELECTOR_VAR_RE = rx("^" + T.ICU_SELECTOR_VAR_RE.source);
 const MAX_ICU_DEPTH = T.MAX_ICU_DEPTH;
+const MERGE_MARKER_RE = re(T.MERGE_MARKER_RE);
+const MERGE_MARKER_G_RE = re(T.MERGE_MARKER_RE, "g");
 
 const allMatches = (regex, text) => [...text.matchAll(regex)].map((m) => m[0]);
 
@@ -133,10 +135,45 @@ function placeholderArity(text, depth = 0) {
   return [counterAdd(flat, armMax), counterAdd(flat, armMin)];
 }
 
+// The forms of a vue-i18n pipe plural (`{count} car | {count} cars`), or null when the text is
+// not one. Only a `|` outside braces separates forms. How many forms a translation has is the
+// TARGET language's business, so the parts are never counted against the source's.
+function pipeParts(text) {
+  const parts = [];
+  let depth = 0;
+  let start = 0;
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (ch === "{") depth++;
+    else if (ch === "}" && depth) depth--;
+    else if (ch === "|" && depth === 0) {
+      parts.push(text.slice(start, i));
+      start = i + 1;
+    }
+  }
+  if (!parts.length) return null;
+  parts.push(text.slice(start));
+  return parts;
+}
+
+// The most times each placeholder shows in any ONE form: the forms are alternatives.
+function pipeArity(parts) {
+  const best = new Counter();
+  for (const part of parts) for (const [ph, n] of placeholderArity(part)[0]) best.set(ph, Math.max(best.get(ph), n));
+  return best;
+}
+
 // An invented placeholder, or one used a different number of times.
 function placeholderTypeFaults(original, translated) {
-  const [srcMax, srcMin] = placeholderArity(original);
-  const [trMax, trMin] = placeholderArity(translated);
+  let [srcMax, srcMin] = placeholderArity(original);
+  let [trMax, trMin] = placeholderArity(translated);
+  const srcParts = pipeParts(original);
+  if (srcParts) {
+    srcMax = pipeArity(srcParts);
+    trMax = pipeArity(pipeParts(translated) ?? [translated]);
+    srcMin = new Counter();
+    trMin = new Counter();
+  }
   const faults = [];
   for (const ph of sorted(new Set([...srcMax.keys(), ...trMax.keys()]))) {
     if (ph === "%%") continue;
@@ -452,7 +489,7 @@ function icuFaults(original, translated, lang) {
     if (!arms) continue;
     const kws = arms[1];
     if (!kws.has("other")) faults.push(`ICU ${typ} is missing the required 'other' branch`);
-    if (typ === "plural") {
+    if (typ === "plural" && !(arms[2].size && [...kws].every((k) => k === "other"))) {
       const missing = [...(CLDR_REQUIRED.get(base) ?? [])].filter((x) => !kws.has(x));
       if (missing.length) faults.push(`ICU plural is missing the ${sorted(missing).join("/")} form(s) ${base} requires`);
     }
@@ -729,6 +766,19 @@ function answeredInsteadOfTranslating(original, translated) {
 export function stringFaults(src, tgt, lang, glossary = null) {
   if (typeof src !== "string" || typeof tgt !== "string") return [];
   const out = [];
+  if (MERGE_MARKER_RE.test(tgt)) {
+    out.push({
+      severity: ERROR,
+      msg: "gettext merge markers (#-#-#-#-# file.po #-#-#-#-#) are left in the translation — two .po files were merged and the conflict never resolved",
+    });
+    tgt = strip(tgt.replace(MERGE_MARKER_G_RE, ""));
+  }
+  if (!strip(src)) {
+    // An empty source (the key is the text) leaves nothing to compare a placeholder, number or
+    // tag against; only what is wrong in the translation by itself is still reported.
+    for (const msg of entityFaults(src, tgt)) out.push({ severity: ERROR, msg });
+    return out;
+  }
   for (const ph of lostPlaceholders(src, tgt)) out.push({ severity: ERROR, msg: `lost placeholder ${ph}` });
   for (const msg of placeholderTypeFaults(src, tgt)) out.push({ severity: ERROR, msg });
   for (const msg of numericFaults(src, tgt, lang)) out.push({ severity: ERROR, msg });

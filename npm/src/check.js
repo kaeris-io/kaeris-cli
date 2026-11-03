@@ -106,6 +106,7 @@ export function diffLocale(sourceFlat, targetFlat, pair = true, optional = new S
   if (!pair) return [missing, extra, issues];
   for (const [key, srcVal, tgtVal] of pairs(sourceFlat, targetFlat, optional)) {
     if (typeof srcVal !== "string" || typeof tgtVal !== "string") continue;
+    if (!strip(srcVal)) continue; // an empty source has nothing to compare against
     const srcPh = findPlaceholders(srcVal);
     const tgtPh = findPlaceholders(tgtVal);
     if (!setEq(srcPh, tgtPh)) issues.push({ key, missing: sorted(setDiff(srcPh, tgtPh)), added: sorted(setDiff(tgtPh, srcPh)) });

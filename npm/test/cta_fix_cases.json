@@ -1,0 +1,25 @@
+{
+  "_": "The `check` fix line, word for word: read by tests/test_check_fix_line.py (kaeris/cta.py) and npm/test/cta-fix.test.js (npm/src/cta.js), so the two ports cannot say different things. Plan numbers come from kaeris/plans.py.",
+  "units": [
+    {"source": {"a": "Hello", "b": "Grüße 👋", "n": 5}, "missing": {"de": ["a", "b"], "fr": ["b"]}, "incremental": true, "want": [19, 12]},
+    {"source": {"a": "Hello", "b": "Grüße 👋", "n": 5}, "missing": {"de": ["a", "b"], "fr": ["b"]}, "incremental": false, "want": [24, 12]},
+    {"source": {"a": "Hello"}, "missing": {"de": []}, "incremental": true, "want": [0, 0]}
+  ],
+  "commands": [
+    {"langs": ["de", "fr"], "path": "en.json", "out": null, "incremental": true, "want": "kaeris translate en.json --langs de,fr --only-new"},
+    {"langs": ["de"], "path": null, "out": null, "incremental": true, "want": "kaeris translate --langs de --only-new"},
+    {"langs": ["de"], "path": "my app/en.po", "out": "out dir", "incremental": false, "want": "kaeris translate \"my app/en.po\" --langs de --out \"out dir\""}
+  ],
+  "lines": [
+    {"total": 1240, "largest": 800, "want": "Fix: CMD, about 1,240 characters: within Free (1,500,000 a month with a free key). URL"},
+    {"total": 1500000, "largest": 50000, "want": "Fix: CMD, about 1,500,000 characters: within Free (1,500,000 a month with a free key). URL"},
+    {"total": 1500001, "largest": 900, "want": "Fix: CMD, about 1,500,001 characters: over Free's 1,500,000 a month; Pro $19/month covers 12,000,000 a month, or Lifetime $79 once with your own OpenRouter key. URL"},
+    {"total": 80000, "largest": 72000, "want": "Fix: CMD, about 80,000 characters: one request of 72,000 characters is over Free's 50,000 per file; Pro $19/month takes 100,000 per file, or Lifetime $79 once with your own OpenRouter key. URL"},
+    {"total": 13000000, "largest": 90000, "want": "Fix: CMD, about 13,000,000 characters: over Pro's 12,000,000 a month; Team/API $79/month covers 60,000,000 a month, or Lifetime $79 once with your own OpenRouter key. URL"},
+    {"total": 200000, "largest": 150000, "want": "Fix: CMD, about 200,000 characters: one request of 150,000 characters is over Pro's 100,000 per file; Team/API $79/month takes 1,000,000 per file, or Lifetime $79 once with your own OpenRouter key. URL"},
+    {"total": 70000000, "largest": 90000, "want": "Fix: CMD, about 70,000,000 characters: over Team/API's 60,000,000 a month; Lifetime $79 once with your own OpenRouter key has no monthly limit. URL"},
+    {"total": 2000000, "largest": 1200000, "want": "Fix: CMD, about 2,000,000 characters: one request of 1,200,000 characters is over the 1,000,000 per file of every plan, split the file. URL"}
+  ],
+  "url": "https://kaeris.dev/pricing.html?utm_source=cli&utm_campaign=check-fix",
+  "npm_prefix": "Fix with the Python package (pipx install kaeris): "
+}

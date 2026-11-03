@@ -1,0 +1,8 @@
+{
+ "args": [
+  "--source",
+  "l10n/app_en.arb",
+  "--langs",
+  "pt-BR"
+ ]
+}

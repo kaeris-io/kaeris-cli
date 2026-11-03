@@ -2,7 +2,8 @@
 // and the exit code (0 clean, 1 a problem was found, 2 bad usage or an unreadable file).
 import fs from "node:fs";
 import { checkLocales } from "./check.js";
-import { checkLine } from "./cta.js";
+import { checkLine, fixCommand, fixLine, gapUnits } from "./cta.js";
+import { flattenAll } from "./flatten.js";
 import { readText, UnknownEncoding } from "./encoding.js";
 import { ValueError } from "./errors.js";
 import * as fm from "./formats.js";
@@ -257,15 +258,18 @@ function targetPath(srcPath, lang, outDir, sourceLang) {
   return pp.join(baseDir, lang, pp.basename(srcPath));
 }
 
+// A file or folder name as it is compared with a language code: lower case, `_` read as `-`.
+const langFold = (text) => text.toLowerCase().replace(/_/g, "-");
+
 // `path`, with each part that names `lang` spelled the way it already is on disk (zh-Hant.json
-// next to a requested zh-hant.json). An exact match always wins.
+// next to a requested zh-hant.json, pt_BR.json for pt-BR). An exact match always wins.
 function existingCase(path, lang) {
   const [drive, rest] = pp.splitdrive(pp.normpath(path));
   const parts = rest.split(pp.sep);
-  const want = lang.toLowerCase();
+  const want = langFold(lang);
   for (let i = 0; i < parts.length; i++) {
     const part = parts[i];
-    if (!part || !part.toLowerCase().includes(want)) continue;
+    if (!part || !langFold(part).includes(want)) continue;
     const parent = drive + (parts.slice(0, i).join(pp.sep) || (rest.startsWith(pp.sep) ? pp.sep : "."));
     let names;
     try {
@@ -274,7 +278,7 @@ function existingCase(path, lang) {
       break;
     }
     if (names.includes(part)) continue;
-    const same = names.filter((n) => n.toLowerCase() === part.toLowerCase());
+    const same = names.filter((n) => langFold(n) === langFold(part));
     if (same.length === 1) parts[i] = same[0];
   }
   return drive + parts.join(pp.sep);
@@ -559,13 +563,13 @@ function cmdCheck(args, globals) {
       if (args.strict && nExtra) parts.push(`${nExtra} extra ${plural(nExtra, "key", "keys")} (--strict)`);
       err(parts.join(", "));
       if (nMissing) {
-        // Same words as the Python CLI: the command that fills the missing keys.
-        const shellArg = (s) => (!s || /\s/.test(s) ? `"${s}"` : s);
-        const todo = langs.filter((lang) => (result.missing.get(lang) || []).length);
-        const cmd = ["kaeris", "translate", shellArg(path), "--langs", todo.join(",")];
-        if (args.out) cmd.push("--out", shellArg(args.out));
-        if (jsonLike && !merged) cmd.push("--only-new");
-        out("Next: " + cmd.join(" "));
+        // The command that fills the gaps, about how many characters and which plan covers it.
+        const missing = new Map([...result.missing].filter(([, keys]) => keys && keys.length));
+        const incremental = jsonLike && !merged;
+        const [total, largest] = gapUnits(flattenAll(sourceObj), missing, incremental);
+        const cmd = fixCommand([...missing.keys()], { path: args.source || null, out: args.out || null, incremental });
+        const line = fixLine(total, largest, cmd, { machine: Boolean(args.sarif), ci: Boolean(args.ci) });
+        if (line) out(line);
       }
     } else if (nWarn) warn(`${nWarn} warning(s) — non-blocking (use --strict to fail on them)`);
     else {
