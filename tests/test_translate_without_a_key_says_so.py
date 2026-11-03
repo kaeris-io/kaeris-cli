@@ -52,7 +52,7 @@ class TestNoKeyNotice(unittest.TestCase):
         self.assertIn("no key: free demo limits", text)
         self.assertIn("10,000", text)
         self.assertIn("8 languages", text)
-        self.assertIn("kaeris.dev/developer", text)
+        self.assertIn("https://kaeris.dev/docs/key", text)
 
     def test_run_with_key_is_silent_about_it(self):
         self.assertNotIn("free demo", _run(["--key", "kaerisp_x"]))

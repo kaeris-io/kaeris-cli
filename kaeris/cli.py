@@ -310,7 +310,7 @@ def cmd_quota(args):
         # against production; a stub returning "none" had looked fine.
         if not (args.key or os.environ.get("KAERIS_API_KEY")):
             info("No API key — the keyless demo has no monthly volume. "
-                 "Get a free key at kaeris.dev/developer")
+                 f"Get a free key at {KEY_DOCS_URL}")
         elif (data.get("tier") or "") == "byok":
             info("Lifetime (BYOK) has no monthly volume cap — you pay OpenRouter directly "
                  "for tokens. The per-file character limit still applies.")
@@ -1075,7 +1075,7 @@ def _show_demo_notice(client):
     except Exception:
         pass
     info(f"no key: free demo limits{' ' + limits if limits else ''}, "
-         "get a key: kaeris.dev/developer")
+         f"get a key: {KEY_DOCS_URL}")
 
 
 def cmd_translate(args):
@@ -2372,7 +2372,7 @@ def build_parser():
                     "when 'file'/--langs/etc. are omitted — precedence is CLI flag > kaeris.json > "
                     "built-in default. Run `kaeris init` to create one. "
                     "Without a key it runs as a free anonymous demo with smaller limits "
-                    "(get a key: kaeris.dev/developer).",
+                    f"(get a key: {KEY_DOCS_URL}).",
     )
     t.add_argument("files", nargs="*",
                    help="Source file(s) (.json/.yml/.strings/.xcstrings/.md/.mdx/.po/.arb/.xml/.csv/.xliff/.properties/.resx/.ftl) — accepts several "

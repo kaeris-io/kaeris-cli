@@ -76,7 +76,7 @@ class TestTheQuotaCommand:
         fake_server["info"] = {"tier": "none", "char_limit": 10000}
         code, out = _run(["quota"], capsys)
         assert code == 0, out
-        assert "kaeris.dev/developer" in out, (
+        assert "https://kaeris.dev/docs/key" in out, (
             f"a reader with no key is told nothing and given nowhere to go: {out}")
 
     def test_the_tier_name_the_live_server_actually_returns(self, fake_server, capsys):
@@ -86,7 +86,7 @@ class TestTheQuotaCommand:
         fake_server["info"] = {"tier": "anonymous", "char_limit": 10000}
         code, out = _run(["quota"], capsys)
         assert code == 0, out
-        assert "kaeris.dev/developer" in out, (
+        assert "https://kaeris.dev/docs/key" in out, (
             f"an anonymous reader was not pointed at a free key: {out}")
         assert "OpenRouter" not in out, (
             f"someone with no key was told about BYOK tokens: {out}")
