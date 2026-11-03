@@ -139,6 +139,7 @@ _STUB = r"""
 import sys
 from kaeris import cli as K
 K.KaerisClient.languages = lambda self: {"de": "German", "ja": "日本語", "uk": "Українська", "ar": "العربية"}
+K.KaerisClient.key_info = lambda self: {"tier": "anonymous", "char_limit": 10000}
 sys.exit(K.main(sys.argv[1:]))
 """
 
@@ -167,6 +168,13 @@ class TestLegacyConsole:
         assert p.returncode == 0, err
         assert "\\u" not in err and "\ufffd" not in err, err
         assert "Wrote kaeris.json" in err, err
+
+    def test_our_punctuation_is_ascii(self, tmp_path):
+        """A cp1251 em dash is byte 0x97: a terminal reading UTF-8 shows it as "�"."""
+        p = _legacy(["quota"], tmp_path)
+        assert p.returncode == 0, p.stderr
+        assert max(p.stderr) < 128, p.stderr
+        assert b"No API key - the keyless demo" in p.stderr, p.stderr
 
 
 # ── 5. --key after the command; a wrong key says where to get one ────────────

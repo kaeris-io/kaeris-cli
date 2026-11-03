@@ -85,17 +85,48 @@ def _mark(glyph):
         return _ASCII_MARKS.get(glyph, "?")
 
 
+# Punctuation of our own messages, said in ASCII on a stderr that is not UTF-8. A cp1251 "—"
+# is byte 0x97, which a terminal decoding UTF-8 shows as "�" (newcomer run, 03.11).
+_ASCII_PUNCT = str.maketrans({"—": "-", "–": "-", "…": "...", "→": "->", "←": "<-", "✓": "ok",
+                              "✗": "x", "⚠": "!", "‘": "'", "’": "'", "“": '"', "”": '"',
+                              "⟦": "[[", "⟧": "]]", "×": "x", "≈": "~"})
+
+
+class _AsciiPunct:
+    """stderr, with the punctuation above written in ASCII. Everything else is passed through."""
+
+    def __init__(self, stream):
+        self._stream = stream
+
+    def write(self, s):
+        return self._stream.write(s.translate(_ASCII_PUNCT))
+
+    def __getattr__(self, name):
+        return getattr(self._stream, name)
+
+
+def _utf8(stream):
+    """True unless the stream turns text into bytes with an encoding that is not UTF-8
+    (a StringIO, or no stream at all, has no bytes to get wrong)."""
+    enc = getattr(stream, "encoding", None)
+    if stream is None or not isinstance(enc, str):
+        return True
+    return enc.lower().replace("-", "").replace("_", "") in ("utf8", "utf8sig")
+
+
 def _safe_console():
     """On a console that is not UTF-8, a character it cannot show becomes "?" instead of a
-    UnicodeEncodeError (`kaeris languages` died on the first non-cp1251 name) or an escape."""
+    UnicodeEncodeError (`kaeris languages` died on the first non-cp1251 name) or an escape,
+    and our own punctuation on stderr is written in ASCII."""
     for stream in (sys.stdout, sys.stderr):
-        enc = (getattr(stream, "encoding", None) or "").lower().replace("-", "").replace("_", "")
-        if enc in ("utf8", "utf8sig") or not hasattr(stream, "reconfigure"):
+        if _utf8(stream) or not hasattr(stream, "reconfigure"):
             continue
         try:
             stream.reconfigure(errors="replace")
         except (ValueError, OSError):
             pass
+    if not _utf8(sys.stderr) and not isinstance(sys.stderr, _AsciiPunct):
+        sys.stderr = _AsciiPunct(sys.stderr)
 
 
 def info(msg):  print(_c(_mark("→"), "36"), msg, file=sys.stderr)
