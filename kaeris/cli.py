@@ -289,6 +289,9 @@ def _show_quota(client):
         info(text)
 
 
+KEY_DOCS_URL = "https://kaeris.dev/docs/key"
+
+
 def cmd_quota(args):
     """Answer 'how much have I got left' BEFORE a big run, not after one."""
     client = _client(args)
@@ -296,6 +299,8 @@ def cmd_quota(args):
         data = client.key_info()
     except KaerisError as e:
         err(str(e))
+        if re.search(r"\b40[13]\b|invalid api key", str(e), re.I):
+            info(f"Check the key, or get a free one: {KEY_DOCS_URL}")
         return 2
     line = _quota_line(data)
     if not line:
@@ -2588,6 +2593,12 @@ def build_parser():
                     "left is refused, and the answer used to arrive only as that refusal.",
     )
     q.set_defaults(func=cmd_quota)
+
+    # `kaeris quota --key K` was "unrecognized arguments" (newcomer run, 03.11): the key is taken
+    # after the command too. SUPPRESS keeps a key given before the command when none comes after.
+    for parser in sub.choices.values():
+        parser.add_argument("--key", "-k", default=argparse.SUPPRESS,
+                            help="API key, here or before the command (or env KAERIS_API_KEY)")
 
     return p
 

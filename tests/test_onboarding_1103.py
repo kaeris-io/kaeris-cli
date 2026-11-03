@@ -167,3 +167,49 @@ class TestLegacyConsole:
         assert p.returncode == 0, err
         assert "\\u" not in err and "\ufffd" not in err, err
         assert "Wrote kaeris.json" in err, err
+
+
+# ── 5. --key after the command; a wrong key says where to get one ────────────
+
+@pytest.fixture()
+def key_server(monkeypatch):
+    box = {"keys": [], "raises": None}
+
+    class FakeClient:
+        def __init__(self, api_url=None, api_key=None, openrouter_key=None, **kw):
+            box["keys"].append(api_key)
+
+        def key_info(self):
+            if box["raises"]:
+                raise box["raises"]
+            return {"tier": "premium", "month_cap": 1000, "month_used": 1,
+                    "month_remaining": 999, "month_resets": "2026-12-01"}
+
+    monkeypatch.delenv("KAERIS_API_KEY", raising=False)
+    monkeypatch.setattr(K, "KaerisClient", FakeClient)
+    return box
+
+
+class TestKeyAnywhere:
+
+    @pytest.mark.parametrize("argv", [["--key", "kaerisp_x", "quota"], ["quota", "--key", "kaerisp_x"],
+                                      ["quota", "-k", "kaerisp_x"]])
+    def test_key_before_or_after(self, key_server, capsys, argv):
+        code, out = _run(argv, capsys)
+        assert code == 0, out
+        assert key_server["keys"] == ["kaerisp_x"], out
+
+    def test_after_the_command_wins(self, key_server, capsys):
+        _run(["--key", "kaerisp_a", "quota", "--key", "kaerisp_b"], capsys)
+        assert key_server["keys"] == ["kaerisp_b"]
+
+    def test_every_command_takes_it(self):
+        p = K.build_parser()
+        for cmd in ("translate", "check", "fix", "review", "languages", "init", "quota"):
+            assert p.parse_args([cmd, "--key", "kaerisp_x"]).key == "kaerisp_x", cmd
+
+    def test_a_wrong_key_says_where_to_get_one(self, key_server, capsys):
+        key_server["raises"] = K.KaerisError("HTTP 401: Invalid API key")
+        code, out = _run(["quota", "--key", "kaerisp_bad"], capsys)
+        assert code == 2, out
+        assert "Invalid API key" in out and "https://kaeris.dev/docs/key" in out, out
