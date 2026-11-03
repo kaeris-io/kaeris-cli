@@ -558,6 +558,15 @@ function cmdCheck(args, globals) {
       if (args.strict && nWarn) parts.push(`${nWarn} ${plural(nWarn, "warning", "warnings")} (--strict)`);
       if (args.strict && nExtra) parts.push(`${nExtra} extra ${plural(nExtra, "key", "keys")} (--strict)`);
       err(parts.join(", "));
+      if (nMissing) {
+        // Same words as the Python CLI: the command that fills the missing keys.
+        const shellArg = (s) => (!s || /\s/.test(s) ? `"${s}"` : s);
+        const todo = langs.filter((lang) => (result.missing.get(lang) || []).length);
+        const cmd = ["kaeris", "translate", shellArg(path), "--langs", todo.join(",")];
+        if (args.out) cmd.push("--out", shellArg(args.out));
+        if (jsonLike && !merged) cmd.push("--only-new");
+        out("Next: " + cmd.join(" "));
+      }
     } else if (nWarn) warn(`${nWarn} warning(s) — non-blocking (use --strict to fail on them)`);
     else {
       ok("all locales complete & placeholder-safe");

@@ -322,22 +322,13 @@ def _client(args):
     )
 
 
-def _config_comment(extra=None):
-    base = ("KAERIS config — `kaeris translate` (no args) reads this file for defaults. "
-            "Precedence: CLI flags > this file > built-in defaults. "
-            "Fields: source (base-language file, path or glob — or a list of paths/globs for "
-            "multi-namespace projects), source_lang (base language code, e.g. 'en'; used to "
-            "detect locales/<lang>/<namespace>.json-style layouts so each target lands next to "
-            "its namespace), langs (target language codes), "
-            "keep (glossary terms to never translate — `kaeris check` fails a target that "
-            "dropped one), context (one line about what the app is, so the model picks the "
-            "right sense of ambiguous strings), tone (neutral/formal/casual), "
-            "icu (true if your strings use ICU MessageFormat plurals/select), "
-            "only_new (reproducible incremental: translate only new/missing/edited keys — and "
-            "re-translate everything if tone/icu/glossary/context changed; JSON and ARB), lock (path to the "
-            "incremental lock file; default kaeris.lock next to the source), out (output "
-            "directory), format (informational; auto-detected from the source file extension).")
-    return base + " " + extra if extra else base
+CONFIG_DOCS_URL = "https://kaeris.dev/docs/cli"
+
+
+def _config_comment():
+    """One line at the top of kaeris.json. The field list used to be 900 characters here; it
+    lives in the docs, where it can be read (newcomer run, 03.11)."""
+    return f"KAERIS config for translate and check; CLI flags override it. Fields: {CONFIG_DOCS_URL}"
 
 
 def _load_config(args):
@@ -552,13 +543,19 @@ def cmd_init(args):
         cfg.update(PRESET_OVERRIDES[args.preset])
         note = PRESET_NOTES.get(args.preset)
 
-    doc = {"//": _config_comment(note)}
+    doc = {"//": _config_comment()}
+    if note:
+        doc["//preset"] = note
     doc.update(cfg)
     write_atomic(CONFIG_FILENAME, json.dumps(doc, ensure_ascii=False, indent=2) + "\n")
 
     suffix = f" (preset: {args.preset})" if args.preset else ""
     ok(f"Wrote {CONFIG_FILENAME}{suffix}")
-    info("Edit 'langs' (and 'keep' for brand names), then just run: kaeris translate")
+    if not os.path.isfile(cfg["source"]):
+        warn(f"{cfg['source']} does not exist yet: put your base-language file there, "
+             f"or change 'source' in {CONFIG_FILENAME}")
+    print(f"Next: kaeris translate  (reads {cfg['source']} and langs "
+          f"{','.join(cfg['langs'])} from {CONFIG_FILENAME})", file=sys.stderr)
     return 0
 
 
@@ -870,6 +867,14 @@ def cmd_check(args):
             if args.strict and n_extra:
                 parts.append(f"{n_extra} extra key{'s' if n_extra != 1 else ''} (--strict)")
             err(", ".join(parts))
+            if n_missing:
+                todo = [lang for lang in langs if result["missing"].get(lang)]
+                cmd = ["kaeris", "translate", _shell_arg(path), "--langs", ",".join(todo)]
+                if args.out:
+                    cmd += ["--out", _shell_arg(args.out)]
+                if json_like and not merged:
+                    cmd.append("--only-new")
+                print("Next: " + " ".join(cmd), file=sys.stderr)
         elif n_warn:
             warn(f"{n_warn} warning(s) — non-blocking (use --strict to fail on them)")
         else:
@@ -886,6 +891,12 @@ def cmd_check(args):
         print(json.dumps(result, ensure_ascii=not utf8, indent=2))
 
     return 1 if fail else 0
+
+
+def _shell_arg(s):
+    """A path as it can be pasted back into a shell: quoted only when it has to be."""
+    s = str(s)
+    return f'"{s}"' if not s or any(ch.isspace() for ch in s) else s
 
 
 def _progress_printer(label=""):

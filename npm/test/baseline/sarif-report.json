@@ -54,7 +54,7 @@
  "human": {
   "code": 1,
   "stdout": "",
-  "stderr": "→ SARIF report → out/report.sarif\n✗ de: 1 missing key(s): b\n✗ de: 1 placeholder mismatch(es):\n    a: missing ['{n}'], added ['{m}']\n✗ de: 2 translation fault(s):\n    a: lost placeholder {n}\n    a: invented placeholder {m} (not in source)\n! de: 1 extra/stale key(s): z\n✗ fr: locale file not found (fr.json)\n✗ 4 missing keys, 1 placeholder mismatch, 2 translation faults\n"
+  "stderr": "→ SARIF report → out/report.sarif\n✗ de: 1 missing key(s): b\n✗ de: 1 placeholder mismatch(es):\n    a: missing ['{n}'], added ['{m}']\n✗ de: 2 translation fault(s):\n    a: lost placeholder {n}\n    a: invented placeholder {m} (not in source)\n! de: 1 extra/stale key(s): z\n✗ fr: locale file not found (fr.json)\n✗ 4 missing keys, 1 placeholder mismatch, 2 translation faults\nNext: kaeris translate en.json --langs de,fr --only-new\n"
  },
  "sarif": {
   "$schema": "https://json.schemastore.org/sarif-2.1.0.json",

@@ -33,7 +33,7 @@
  "human": {
   "code": 1,
   "stdout": "",
-  "stderr": "! en.ftl: line 19: bad: a { that never closes\n! en.ftl: line 20: not a Fluent message ('not a message')\n✗ de: 4 missing key(s): gender$0.female, photos$2 (plural), photos~1, photos~3\n✗ de: 1 placeholder mismatch(es):\n    multi: missing ['{$x}'], added ['{$y}']\n✗ 4 missing keys, 1 placeholder mismatch\n"
+  "stderr": "! en.ftl: line 19: bad: a { that never closes\n! en.ftl: line 20: not a Fluent message ('not a message')\n✗ de: 4 missing key(s): gender$0.female, photos$2 (plural), photos~1, photos~3\n✗ de: 1 placeholder mismatch(es):\n    multi: missing ['{$x}'], added ['{$y}']\n✗ 4 missing keys, 1 placeholder mismatch\nNext: kaeris translate en.ftl --langs de\n"
  },
  "sarif": null
 }

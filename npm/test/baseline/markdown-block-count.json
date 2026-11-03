@@ -26,7 +26,7 @@
  "human": {
   "code": 1,
   "stdout": "",
-  "stderr": "✗ de: 1 missing key(s): md.0015\n✗ de: 1 translation fault(s):\n    14 translatable blocks, the source has 15: a heading, paragraph, list item or table cell was added, merged or lost\n✗ 1 missing key, 1 translation fault\n"
+  "stderr": "✗ de: 1 missing key(s): md.0015\n✗ de: 1 translation fault(s):\n    14 translatable blocks, the source has 15: a heading, paragraph, list item or table cell was added, merged or lost\n✗ 1 missing key, 1 translation fault\nNext: kaeris translate en.md --langs de\n"
  },
  "sarif": null
 }

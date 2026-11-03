@@ -95,3 +95,39 @@ class TestVerifyIsFound:
             code, out = _run(argv, capsys)
             assert code == 2, out
             assert where in out and "--verify" in out, out
+
+
+# ── 3. what to do next ────────────────────────────────────────────────────────
+
+class TestNextStep:
+
+    def test_check_with_missing_keys_names_the_command(self, tmp_path, monkeypatch, capsys):
+        monkeypatch.chdir(tmp_path)
+        (tmp_path / "en.json").write_text('{"a": "Hello", "b": "Bye"}', encoding="utf-8")
+        (tmp_path / "de.json").write_text('{"a": "Hallo"}', encoding="utf-8")
+        code, out = _run(["check", "--source", "en.json", "--langs", "de,fr"], capsys)
+        assert code == 1, out
+        assert "Next: kaeris translate en.json --langs de,fr --only-new" in out, out
+
+    def test_clean_check_has_no_next(self, tmp_path, monkeypatch, capsys):
+        monkeypatch.chdir(tmp_path)
+        (tmp_path / "en.json").write_text('{"a": "Hello"}', encoding="utf-8")
+        (tmp_path / "de.json").write_text('{"a": "Hallo"}', encoding="utf-8")
+        code, out = _run(["check", "--source", "en.json", "--langs", "de"], capsys)
+        assert code == 0 and "Next:" not in out, out
+
+    def test_init_ends_with_one_next(self, tmp_path, monkeypatch, capsys):
+        monkeypatch.chdir(tmp_path)
+        code, out = _run(["init"], capsys)
+        assert code == 0, out
+        lines = [l for l in out.splitlines() if l.strip()]
+        assert sum("Next:" in l for l in lines) == 1, out
+        assert "Next: kaeris translate" in lines[-1], out
+
+    def test_init_comment_is_one_short_line(self, tmp_path, monkeypatch, capsys):
+        monkeypatch.chdir(tmp_path)
+        for argv in (["init"], ["init", "--force", "--preset", "next-intl"]):
+            _run(argv, capsys)
+            note = json.loads((tmp_path / "kaeris.json").read_text(encoding="utf-8"))["//"]
+            assert len(note) <= 160, note
+            assert "https://kaeris.dev/docs/cli" in note, note

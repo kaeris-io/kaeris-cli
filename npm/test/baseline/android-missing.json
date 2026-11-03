@@ -19,7 +19,7 @@
  "human": {
   "code": 1,
   "stdout": "",
-  "stderr": "✗ de: 1 missing key(s): save\n✗ 1 missing key\n"
+  "stderr": "✗ de: 1 missing key(s): save\n✗ 1 missing key\nNext: kaeris translate res/values/strings.xml --langs de\n"
  },
  "sarif": null
 }
