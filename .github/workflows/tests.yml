@@ -71,6 +71,11 @@ jobs:
           #                               stale wheel. It has meaning only where a wheel has
           #                               been built, i.e. on the machine doing the release.
           #                               CI has no dist/ and must not build one.
+          #   test_plans_are_the_sites   — the half that compares kaeris/plans.py with the site's
+          #                               tools/plans.json needs the private site repository.
+          #                               It runs on the release machine (../i18n_tool next to
+          #                               this checkout, or KAERIS_SITE_REPO); the README half
+          #                               of the same test still runs here.
           #
           # That second one is why this job sat red from 03.08 to 04.08: the test was added
           # with the guard still demanding exactly one skip, so every push failed and the
@@ -78,7 +83,7 @@ jobs:
           # still fails the build — that is the whole point of the check.
           if grep -qE '[0-9]+ skipped' pytest.txt; then
             unexpected=$(grep -E '^SKIPPED' pytest.txt \
-              | grep -vE 'test_detector_parity|test_dist_matches_the_tree|test_check_xcstrings|test_encoding_parity|test_formats_match_the_server' || true)
+              | grep -vE 'test_detector_parity|test_dist_matches_the_tree|test_check_xcstrings|test_encoding_parity|test_formats_match_the_server|test_plans_are_the_sites' || true)
             if [ -n "$unexpected" ]; then
               echo "::error::unexpected skip — a dependency is missing and real tests are not running"
               echo "$unexpected"
@@ -86,7 +91,7 @@ jobs:
             fi
             grep -q 'test_detector_parity' pytest.txt || {
               echo "::error::the detector-parity skip is gone — did the test stop existing?"; exit 1; }
-            echo "Only the two structurally impossible skips — ok"
+            echo "Only the known structural skips — ok"
           fi
 
   # What people actually install
