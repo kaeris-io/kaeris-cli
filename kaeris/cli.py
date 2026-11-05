@@ -462,6 +462,7 @@ def _target_path(src_path, lang, out_dir, source_lang):
     - Namespace/dir: locales/en/common.json -> locales/<lang>/common.json.
     - Prefixed file: app_en.arb -> app_de.arb (Flutter gen-l10n), messages_en.properties ->
       messages_de.properties (Java bundles).
+    - Xcode: en.lproj/Localizable.strings -> de.lproj/Localizable.strings.
     - Fallback (layout not detected): <out_dir or src dir>/<lang>/<basename>.
     """
     stem, ext = os.path.splitext(os.path.basename(src_path))
@@ -471,6 +472,13 @@ def _target_path(src_path, lang, out_dir, source_lang):
     if ext.lower() == ".xml" and (parent == "values" or parent.startswith("values-")):
         res_dir = out_dir or os.path.dirname(src_dir)
         return os.path.join(res_dir, f"values-{lang}", os.path.basename(src_path))
+
+    # Xcode keeps one folder per language: en.lproj/Localizable.strings -> de.lproj/. `check`
+    # already looked there; translate fell through to the nested fallback below and wrote
+    # en.lproj/de/Localizable.strings, a folder Xcode never reads (02.11).
+    sibling = _lproj_sibling(src_path, lang, source_lang, out_dir)
+    if sibling:
+        return sibling
 
     if stem == source_lang:
         d = out_dir if out_dir else src_dir
