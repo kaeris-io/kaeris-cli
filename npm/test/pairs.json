@@ -2045,7 +2045,12 @@
    "tgt": "{count, plural, one  other {# files}}",
    "lang": "it",
    "glossary": null,
-   "expect": []
+   "expect": [
+    {
+     "severity": "error",
+     "msg": "ICU plural is missing the one form(s) it requires"
+    }
+   ]
   },
   {
    "src": "Settings",
@@ -16444,6 +16449,10 @@
      "msg": "double-encoded entity &amp;amp; — the & was re-escaped (renders literally)"
     },
     {
+     "severity": "error",
+     "msg": "ICU plural is missing the one form(s) fa requires"
+    },
+    {
      "severity": "warn",
      "msg": "may be untranslated — no target-language script, still reads as source text"
     }
@@ -19018,6 +19027,10 @@
     {
      "severity": "error",
      "msg": "ICU plural is missing the required 'other' branch"
+    },
+    {
+     "severity": "error",
+     "msg": "ICU plural is missing the one form(s) en requires"
     }
    ]
   },

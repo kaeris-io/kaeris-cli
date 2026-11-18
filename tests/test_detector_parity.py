@@ -73,6 +73,25 @@ CORPUS += [
     ("Add to favorites", "Afegeix a la llista de preferits", "ca"),
 ]
 
+# Plurals by the TARGET language's CLDR forms, nested ones too (p13, 18.11.2026): a plural
+# inside a select arm or inside another plural, Welsh, a one-form language, the `one` rule and
+# the exact-branch exemption. Both copies must give the same verdict on each.
+_SEL = "{g, select, male {{n, plural, %s}} other {{n, plural, %s}}}"
+CORPUS += [
+    (_SEL % ("one {# item} other {# items}", "one {# item} other {# items}"),
+     _SEL % ("one {# plik} other {# pliku}", "one {# plik} few {# pliki} many {# plików} other {# pliku}"), "pl"),
+    ("{f, plural, one {# file in {d, plural, one {# dir} other {# dirs}}} other {# files}}",
+     "{f, plural, zero {لا} one {ملف {d, plural, one {مجلد} other {# مجلد}}} two {ملفان} few {# ملفات}"
+     " many {# ملفًا} other {# ملف}}", "ar"),
+    ("{n, plural, one {# item} other {# items}}", "{n, plural, one {# eitem} other {# eitemau}}", "cy"),
+    (_SEL % ("one {# item} other {# items}", "one {# item} other {# items}"),
+     _SEL % ("other {#個}", "other {#個}"), "ja"),
+    ("{n, plural, one {# file} other {# files}}", "{n, plural, other {# Dateien}}", "de"),
+    ("{n, plural, =0 {No files} other {# files}}", "{n, plural, =0 {Keine Dateien} other {# Dateien}}", "de"),
+    ("{n, plural, =0 {No files} one {# file} other {# files}}",
+     "{n, plural, =0 {Нет} =1 {Один файл} other {# файлов}}", "ru"),
+]
+
 GLOSSARY = ["KAERIS"]
 
 @unittest.skipIf(BK is None, "backend/translator.py not importable — parity skipped")

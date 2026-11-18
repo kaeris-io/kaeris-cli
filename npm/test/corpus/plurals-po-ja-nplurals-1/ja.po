@@ -1,0 +1,8 @@
+msgid ""
+msgstr ""
+"Language: ja\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "%d file"
+msgid_plural "%d files"
+msgstr[0] "%d 個のファイル"

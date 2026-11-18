@@ -52,6 +52,7 @@ def build():
         "MERGE_MARKER_RE": pat(d._MERGE_MARKER_RE),
         "EMPHASIS_RE": pat(d._EMPHASIS_RE),
         "CLDR_REQUIRED": {k: sorted(v) for k, v in d._CLDR_REQUIRED.items()},
+        "NO_SINGULAR": sorted(d._NO_SINGULAR),
         "REGISTER_MARKERS": {k: [pat(a), pat(b)] for k, (a, b) in d._REGISTER_MARKERS.items()},
         "LANG_EXPANSION": d._LANG_EXPANSION,
         "WRAPS_RE": pat(d._WRAPS_RE),

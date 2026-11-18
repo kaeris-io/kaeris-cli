@@ -69,6 +69,13 @@ for fname, (source, good, bad, missing, _word) in sorted(EVERY.FORMATS.items()):
     miss.update(missing)
     case(f"{fname}-missing", miss, ["--source", source, "--langs", "de"])
 
+# ── B0. plurals held to the TARGET language's CLDR forms, nested ones too, in every format that
+# has plurals (tests/test_plurals_by_cldr.py: pl/ru/ar/cy with en and ja controls) ──────────────
+PLURALS = _load("plurals_by_cldr", os.path.join(ROOT, "tests", "test_plurals_by_cldr.py"))
+for _cid, (_source, _files, _lang, _missing) in sorted(PLURALS.CASES.items()):
+    case("plurals-" + re.sub(r"[^a-z0-9]+", "-", _cid.lower()).strip("-"), dict(_files),
+         ["--source", _source, "--langs", _lang])
+
 # ── B. native plurals (fixtures from the same suite) ─────────────────────────────────────────────
 AP, items = EVERY.ANDROID_PLURALS, EVERY._items
 ANDROID_EN = AP % items([("one", "%d file"), ("other", "%d files")])

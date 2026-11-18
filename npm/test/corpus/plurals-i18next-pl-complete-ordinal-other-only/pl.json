@@ -1,0 +1,1 @@
+{"cart": {"item_one": "{{count}} przedmiot", "item_few": "{{count}} przedmioty", "item_many": "{{count}} przedmiotów", "item_other": "{{count}} przedmiotu"}, "rank": {"place_ordinal_other": "{{count}}. miejsce"}}

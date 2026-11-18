@@ -178,6 +178,16 @@ beside = You have { $n ->
     [one] one item
    *[other] many items
   } here
+gendered = { $gender ->
+    [male] { $n ->
+        [one] He has { $n } item
+       *[other] He has { $n } items
+    }
+   *[other] { $n ->
+        [one] They have { $n } item
+       *[other] They have { $n } items
+    }
+  }
 '''
 
 MD = '''---

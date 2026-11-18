@@ -428,6 +428,8 @@ function lineBreakFaults(original, translated, softBreaks = false) {
 // ── ICU plural/select validation ──────────────────────────────────────────────
 
 export const CLDR_REQUIRED = new Map(Object.entries(T.CLDR_REQUIRED).map(([k, v]) => [k, new Set(v)]));
+// Languages with `other` as their only plural form: `one` is not owed by their translation.
+export const NO_SINGULAR = new Set(T.NO_SINGULAR);
 
 // Top-level ICU plural/select/selectordinal blocks as [type, full segment].
 function icuBlocks(text) {
@@ -478,20 +480,42 @@ function icuArms(seg) {
   return [m[1], keywords, exacts];
 }
 
+// The ICU blocks nested in the arms of `seg`, at any depth, as [type, segment, where]: `where`
+// is the path of arms leading to the block. At most MAX_ICU_DEPTH arms deep. See
+// _icu_inner_blocks in kaeris/detectors.py.
+function icuInnerBlocks(seg, where = []) {
+  const m = ICU_HEAD_RE.exec(seg);
+  if (!m || where.length >= MAX_ICU_DEPTH) return [];
+  const body = seg.slice(m[0].length, -1);
+  const out = [];
+  for (const [s, e] of braceSpans(body)) {
+    const here = [...where, `${m[1]} arm '${armLabel(body, s) ?? "?"}'`];
+    for (const [typ, inner] of icuBlocks(body.slice(s + 1, e - 1))) {
+      out.push([typ, inner, here]);
+      out.push(...icuInnerBlocks(inner, here));
+    }
+  }
+  return out;
+}
+
 function icuFaults(original, translated, lang) {
   const src = icuBlocks(original);
   const tr = icuBlocks(translated);
   const faults = [];
   if (src.length > tr.length) faults.push(`ICU plural/select construct dropped or broken (${src.length} in source, ${tr.length} in translation)`);
   const base = (lang || "").replace(/_/g, "-").split("-")[0].toLowerCase();
-  for (const [typ, seg] of tr) {
-    const arms = icuArms(seg);
-    if (!arms) continue;
-    const kws = arms[1];
-    if (!kws.has("other")) faults.push(`ICU ${typ} is missing the required 'other' branch`);
-    if (typ === "plural" && !(arms[2].size && [...kws].every((k) => k === "other"))) {
-      const missing = [...(CLDR_REQUIRED.get(base) ?? [])].filter((x) => !kws.has(x));
-      if (missing.length) faults.push(`ICU plural is missing the ${sorted(missing).join("/")} form(s) ${base} requires`);
+  for (const [topTyp, topSeg] of tr) {
+    for (const [typ, seg, where] of [[topTyp, topSeg, []], ...icuInnerBlocks(topSeg)]) {
+      const arms = icuArms(seg);
+      if (!arms) continue;
+      const [, kws, exactSet] = arms;
+      const name = `ICU ${typ}` + (where.length ? ` inside the ${where.join(" › ")}` : "");
+      if (!kws.has("other")) faults.push(`${name} is missing the required 'other' branch`);
+      if (typ === "plural" && !(exactSet.size && [...kws].every((k) => k === "other"))) {
+        const missing = new Set([...(CLDR_REQUIRED.get(base) ?? [])].filter((x) => !kws.has(x)));
+        if (!NO_SINGULAR.has(base) && !kws.has("one") && !exactSet.has("=1")) missing.add("one");
+        if (missing.size) faults.push(`${name} is missing the ${sorted(missing).join("/")} form(s) ${base} requires`);
+      }
     }
   }
   const exactsOf = (blocks) => blocks.map(([, s]) => icuArms(s)).filter(Boolean).map((a) => a[2]);

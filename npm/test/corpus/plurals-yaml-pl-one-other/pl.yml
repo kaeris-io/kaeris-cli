@@ -1,0 +1,5 @@
+pl:
+  cart:
+    items:
+      one: "%{count} przedmiot"
+      other: "%{count} przedmiotu"

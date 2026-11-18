@@ -1,0 +1,5 @@
+en:
+  cart:
+    items:
+      one: "%{count} item"
+      other: "%{count} items"

@@ -1,0 +1,58 @@
+{
+ "json": {
+  "code": 1,
+  "stdout": {
+   "ok": false,
+   "missing": {},
+   "extra": {},
+   "placeholder_issues": [],
+   "missing_files": [],
+   "faults": [
+    {
+     "lang": "ar",
+     "key": "cart.deep",
+     "msg": "ICU plural inside the plural arm 'zero' is missing the few/many/two/zero form(s) ar requires",
+     "severity": "error"
+    },
+    {
+     "lang": "ar",
+     "key": "cart.deep",
+     "msg": "ICU plural inside the plural arm 'one' is missing the few/many/two/zero form(s) ar requires",
+     "severity": "error"
+    },
+    {
+     "lang": "ar",
+     "key": "cart.deep",
+     "msg": "ICU plural inside the plural arm 'two' is missing the few/many/two/zero form(s) ar requires",
+     "severity": "error"
+    },
+    {
+     "lang": "ar",
+     "key": "cart.deep",
+     "msg": "ICU plural inside the plural arm 'few' is missing the few/many/two/zero form(s) ar requires",
+     "severity": "error"
+    },
+    {
+     "lang": "ar",
+     "key": "cart.deep",
+     "msg": "ICU plural inside the plural arm 'many' is missing the few/many/two/zero form(s) ar requires",
+     "severity": "error"
+    },
+    {
+     "lang": "ar",
+     "key": "cart.deep",
+     "msg": "ICU plural inside the plural arm 'other' is missing the few/many/two/zero form(s) ar requires",
+     "severity": "error"
+    }
+   ],
+   "warnings": []
+  },
+  "stderr": ""
+ },
+ "human": {
+  "code": 1,
+  "stdout": "",
+  "stderr": "✗ ar: 6 translation fault(s):\n    cart.deep: ICU plural inside the plural arm 'zero' is missing the few/many/two/zero form(s) ar requires\n    cart.deep: ICU plural inside the plural arm 'one' is missing the few/many/two/zero form(s) ar requires\n    cart.deep: ICU plural inside the plural arm 'two' is missing the few/many/two/zero form(s) ar requires\n    cart.deep: ICU plural inside the plural arm 'few' is missing the few/many/two/zero form(s) ar requires\n    cart.deep: ICU plural inside the plural arm 'many' is missing the few/many/two/zero form(s) ar requires\n    cart.deep: ICU plural inside the plural arm 'other' is missing the few/many/two/zero form(s) ar requires\n✗ 6 translation faults\n"
+ },
+ "sarif": null
+}

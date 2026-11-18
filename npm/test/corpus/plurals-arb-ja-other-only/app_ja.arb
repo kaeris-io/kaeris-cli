@@ -1,0 +1,1 @@
+{"@@locale": "ja", "cartItems": "{gender, select, male {Er: {count, plural, other {#個のアイテム}}} female {Sie: {count, plural, other {#個のアイテム}}} other {{count, plural, other {#個のアイテム}}}}"}

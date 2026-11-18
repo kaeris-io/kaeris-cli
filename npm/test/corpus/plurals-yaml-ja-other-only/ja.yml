@@ -1,0 +1,4 @@
+ja:
+  cart:
+    items:
+      other: "%{count}個のアイテム"

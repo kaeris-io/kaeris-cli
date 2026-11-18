@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="items"><item quantity="other">%d個のアイテム</item></plurals>
+</resources>

@@ -1,0 +1,61 @@
+{
+ "json": {
+  "code": 1,
+  "stdout": {
+   "ok": false,
+   "missing": {},
+   "extra": {},
+   "placeholder_issues": [
+    {
+     "lang": "ar",
+     "key": "cart.item_one",
+     "missing": [
+      "{count}"
+     ],
+     "added": []
+    }
+   ],
+   "missing_files": [],
+   "faults": [
+    {
+     "lang": "ar",
+     "key": "",
+     "msg": "plural form missing: cart.item_few — ar needs the zero/one/two/few/many/other forms of 'cart.item'",
+     "severity": "error"
+    },
+    {
+     "lang": "ar",
+     "key": "",
+     "msg": "plural form missing: cart.item_many — ar needs the zero/one/two/few/many/other forms of 'cart.item'",
+     "severity": "error"
+    },
+    {
+     "lang": "ar",
+     "key": "",
+     "msg": "plural form missing: cart.item_two — ar needs the zero/one/two/few/many/other forms of 'cart.item'",
+     "severity": "error"
+    },
+    {
+     "lang": "ar",
+     "key": "",
+     "msg": "plural form missing: cart.item_zero — ar needs the zero/one/two/few/many/other forms of 'cart.item'",
+     "severity": "error"
+    },
+    {
+     "lang": "ar",
+     "key": "cart.item_one",
+     "msg": "lost placeholder {{count}}",
+     "severity": "error"
+    }
+   ],
+   "warnings": []
+  },
+  "stderr": ""
+ },
+ "human": {
+  "code": 1,
+  "stdout": "",
+  "stderr": "✗ ar: 1 placeholder mismatch(es):\n    cart.item_one: missing ['{count}'], added -\n✗ ar: 5 translation fault(s):\n    plural form missing: cart.item_few — ar needs the zero/one/two/few/many/other forms of 'cart.item'\n    plural form missing: cart.item_many — ar needs the zero/one/two/few/many/other forms of 'cart.item'\n    plural form missing: cart.item_two — ar needs the zero/one/two/few/many/other forms of 'cart.item'\n    plural form missing: cart.item_zero — ar needs the zero/one/two/few/many/other forms of 'cart.item'\n    cart.item_one: lost placeholder {{count}}\n✗ 1 placeholder mismatch, 5 translation faults\n"
+ },
+ "sarif": null
+}

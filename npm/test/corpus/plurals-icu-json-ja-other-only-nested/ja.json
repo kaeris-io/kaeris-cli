@@ -1,0 +1,1 @@
+{"cart": {"items": "{gender, select, male {Er: {count, plural, other {#個のアイテム}}} female {Sie: {count, plural, other {#個のアイテム}}} other {{count, plural, other {#個のアイテム}}}}", "flat": "{count, plural, other {#個のアイテム}}", "deep": "{files, plural, other {#個のアイテム / {folders, plural, other {#個のアイテム}}}}"}}

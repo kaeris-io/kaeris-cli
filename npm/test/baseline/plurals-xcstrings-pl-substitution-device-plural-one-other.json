@@ -1,0 +1,40 @@
+{
+ "json": {
+  "code": 1,
+  "stdout": {
+   "ok": false,
+   "missing": {},
+   "extra": {},
+   "placeholder_issues": [],
+   "missing_files": [],
+   "faults": [
+    {
+     "lang": "pl",
+     "key": "cart⟦sub:n⟧⟦plural⟧",
+     "msg": "ICU plural is missing the few/many form(s) pl requires",
+     "severity": "error"
+    },
+    {
+     "lang": "pl",
+     "key": "tap⟦device:iphone⟧⟦plural⟧",
+     "msg": "ICU plural is missing the few/many form(s) pl requires",
+     "severity": "error"
+    },
+    {
+     "lang": "pl",
+     "key": "tap⟦device:other⟧⟦plural⟧",
+     "msg": "ICU plural is missing the few/many form(s) pl requires",
+     "severity": "error"
+    }
+   ],
+   "warnings": []
+  },
+  "stderr": ""
+ },
+ "human": {
+  "code": 1,
+  "stdout": "",
+  "stderr": "✗ pl: 3 translation fault(s):\n    cart (sub n, plural): ICU plural is missing the few/many form(s) pl requires\n    tap (device iphone, plural): ICU plural is missing the few/many form(s) pl requires\n    tap (device other, plural): ICU plural is missing the few/many form(s) pl requires\n✗ 3 translation faults\n"
+ },
+ "sarif": null
+}

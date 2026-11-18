@@ -4,7 +4,8 @@
 import * as det from "./detectors.js";
 import { flattenAll } from "./flatten.js";
 import { loneCountToHash } from "./formats.js";
-import { rx, strip, sorted, setDiff, setEq } from "./py.js";
+import * as ftl from "./ftl.js";
+import { rx, strip, sorted, setDiff, setEq, cmp } from "./py.js";
 
 // Percent-style placeholders (positional and %@ are tried before the bare %s/%d/... class)
 const PERCENT_RE = rx("%\\d+\\$[@a-zA-Z]|%@|%[sdifxocegpnXOCEGP%]", "g");
@@ -114,45 +115,88 @@ export function diffLocale(sourceFlat, targetFlat, pair = true, optional = new S
   return [missing, extra, issues];
 }
 
-const I18N_SUFFIX_RE = /^(.+)_(zero|one|two|few|many|other)$/;
 const CLDR_ORDER_LOCAL = ["zero", "one", "two", "few", "many", "other"];
+// i18next v4 suffixes (`item_one`, `item_few`). The Rails / nested-object shape (`items.one`,
+// `items.other`) is found by its parent instead: see pluralSets.
+const I18N_SUFFIX_RE = /^(.+)_(zero|one|two|few|many|other)$/;
+// i18next ordinals (`place_ordinal_one`) have their own categories; never held to cardinal ones.
+const ORDINAL = "_ordinal";
+const PLURAL_KEY = "⟦plural⟧";
 
-// Keys of the source that are an i18next plural set: `item_one` + `item_other` become the base
-// `item`. Needs both one and other, so a lone `thing_other` key is not taken for one.
-function i18nextPluralBases(sourceFlat) {
-  const forms = new Map();
+// [[base, separator, forms]] for every plural set of the source, sorted by base then separator.
+// A set needs both `one` and `other`; a dotted set also needs every key under its base to be a
+// CLDR category. See _plural_sets in kaeris/check.py.
+function pluralSets(sourceFlat) {
+  const sets = new Map();
+  const add = (base, sep, forms) => sets.set(`${base}\u0000${sep}`, [base, sep, forms]);
+  const children = new Map();
   for (const key of sourceFlat.keys()) {
     const m = I18N_SUFFIX_RE.exec(key);
     if (m) {
-      if (!forms.has(m[1])) forms.set(m[1], new Set());
-      forms.get(m[1]).add(m[2]);
+      if (!sets.has(`${m[1]}\u0000_`)) add(m[1], "_", new Set());
+      sets.get(`${m[1]}\u0000_`)[2].add(m[2]);
+    }
+    const dot = key.lastIndexOf(".");
+    if (dot !== -1) {
+      const head = key.slice(0, dot);
+      if (!children.has(head)) children.set(head, new Set());
+      children.get(head).add(key.slice(dot + 1));
     }
   }
-  return new Set([...forms].filter(([, f]) => f.has("one") && f.has("other")).map(([b]) => b));
+  const nested = new Set(); // bases with something deeper than a direct child
+  for (const key of sourceFlat.keys()) {
+    const parts = key.split(".");
+    for (let i = 1; i < parts.length - 1; i++) nested.add(parts.slice(0, i).join("."));
+  }
+  for (const [head, leaves] of children) {
+    if ([...leaves].every((l) => CLDR_ORDER_LOCAL.includes(l)) && !nested.has(head)) add(head, ".", new Set(leaves));
+  }
+  return [...sets.values()]
+    .filter(([, , f]) => f.has("one") && f.has("other"))
+    .sort((a, b) => cmp(a[0], b[0]) || cmp(a[1], b[1]));
 }
 
-// [missing forms as faults, extra keys without the forms the language owns]. A Polish
-// `item_one`/`item_other` pair is incomplete: CLDR gives Polish one/few/many/other, so `item_few`
-// and `item_many` are required, and not "stale" when present. Only languages in CLDR_REQUIRED
-// are judged, the same conservative table the ICU check uses.
-function i18nextPluralFaults(sourceFlat, targetFlat, extra, lang) {
+// [forms the language must have, or null when not known; true if `other` is all it has]
+function languageForms(lang) {
   const baseLang = (lang || "").replace(/_/g, "-").split("-")[0].toLowerCase();
+  if (det.NO_SINGULAR.has(baseLang)) return [new Set(["other"]), true];
   const required = det.CLDR_REQUIRED.get(baseLang);
-  const bases = i18nextPluralBases(sourceFlat);
-  if (!required || !required.size || !bases.size) return [[], extra];
-  const forms = new Set([...required, "other"]);
+  return [required && required.size ? new Set([...required, "other"]) : null, false];
+}
+
+// [faults, missing, extra] once every plural set is read by the TARGET language's forms: a
+// Polish `item_one`/`item_other` pair lacks `item_few`/`item_many`; a Japanese file without
+// `item_one` (or `items.one`, a .po msgid_plural, an ordinal's `_ordinal_one`) misses nothing.
+// See _plural_set_faults in kaeris/check.py.
+function pluralSetFaults(sourceFlat, targetFlat, missing, extra, lang) {
+  const baseLang = (lang || "").replace(/_/g, "-").split("-")[0].toLowerCase();
+  const [forms, single] = languageForms(lang);
   const faults = [];
   const owned = new Set();
-  for (const base of sorted(bases)) {
+  const optional = new Set();
+  for (const [base, sep, srcForms] of pluralSets(sourceFlat)) {
+    const other = `${base}${sep}other`;
+    if (sep === "_" && base.endsWith(ORDINAL)) {
+      if (targetFlat.has(other)) for (const c of srcForms) optional.add(`${base}${sep}${c}`);
+      continue;
+    }
+    if (single && targetFlat.has(other)) for (const c of srcForms) optional.add(`${base}${sep}${c}`);
+    if (!forms) continue;
     for (const cat of sorted(forms)) {
-      const key = `${base}_${cat}`;
+      const key = `${base}${sep}${cat}`;
       owned.add(key);
       if (!sourceFlat.has(key) && !targetFlat.has(key)) {
         faults.push(`plural form missing: ${key} — ${baseLang} needs the ${CLDR_ORDER_LOCAL.filter((c) => forms.has(c)).join("/")} forms of '${base}'`);
       }
     }
   }
-  return [faults, extra.filter((k) => !owned.has(k))];
+  if (single) {
+    // gettext: msgid_plural is the second form, and a one-form language has no second.
+    for (const k of missing) {
+      if (k.endsWith(PLURAL_KEY) && targetFlat.has(k.slice(0, -PLURAL_KEY.length))) optional.add(k);
+    }
+  }
+  return [faults, missing.filter((k) => !optional.has(k)), extra.filter((k) => !owned.has(k))];
 }
 
 const onlyText = (flat) => new Map([...flat].filter(([, v]) => typeof v === "string"));
@@ -181,7 +225,7 @@ export function checkLocales(sourceObj, langs, loadTarget, glossary = null) {
       result.ok = false;
       continue;
     }
-    const targetFlat = flattenAll(targetObj);
+    const targetFlat = ftl.foldSingleForm(sourceFlat, flattenAll(targetObj));
     const pair = !targetObj.skipPairwise;
     for (const note of targetObj.notes ?? []) {
       const rec = { lang, key: note.key ?? "", msg: note.msg };
@@ -190,12 +234,12 @@ export function checkLocales(sourceObj, langs, loadTarget, glossary = null) {
         result.ok = false;
       } else result.warnings.push({ ...rec, severity: "warn" });
     }
-    const [missing, extra, issues] = diffLocale(sourceFlat, targetFlat, pair, optional);
+    const [missingAll, extra, issues] = diffLocale(sourceFlat, targetFlat, pair, optional);
+    const [pluralFaults, missing, extraLeft] = pluralSetFaults(sourceFlat, targetFlat, missingAll, extra, lang);
     if (missing.length) {
       result.missing.set(lang, missing);
       result.ok = false;
     }
-    const [pluralFaults, extraLeft] = i18nextPluralFaults(sourceFlat, targetFlat, extra, lang);
     for (const msg of pluralFaults) {
       result.faults.push({ lang, key: "", msg, severity: "error" });
       result.ok = false;

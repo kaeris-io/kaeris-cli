@@ -1,0 +1,40 @@
+{
+ "json": {
+  "code": 1,
+  "stdout": {
+   "ok": false,
+   "missing": {},
+   "extra": {},
+   "placeholder_issues": [],
+   "missing_files": [],
+   "faults": [
+    {
+     "lang": "pl",
+     "key": "cartItems",
+     "msg": "ICU plural inside the select arm 'male' is missing the few/many form(s) pl requires",
+     "severity": "error"
+    },
+    {
+     "lang": "pl",
+     "key": "cartItems",
+     "msg": "ICU plural inside the select arm 'female' is missing the few/many form(s) pl requires",
+     "severity": "error"
+    },
+    {
+     "lang": "pl",
+     "key": "cartItems",
+     "msg": "ICU plural inside the select arm 'other' is missing the few/many form(s) pl requires",
+     "severity": "error"
+    }
+   ],
+   "warnings": []
+  },
+  "stderr": ""
+ },
+ "human": {
+  "code": 1,
+  "stdout": "",
+  "stderr": "✗ pl: 3 translation fault(s):\n    cartItems: ICU plural inside the select arm 'male' is missing the few/many form(s) pl requires\n    cartItems: ICU plural inside the select arm 'female' is missing the few/many form(s) pl requires\n    cartItems: ICU plural inside the select arm 'other' is missing the few/many form(s) pl requires\n✗ 3 translation faults\n"
+ },
+ "sarif": null
+}

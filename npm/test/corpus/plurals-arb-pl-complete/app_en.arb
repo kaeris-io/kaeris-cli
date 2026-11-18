@@ -1,0 +1,1 @@
+{"@@locale": "en", "cartItems": "{gender, select, male {Er: {count, plural, one {# item} other {# items}}} female {Sie: {count, plural, one {# item} other {# items}}} other {{count, plural, one {# item} other {# items}}}}", "@cartItems": {"placeholders": {"gender": {"type": "String"}, "count": {"type": "int"}}}}

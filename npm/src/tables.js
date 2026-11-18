@@ -260,8 +260,31 @@ export default {
   "he": [
    "one",
    "two"
+  ],
+  "cy": [
+   "few",
+   "many",
+   "one",
+   "two",
+   "zero"
   ]
  },
+ "NO_SINGULAR": [
+  "id",
+  "ig",
+  "ja",
+  "jv",
+  "km",
+  "ko",
+  "lo",
+  "ms",
+  "my",
+  "su",
+  "th",
+  "vi",
+  "yo",
+  "zh"
+ ],
  "REGISTER_MARKERS": {
   "de": [
    {

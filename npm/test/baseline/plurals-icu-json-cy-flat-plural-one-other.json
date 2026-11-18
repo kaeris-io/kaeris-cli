@@ -1,0 +1,28 @@
+{
+ "json": {
+  "code": 1,
+  "stdout": {
+   "ok": false,
+   "missing": {},
+   "extra": {},
+   "placeholder_issues": [],
+   "missing_files": [],
+   "faults": [
+    {
+     "lang": "cy",
+     "key": "cart.flat",
+     "msg": "ICU plural is missing the few/many/two/zero form(s) cy requires",
+     "severity": "error"
+    }
+   ],
+   "warnings": []
+  },
+  "stderr": ""
+ },
+ "human": {
+  "code": 1,
+  "stdout": "",
+  "stderr": "✗ cy: 1 translation fault(s):\n    cart.flat: ICU plural is missing the few/many/two/zero form(s) cy requires\n✗ 1 translation fault\n"
+ },
+ "sarif": null
+}

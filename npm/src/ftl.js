@@ -151,10 +151,14 @@ function normExpr(expr) {
 }
 
 // [[key, isDefault, pattern text]] from what follows `->` inside a placeable.
+// Only lines outside any placeable start a variant: the `[one]` of a selector nested in a
+// variant belongs to that selector (see _variants in kaeris/ftl.py).
 function variants(body) {
   const lines = body.split("\n");
+  const depths = scan(body);
   const marks = [];
   lines.forEach((ln, n) => {
+    if (depths[n] !== 0) return;
     const m = VARIANT_RE.exec(ln);
     if (m) marks.push([n, m]);
   });
@@ -253,6 +257,41 @@ function fold(flat, prefixes) {
   for (const [key, value] of flat) {
     if (firstKey.has(key)) out.set(firstKey.get(key), groups.get(firstKey.get(key))[1]);
     else if (!gone.has(key)) out.set(key, value);
+  }
+  return out;
+}
+
+// `flat` with a lone `*[other]` variant folded where the SOURCE folded the same selector, so a
+// Japanese plural (`other` is its only form) meets the source's key. See fold_single_form in
+// kaeris/ftl.py.
+export function foldSingleForm(sourceFlat, flat) {
+  const lone = new Map();
+  for (const skey of sourceFlat.keys()) {
+    if (skey.endsWith(FOLD_MARK) && !flat.has(skey)) {
+      const head = skey.slice(0, -FOLD_MARK.length);
+      if (flat.has(head + ".other")) lone.set(head + ".other", skey);
+    }
+  }
+  if (!lone.size) return flat;
+  const heads = new Set([...lone.keys()].map((k) => k.slice(0, -".other".length)));
+  const crowded = new Set();
+  for (const k of flat.keys()) {
+    if (k.endsWith(".other")) continue;
+    const dot = k.lastIndexOf(".");
+    const head = dot === -1 ? "" : k.slice(0, dot);
+    if (heads.has(head)) crowded.add(head);
+  }
+  const out = new Map();
+  for (const [key, value] of flat) {
+    const folded = lone.get(key);
+    if (folded && !crowded.has(key.slice(0, -".other".length)) && typeof value === "string") {
+      const text = value.replace(SIMPLE_VAR_RE, (_, v) => "{" + v.slice(1) + "}");
+      if (balanced(text)) {
+        out.set(folded, `{count, plural, other {${text}}}`);
+        continue;
+      }
+    }
+    out.set(key, value);
   }
   return out;
 }
