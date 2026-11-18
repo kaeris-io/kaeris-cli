@@ -175,9 +175,15 @@ def _norm_expr(expr):
 
 
 def _variants(body):
-    """[(key, is_default, pattern text)] from what follows `->` inside a placeable."""
+    """[(key, is_default, pattern text)] from what follows `->` inside a placeable.
+
+    Only lines outside any placeable start a variant: the `[one]` of a selector nested in a
+    variant belongs to that selector. Reading it as this selector's variant cut the nested
+    placeable in half, and a file with `{ $gender -> [male] { $count -> … } }` was read as
+    "a { that never closes" — no strings at all, while Fluent itself accepts it."""
     lines = body.split("\n")
-    marks = [(n, _VARIANT_RE.match(ln)) for n, ln in enumerate(lines)]
+    depths = _scan(body)
+    marks = [(n, _VARIANT_RE.match(ln)) for n, ln in enumerate(lines) if depths[n] == 0]
     marks = [(n, m) for n, m in marks if m]
     if not marks:
         raise FtlError("a selector with no [variant]")
@@ -279,6 +285,38 @@ def _fold(flat, prefixes):
             out[first[key]] = groups[first[key]][1]
         elif key not in gone:
             out[key] = value
+    return out
+
+
+def fold_single_form(source_flat, flat):
+    """`flat` with a lone `*[other]` variant folded where the SOURCE folded the same selector.
+
+    parse() folds a selector only when it has a counting variant (one/few/…): `*[other]` alone
+    cannot be told apart from a platform or gender select. But Japanese and Chinese have that
+    one form only, so their translation of a plural IS a lone `*[other]` — and read unfolded it
+    came out as `items$0.other` against the source's `items$0⟦plural⟧`: a missing key and an
+    extra one for a correct file. Folded, it meets the source's key and the plural rules of
+    the target language judge it (a Polish lone `other` is still told it lacks one/few/many).
+    Any other `flat` is returned unchanged."""
+    lone = {}
+    for skey in source_flat:
+        if skey.endswith(FOLD_MARK) and skey not in flat:
+            head = skey[:-len(FOLD_MARK)]
+            if head + ".other" in flat:
+                lone[head + ".other"] = skey
+    if not lone:
+        return flat
+    heads = {k[:-len(".other")] for k in lone}
+    crowded = {k.rpartition(".")[0] for k in flat if not k.endswith(".other")} & heads
+    out = {}
+    for key, value in flat.items():
+        folded = lone.get(key)
+        if folded and key[:-len(".other")] not in crowded and isinstance(value, str):
+            text = _SIMPLE_VAR_RE.sub(lambda m: "{" + m.group(1)[1:] + "}", value)
+            if _balanced(text):
+                out[folded] = f"{{count, plural, other {{{text}}}}}"
+                continue
+        out[key] = value
     return out
 
 

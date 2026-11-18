@@ -754,7 +754,13 @@ _CLDR_REQUIRED: dict[str, set[str]] = {
     "lv": {"zero", "one"}, "sl": {"one", "two", "few"},
     # Hebrew has a dual — 2 takes its own form.
     "he": {"one", "two"},
+    # Welsh uses all six as well: 0, 1, 2, 3 and 6 each take their own form (CLDR).
+    "cy": {"zero", "one", "two", "few", "many"},
 }
+# Languages with no separate singular: CLDR gives them `other` only, so `one` must not be
+# demanded of their translation (a false alarm teaches people to ignore the check). The
+# same set as backend/translator.py, checked against CLDR there.
+_NO_SINGULAR = {"ja", "zh", "ko", "vi", "th", "id", "ms", "km", "lo", "my", "yo", "ig", "jv", "su"}
 _ICU_HEAD_RE = re.compile(r"\{\s*[\w\d_]+\s*,\s*(plural|selectordinal|select)\s*,")
 
 def _icu_blocks(text: str) -> list[tuple[str, str]]:
@@ -808,35 +814,66 @@ def _icu_arms(seg: str) -> tuple[str, set, set] | None:
             (exacts if tok.startswith("=") else keywords).add(tok)
     return m.group(1), keywords, exacts
 
+def _icu_inner_blocks(seg: str, where: tuple = ()) -> list[tuple[str, str, tuple]]:
+    """The ICU blocks nested in the arms of `seg`, at any depth, as (type, segment, where).
+    `where` is the path of arms leading to the block: ("select arm 'male'",). A plural inside
+    a select is the shape react-intl and Flutter document for a gendered count, and it owes
+    the target language its CLDR forms exactly like a top-level one does: before this, a
+    Polish `{g, select, male {{n, plural, one {..} other {..}}} …}` passed the check.
+    Descends at most _MAX_ICU_DEPTH arms, like the placeholder readers: past that a hostile
+    file costs a missed finding, never a RecursionError or a quadratic scan."""
+    m = _ICU_HEAD_RE.match(seg)
+    if not m or len(where) >= _MAX_ICU_DEPTH:
+        return []
+    body = seg[m.end():-1]
+    out = []
+    for s, e in _brace_spans(body):
+        here = where + (f"{m.group(1)} arm '{_arm_label(body, s) or '?'}'",)
+        for typ, inner in _icu_blocks(body[s + 1:e - 1]):
+            out.append((typ, inner, here))
+            out.extend(_icu_inner_blocks(inner, here))
+    return out
+
+
 def _icu_faults(original: str, translated: str, lang: str) -> list[str]:
     """Deterministic ICU MessageFormat validation — a class Crowdin/Lokalise/Phrase only
     enforce inside their editor when the string is registered as a plural. Flags: a plural/
     select construct dropped or brace-broken by the translation; a missing required 'other'
     arm (ICU won't compile); a dropped literal =N exact-match branch (e.g. the =0 'empty'
-    case); and a plural missing a CLDR form the TARGET language requires (Russian few/many)."""
+    case); and a plural missing a CLDR form the TARGET language requires (Russian few/many).
+    The 'other' arm and the CLDR forms are judged for every block, top-level or nested in
+    another block's arm."""
     src = _icu_blocks(original)
     tr = _icu_blocks(translated)
     faults: list[str] = []
     if len(src) > len(tr):
         faults.append(f"ICU plural/select construct dropped or broken ({len(src)} in source, {len(tr)} in translation)")
     base = (lang or "").replace("_", "-").split("-")[0].lower()
-    for typ, seg in tr:
-        arms = _icu_arms(seg)
-        if not arms:
-            continue
-        _, kws, exact_set = arms
-        if "other" not in kws:
-            faults.append(f"ICU {typ} is missing the required 'other' branch")
-        # Only cardinal `plural`. _CLDR_REQUIRED holds CARDINAL categories; ordinal ones
-        # differ, so applying them to `selectordinal` false-flags a correct ordinal (Russian
-        # ordinals need only `other`). We have no ordinal table, so skip completeness for
-        # selectordinal rather than warn wrongly (the 'other'-branch check above still applies).
-        # A block that spells its cases out (`=1{..} =2{..} other{..}`) and uses no category
-        # keyword besides `other` decided its own cases; CLDR forms are not owed there.
-        if typ == "plural" and not (exact_set and kws <= {"other"}):
-            missing = _CLDR_REQUIRED.get(base, set()) - kws
-            if missing:
-                faults.append(f"ICU plural is missing the {'/'.join(sorted(missing))} form(s) {base} requires")
+    for top_typ, top_seg in tr:
+        for typ, seg, where in [(top_typ, top_seg, ())] + _icu_inner_blocks(top_seg):
+            arms = _icu_arms(seg)
+            if not arms:
+                continue
+            _, kws, exact_set = arms
+            name = f"ICU {typ}" + (f" inside the {' › '.join(where)}" if where else "")
+            if "other" not in kws:
+                faults.append(f"{name} is missing the required 'other' branch")
+            # Only cardinal `plural`. _CLDR_REQUIRED holds CARDINAL categories; ordinal ones
+            # differ, so applying them to `selectordinal` false-flags a correct ordinal (Russian
+            # ordinals need only `other`). We have no ordinal table, so skip completeness for
+            # selectordinal rather than warn wrongly (the 'other'-branch check above still applies).
+            # A block that spells its cases out (`=1{..} =2{..} other{..}`) and uses no category
+            # keyword besides `other` decided its own cases; CLDR forms are not owed there.
+            if typ == "plural" and not (exact_set and kws <= {"other"}):
+                missing = _CLDR_REQUIRED.get(base, set()) - kws
+                # `one` is a form the language requires too; the table above lists only the
+                # "extra" ones (the plural repair reads it as well). Audit 25.10 (C7):
+                # `{n, plural, other {# Dateien}}` in de passed clean and "1 Dateien" shipped.
+                # An exact =1 branch covers the singular.
+                if base not in _NO_SINGULAR and "one" not in kws and "=1" not in exact_set:
+                    missing = missing | {"one"}
+                if missing:
+                    faults.append(f"{name} is missing the {'/'.join(sorted(missing))} form(s) {base} requires")
     # dropped literal =N branches (pair blocks positionally when counts match; else union)
     def _exacts(blocks):
         return [a[2] for a in (_icu_arms(s) for _, s in blocks) if a]

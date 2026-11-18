@@ -16,6 +16,7 @@ import re
 from .incremental import flatten_all
 from . import detectors as det
 from . import glossary as gl
+from . import ftl
 from .formats import lone_count_to_hash
 
 # Percent/dollar-style placeholders (order matters: positional and %@ must be
@@ -166,44 +167,85 @@ def diff_locale(source_flat, target_flat, pair=True, optional=()):
     return missing, extra, issues
 
 
-_I18N_SUFFIX_RE = re.compile(r"^(.+)_(zero|one|two|few|many|other)$")
+CLDR_ORDER_LOCAL = ("zero", "one", "two", "few", "many", "other")
+_CATS = "zero|one|two|few|many|other"
+# i18next v4 suffixes (`item_one`, `item_few`). The Rails / nested-object shape (`items.one`,
+# `items.other`) is found by its parent instead: see _plural_sets.
+_I18N_SUFFIX_RE = re.compile(rf"^(.+)_({_CATS})$")
+# i18next writes ordinals as `place_ordinal_one`. Their categories are not the cardinal ones
+# (Polish and Russian ordinals have `other` alone, English has one/two/few/other), and there
+# is no ordinal table here, so an ordinal set is never held to cardinal forms.
+_ORDINAL = "_ordinal"
+_PLURAL_KEY = "⟦plural⟧"
 
 
-def _i18next_plural_bases(source_flat):
-    """Keys of the source that are an i18next plural set: `item_one` + `item_other` become the
-    base `item`. Needs both one and other, so a lone `thing_other` key is not taken for one."""
-    forms = {}
+def _plural_sets(source_flat):
+    """{(base, separator): forms} for every plural set of the source. An i18next set needs both
+    `_one` and `_other`, so a lone `thing_other` is not taken for one. A dotted set needs both
+    too, and every key under its base must be a CLDR category: `{one, other, title}` is an
+    object that happens to have a key `one`, not a plural."""
+    sets, children = {}, {}
     for key in source_flat:
         m = _I18N_SUFFIX_RE.match(key)
         if m:
-            forms.setdefault(m.group(1), set()).add(m.group(2))
-    return {b for b, f in forms.items() if {"one", "other"} <= f}
+            sets.setdefault((m.group(1), "_"), set()).add(m.group(2))
+        head, dot, leaf = key.rpartition(".")
+        if dot:
+            children.setdefault(head, set()).add(leaf)
+    nested = set()                      # bases with something deeper than a direct child
+    for key in source_flat:
+        parts = key.split(".")
+        nested.update(".".join(parts[:i]) for i in range(1, len(parts) - 1))
+    for head, leaves in children.items():
+        if leaves <= set(CLDR_ORDER_LOCAL) and head not in nested:
+            sets[(head, ".")] = set(leaves)
+    return {s: f for s, f in sets.items() if {"one", "other"} <= f}
 
 
-def _i18next_plural_faults(source_flat, target_flat, extra, lang):
-    """(missing forms as faults, extra keys without the forms the language owns). A Polish
-    `item_one`/`item_other` pair is incomplete: CLDR gives Polish one/few/many/other, so
-    `item_few` and `item_many` are required — and not "stale" when present. Only languages
-    in det._CLDR_REQUIRED are judged, the same conservative table the ICU check uses."""
+def _language_forms(lang):
+    """(forms the language must have, or None when not known; True if `other` is all it has)."""
     base_lang = (lang or "").replace("_", "-").split("-")[0].lower()
+    if base_lang in det._NO_SINGULAR:
+        return {"other"}, True
     required = det._CLDR_REQUIRED.get(base_lang)
-    bases = _i18next_plural_bases(source_flat)
-    if not required or not bases:
-        return [], extra
-    forms = required | {"other"}
-    faults = []
-    owned = set()
-    for base in sorted(bases):
+    return (required | {"other"} if required else None), False
+
+
+def _plural_set_faults(source_flat, target_flat, missing, extra, lang):
+    """(faults, missing, extra) once every plural set is read by the TARGET language's forms.
+
+    A Polish `item_one`/`item_other` pair is incomplete: CLDR gives Polish one/few/many/other,
+    so `item_few` and `item_many` are required — and not "stale" when present. Japanese has
+    `other` alone, so a Japanese file without `item_one` is complete, not missing a key
+    (i18next itself never reads `_one` for Japanese). The same holds for Rails `items.one`, for
+    a .po plural whose header has one form (msgstr[0] only), and for i18next ordinals, which
+    owe only `_ordinal_other`. Languages outside det._CLDR_REQUIRED / det._NO_SINGULAR are not
+    judged: the same conservative tables the ICU check uses."""
+    base_lang = (lang or "").replace("_", "-").split("-")[0].lower()
+    forms, single = _language_forms(lang)
+    faults, owned, optional = [], set(), set()
+    for (base, sep), src_forms in sorted(_plural_sets(source_flat).items()):
+        other = f"{base}{sep}other"
+        if sep == "_" and base.endswith(_ORDINAL):
+            if other in target_flat:
+                optional.update(f"{base}{sep}{c}" for c in src_forms)
+            continue
+        if single and other in target_flat:
+            optional.update(f"{base}{sep}{c}" for c in src_forms)
+        if not forms:
+            continue
         for cat in sorted(forms):
-            key = f"{base}_{cat}"
+            key = f"{base}{sep}{cat}"
             owned.add(key)
             if key not in source_flat and key not in target_flat:
                 faults.append(f"plural form missing: {key} — {base_lang} needs the "
                               f"{'/'.join(c for c in CLDR_ORDER_LOCAL if c in forms)} forms of '{base}'")
-    return faults, [k for k in extra if k not in owned]
-
-
-CLDR_ORDER_LOCAL = ("zero", "one", "two", "few", "many", "other")
+    if single:
+        # gettext: msgid_plural is the second form, and a one-form language has no second.
+        optional.update(k for k in missing if k.endswith(_PLURAL_KEY)
+                        and k[:-len(_PLURAL_KEY)] in target_flat)
+    return (faults, [k for k in missing if k not in optional],
+            [k for k in extra if k not in owned])
 
 
 def check_locales(source_obj, langs, load_target, glossary=None, terms=None):
@@ -249,7 +291,7 @@ def check_locales(source_obj, langs, load_target, glossary=None, terms=None):
             result["missing"][lang] = sorted(source_flat)
             result["ok"] = False
             continue
-        target_flat = flatten_all(target_obj)
+        target_flat = ftl.fold_single_form(source_flat, flatten_all(target_obj))
         pair = not getattr(target_obj, "skip_pairwise", False)
         for note in getattr(target_obj, "notes", []):
             rec = {"lang": lang, "key": note.get("key", ""), "msg": note["msg"]}
@@ -259,10 +301,11 @@ def check_locales(source_obj, langs, load_target, glossary=None, terms=None):
             else:
                 result["warnings"].append({**rec, "severity": "warn"})
         missing, extra, issues = diff_locale(source_flat, target_flat, pair, optional)
+        plural_faults, missing, extra = _plural_set_faults(source_flat, target_flat, missing,
+                                                           extra, lang)
         if missing:
             result["missing"][lang] = missing
             result["ok"] = False
-        plural_faults, extra = _i18next_plural_faults(source_flat, target_flat, extra, lang)
         for msg in plural_faults:
             result["faults"].append({"lang": lang, "key": "", "msg": msg, "severity": "error"})
             result["ok"] = False
