@@ -511,8 +511,10 @@ function icuFaults(original, translated, lang) {
       const [, kws, exactSet] = arms;
       const name = `ICU ${typ}` + (where.length ? ` inside the ${where.join(" › ")}` : "");
       if (!kws.has("other")) faults.push(`${name} is missing the required 'other' branch`);
-      if (typ === "plural" && !(exactSet.size && [...kws].every((k) => k === "other"))) {
-        const missing = new Set([...(CLDR_REQUIRED.get(base) ?? [])].filter((x) => !kws.has(x)));
+      if (typ === "plural") {
+        // =N branches with only `other` beside them: no extra CLDR forms owed, `one` still is.
+        const spelled = exactSet.size > 0 && [...kws].every((k) => k === "other");
+        const missing = new Set(spelled ? [] : [...(CLDR_REQUIRED.get(base) ?? [])].filter((x) => !kws.has(x)));
         if (!NO_SINGULAR.has(base) && !kws.has("one") && !exactSet.has("=1")) missing.add("one");
         if (missing.size) faults.push(`${name} is missing the ${sorted(missing).join("/")} form(s) ${base} requires`);
       }

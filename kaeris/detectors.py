@@ -863,13 +863,15 @@ def _icu_faults(original: str, translated: str, lang: str) -> list[str]:
             # ordinals need only `other`). We have no ordinal table, so skip completeness for
             # selectordinal rather than warn wrongly (the 'other'-branch check above still applies).
             # A block that spells its cases out (`=1{..} =2{..} other{..}`) and uses no category
-            # keyword besides `other` decided its own cases; CLDR forms are not owed there.
-            if typ == "plural" and not (exact_set and kws <= {"other"}):
-                missing = _CLDR_REQUIRED.get(base, set()) - kws
+            # keyword besides `other` decided its own cases: the extra CLDR forms (few/many…) are
+            # not owed there (public projects, 02.11). The singular still is, below.
+            if typ == "plural":
+                spelled = bool(exact_set) and kws <= {"other"}
+                missing = set() if spelled else _CLDR_REQUIRED.get(base, set()) - kws
                 # `one` is a form the language requires too; the table above lists only the
                 # "extra" ones (the plural repair reads it as well). Audit 25.10 (C7):
-                # `{n, plural, other {# Dateien}}` in de passed clean and "1 Dateien" shipped.
-                # An exact =1 branch covers the singular.
+                # `{n, plural, other {# Dateien}}` in de passed clean and "1 Dateien" shipped,
+                # and `=0 {keine} other {einige}` renders "1 einige". An exact =1 covers it.
                 if base not in _NO_SINGULAR and "one" not in kws and "=1" not in exact_set:
                     missing = missing | {"one"}
                 if missing:
