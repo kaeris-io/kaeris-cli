@@ -22,7 +22,7 @@ No account was created and no login was made.
 
 | Step | What happened | Time |
 |---|---|---|
-| `npx -y lingo.dev@latest --help`, empty npm cache for it | installs 351 packages (one deprecation warning) | 29.9 s |
+| `npx -y lingo.dev@latest --help`, empty npm cache for it | installs its tree: 351 entries at the top of `node_modules` (one deprecation warning) | 29.9 s |
 | `init -y -s en -t de -b json -p "i18n/[locale].json"` | asks "Use (and create) default path i18n/[locale].json?" despite `-y`; with no terminal the prompt dies with `ExitPromptError`, no `i18n.json` written | – |
 | `run` without `init` | `i18n.json not found` | – |
 | `i18n.json` written by hand, `run` | `you are not authenticated`: `lingo.dev login`, `--api-key` or `LINGO_API_KEY` | 4.9 s to the refusal |
@@ -46,15 +46,15 @@ treats them is unknown from this run.
 
 ## 2. Us against Lingo.dev
 
-Filled from the runs in section 6 of this file.
+Same machine, same day, same five-string file. Our numbers are from section 6.
 
 | | Lingo.dev CLI 0.138.12 | `npx kaeris translate` (this branch) |
 |---|---|---|
 | Account needed to translate | yes (login, API key or env) | no: anonymous demo, 10,000 characters per file, 8 languages per run (server's `/api/key/info`, `/api/config`, 18.11) |
-| Config file needed | yes, `i18n.json`; `init` cannot write it without a terminal | no: file and `--langs` on the command line; `kaeris.json` optional |
-| Packages installed by `npx` | 351 | 1 (no dependencies) |
-| Empty folder to a translated file | not reached without an account | see section 6 |
-| `{name}`, `%s`, `/how-to-buy/`, URL | changed by `--pseudo`; AI path not run | see section 6 |
+| Config file needed | yes, `i18n.json`; `init -y` still prompts and dies without a terminal | no: file and `--langs` on the command line; `kaeris.json` optional |
+| What `npx` installs | 351 entries at the top of `node_modules` | 1 package, 0 dependencies, 30 files, 84 KB tgz / 276 KB unpacked |
+| Empty folder to a translated file, cold `npx` | not reached: 29.9 s to install, then a refusal for want of an account | 7.4 s, install and translation together (run 1) |
+| `{name}`, `%s`, `/how-to-buy/`, URL | all four changed by `--pseudo`; AI path not run | all four intact (run 1); `%@`, `%d`, `/how-to-buy/` intact in `.strings` (run 2) |
 
 ## 3. How the Python CLI translates (kaeris/cli.py, kaeris/client.py, 0.2.45 candidate)
 
@@ -122,8 +122,7 @@ Not in the first version (each prints what to use instead and exits 2, so nothin
 surprise): `--only-new`, `--assume-current`, `--lock` (and `"only_new": true` in kaeris.json),
 `--verify`, `--verify-all`, `--back-lang`, `--apply-fixes`, `--dry-run`, `--json`, `--tm`,
 `--digits`, `--lang-case lower`. Also not here: the project memory (`kaeris-tm.json` is neither read
-nor written, so a second whole-file run is charged again in full, as with `--no-tm`), and a
-restarted server job is not sent again automatically (the error says to run the command again).
+nor written, so a second whole-file run is charged again in full, as with `--no-tm`).
 
 ## 5. Tests
 
@@ -141,4 +140,23 @@ restarted server job is not sent again automatically (the error says to run the 
 
 ## 6. Results
 
-Filled in after the runs.
+Tests: `npm test` 234 passed, 0 failed (210 before; 24 new in `npm/test/translate.test.js`, all
+seen failing before the code existed).
+
+Against https://kaeris.dev, no key, 18.11.2026. Each run: `npm pack`, then in a fresh folder outside
+the repository `npx -y --package=<tgz> kaeris translate …`, timed from the start of `npx` to its
+exit. Three translations in all.
+
+| Run | Source | Command | Result | Time |
+|---|---|---|---|---|
+| 1 | `i18n/en.json`, 5 strings | `translate i18n/en.json --langs de` | `i18n/de.json`; `{name}`, `%s`, `href="/how-to-buy/"`, `https://example.com/docs/start` intact; exit 0; 144 characters charged | 7.4 s, cold `npx` |
+| 2 | `App/en.lproj/Localizable.strings`, 5 strings | `translate App/en.lproj/Localizable.strings --langs de,fr --keep KAERIS -q` | `App/de.lproj/…`, `App/fr.lproj/…`; `%@`, `%d`, `/how-to-buy/`, `KAERIS` intact; exit 0 | 6.7 s, `npx` cached |
+| 3 | `locales/en/common.json` (nested, ICU plural, `{{name}}`), `kaeris.json` with `source`, `langs: ["uk"]`, `icu: true` | `translate` (no arguments) | `locales/uk/common.json`; plural with Ukrainian `one/few/many/other`, `{{name}}`, `/how-to-buy/` intact; exit 0 | 8.7 s, cold `npx` (new tgz) |
+
+Two refusals, which translate nothing: a wrong key gives
+`✗ HTTP 401: Invalid API key. Get a valid key at kaeris.dev/developer` and one line on what to do,
+exit 1; `--langs de,xx` gives `Unknown language code: xx` with the codes offered, exit 1, before
+the file is sent.
+
+Seen in run 1, on the server's side: the model ended three German strings with a full stop the
+source does not have, one of them right after the URL (`…/docs/start.`).
