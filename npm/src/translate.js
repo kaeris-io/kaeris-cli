@@ -177,7 +177,8 @@ function refused(e) {
   const line = limitLine(message, { status });
   if (line) out(line);
   if (status === 401 || status === 403) {
-    info(`Check the key (--key or KAERIS_API_KEY), or run without one for the free demo. Keys: ${KEY_DOCS_URL}`);
+    const link = /kaeris\.dev\//.test(message) ? "" : ` Keys: ${KEY_DOCS_URL}`;
+    info(`Check the key (--key or KAERIS_API_KEY), or run without one for the free demo.${link}`);
   } else if (typeof status === "number" && status >= 500) {
     info("The server could not do this right now; nothing was written. Try again in a few minutes.");
   }
@@ -469,14 +470,15 @@ function limiter(n) {
 
 // ── the command ───────────────────────────────────────────────────────────────
 
+// [unknown codes, every code offered]. The list cannot be fetched: nothing is refused here.
 async function unknownLangs(client, langs) {
   let known;
   try {
     known = await client.languages();
   } catch {
-    return [];
+    return [[], []];
   }
-  if (!known || typeof known !== "object" || !Object.keys(known).length) return [];
+  if (!known || typeof known !== "object" || !Object.keys(known).length) return [[], []];
   const offered = new Set(Object.keys(known).map(canonLang));
   const result = [];
   for (const l of langs) {
@@ -484,7 +486,7 @@ async function unknownLangs(client, langs) {
     const near = [...offered].filter((c) => c.split("-")[0] === l.split("-")[0].toLowerCase()).sort();
     result.push(near.length ? `${l} (offered: ${near.join(", ")})` : l);
   }
-  return result;
+  return [result, [...offered]];
 }
 
 async function demoNotice(client) {
@@ -597,9 +599,10 @@ export async function cmdTranslate(args, globals, loadConfig) {
     apiKey: args.key || globals.key || process.env.KAERIS_API_KEY,
     openrouterKey: globals.openrouter_key || process.env.KAERIS_OPENROUTER_KEY,
   });
-  const unknown = await unknownLangs(client, langs);
+  const [unknown, offered] = await unknownLangs(client, langs);
   if (unknown.length) {
-    err(`Unknown language code: ${unknown.join(", ")}. Run 'kaeris languages' for the list (codes like de, ja, pt-PT, zh-Hant).`);
+    // `kaeris languages` is in the Python package only: the codes are listed here instead.
+    err(`Unknown language code: ${unknown.join(", ")}. Codes offered: ${offered.join(", ")}`);
     return 1;
   }
   if (!client.apiKey) await demoNotice(client);

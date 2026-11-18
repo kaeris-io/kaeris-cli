@@ -86,11 +86,37 @@ Flags can be left out when `kaeris.json` in the working directory has `source`, 
   with: { sarif_file: kaeris.sarif }
 ```
 
+## Translate
+
+`translate` sends the source file to the KAERIS API (https://kaeris.dev) and writes each language
+where `check` looks for it. Without a key it runs as the free demo (10,000 characters per file,
+8 languages per run at the time of writing); with one, pass `--key` or set `KAERIS_API_KEY`.
+
+```bash
+npx kaeris translate locales/en.json --langs de,fr
+```
+
+```
+→ Translating en.json → de, fr
+✓ Wrote 2 file(s) to /app/locales
+→ Run: openai/gpt-6-luna · Free · 2/2 languages · 5 strings · 3.3s
+```
+
+Written paths go to stdout, one per line. Exit code: `0` done, `3` a language fell back to the
+source text, `1` a file failed (the server refused it, or a language code is unknown), `2` bad
+usage. Flags: `--langs/--to`, `--out`, `--source-lang`, `--keep`, `--glossary-file`, `--context`,
+`--tone`, `--icu`, `--model`, `--jobs`, `--quiet`, `--receipt`, `--key`; `kaeris translate --help`
+lists them.
+
+Not in this package yet: `--only-new` and `kaeris.lock`, `--verify`, `--dry-run`, the project
+memory `kaeris-tm.json`, `--digits`, `--lang-case`. Each is refused by name, before anything is
+sent; the Python package has them.
+
 ## Relation to the Python package
 
-This is a port of `kaeris check` from the [Python package](https://github.com/kaeris-io/kaeris-cli).
+`check` is a port of `kaeris check` from the [Python package](https://github.com/kaeris-io/kaeris-cli).
 The same files give the same report and exit code; the Python repository holds the corpus that
-proves it. `translate`, `fix`, `init`, `languages` and `quota` talk to the service and stay in the
-Python package: `pipx install kaeris`.
+proves it. `translate` is a port of its whole-file mode, with the same flags, output paths and
+exit codes. `fix`, `init`, `languages` and `quota` stay in the Python package: `pipx install kaeris`.
 
 MIT.

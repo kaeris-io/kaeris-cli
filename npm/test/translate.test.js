@@ -379,7 +379,8 @@ describe("translate: refusals are one clear line and a non-zero exit", () => {
     write(dir, "en.json", EN);
     const r = await kaeris(["translate", "en.json", "--langs", "de,xx"], { cwd: dir });
     assert.equal(r.code, 1);
-    assert.match(r.stderr, /Unknown language code: xx/);
+    assert.match(r.stderr, /Unknown language code: xx\. Codes offered: en, de, fr, zh-Hant/);
+    assert.doesNotMatch(r.stderr, /kaeris languages/); // not in this package
     assert.equal(posted().length, 0);
   });
 
