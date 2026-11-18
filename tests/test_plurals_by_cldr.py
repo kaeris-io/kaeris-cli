@@ -78,6 +78,8 @@ CASES = {}
 
 
 def case(cid, source, files, lang, missing):
+    # a target file named like the source would overwrite it and compare the source with itself
+    assert source in files and (len(files) > 1 or source.endswith(".xcstrings")), cid
     CASES[cid] = (source, files, lang, missing)
 
 
@@ -116,7 +118,7 @@ case("icu-json cy: plural inside select one/other", "en.json",
 case("icu-json cy: complete", "en.json",
      icu_json("cy", icu_value(CY_FULL, CY_FULL, nested_in_plural(CY_FULL, CY_FULL))), "cy", None)
 case("icu-json en: control", "en.json",
-     icu_json("en", icu_value(EN_ARMS, EN_ARMS, EN_NESTED_PLURAL)), "en", None)
+     icu_json("en-GB", icu_value(EN_ARMS, EN_ARMS, EN_NESTED_PLURAL)), "en-GB", None)
 case("icu-json ja: other only, nested", "en.json",
      icu_json("ja", icu_value(JA_ARMS, JA_ARMS, nested_in_plural(JA_ARMS, JA_ARMS))), "ja", None)
 

@@ -15,7 +15,7 @@
  "human": {
   "code": 0,
   "stdout": "",
-  "stderr": "✓ en: complete & placeholder-safe\n✓ all locales complete & placeholder-safe\n"
+  "stderr": "✓ en-GB: complete & placeholder-safe\n✓ all locales complete & placeholder-safe\n"
  },
  "sarif": null
 }

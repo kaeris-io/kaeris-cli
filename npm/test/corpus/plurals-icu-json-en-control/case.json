@@ -3,6 +3,6 @@
   "--source",
   "en.json",
   "--langs",
-  "en"
+  "en-GB"
  ]
 }
