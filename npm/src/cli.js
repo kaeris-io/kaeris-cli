@@ -155,8 +155,9 @@ const MAIN_USAGE = "usage: kaeris [-h] [--version] [--config CONFIG] {check,tran
 const MAIN_HELP = `${MAIN_USAGE}
 
 commands:
-  check      Compare a source locale file with its translations; fails CI when strings are
-             untranslated, keys are missing or extra, or placeholders are broken. Offline.
+  check      Compare a source locale file with its translations; fails CI when keys are
+             missing or placeholders are broken, and on extra keys and warnings (such as
+             text left untranslated) with --strict. Offline.
   translate  Translate a strings file through the KAERIS API and write the translations
              next to it. Without a key it runs as the free demo with smaller limits.
 
