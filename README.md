@@ -11,11 +11,11 @@ Check locale files in CI and translate them into **46 languages** from the termi
 
 ```bash
 pip install kaeris                                           # check and translate, Python 3.8+
-npx kaeris check --source locales/en.json --langs de,fr,ja   # the check only, Node 18+
+npx kaeris check --source locales/en.json --langs de,fr,ja   # Node 18+: check, and translate since 0.2.46
 ```
 
-- **`kaeris check`** fails the build when a translation is missing, a key is left over, or a
-  placeholder was lost or renamed. Offline, no key, no API call.
+- **`kaeris check`** fails the build when a translation is missing or a placeholder was lost or
+  renamed; keys left over and warnings fail it with `--strict`. Offline, no key, no API call.
 - **`kaeris translate`** writes 46 languages. `--only-new` translates only the keys you added
   and leaves the rest of each file as it was.
 - **`--verify`** translates each line back and flags the ones whose meaning may have changed,
@@ -327,7 +327,7 @@ gates a merge on.
 ```bash
 kaeris check                              # reads source/langs/out from kaeris.json
 kaeris check --source en.json --langs de,fr,ja --out locales
-kaeris check --strict                     # also fail on extra/stale keys in a target
+kaeris check --strict                     # also fail on warnings and extra/stale keys in a target
 kaeris check --json                       # machine-readable output for CI/agents
 kaeris check --ci                         # same exit-code contract; a stable, named entry point for pipelines
 ```

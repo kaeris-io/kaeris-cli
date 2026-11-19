@@ -7,11 +7,13 @@
 [![node](https://img.shields.io/node/v/kaeris)](https://www.npmjs.com/package/kaeris)
 [![install size](https://img.shields.io/badge/dependencies-0-brightgreen)](https://www.npmjs.com/package/kaeris?activeTab=dependencies)
 
-An i18n check for CI. It compares your source locale file with its translations and exits non-zero
-when a translation is missing, a key is left over, or a placeholder was lost or renamed:
-`Hello {name}` that became `Bonjour`, `%s` that became `%d`, an ICU plural without its `other` branch.
+An i18n check for CI, and since 0.2.46 a translator. `kaeris check` compares your source locale
+file with its translations and exits non-zero when a translation is missing or a placeholder was
+lost or renamed: `Hello {name}` that became `Bonjour`, `%s` that became `%d`, an ICU plural without
+its `other` branch. Keys left over and warnings fail it only with `--strict`.
+`kaeris translate` writes the file in 46 languages through the KAERIS API ([below](#translate)).
 
-It runs offline, reads 13 formats, and has no dependencies. Node 18 or newer.
+The check runs offline and reads 13 formats; the package has no dependencies. Node 18 or newer.
 
 ```bash
 npx kaeris check --source locales/en.json --langs de,fr,ja

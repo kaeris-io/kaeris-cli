@@ -2618,7 +2618,7 @@ def build_parser():
                         "whose words change shape (ru, pl, fi, de compounds...) a miss is a "
                         "warning, since an inflected form is still matched by its stem.")
     c.add_argument("--strict", action="store_true",
-                   help="Also fail (non-zero exit) if a target has extra/stale keys not in the source")
+                   help="Also fail (non-zero exit) on warnings and if a target has extra/stale keys not in the source")
     c.add_argument("--json", action="store_true", help="Machine-readable JSON output instead of the human report")
     c.add_argument("--sarif", metavar="PATH", default=None,
                    help="Also write a SARIF 2.1.0 report to PATH. Upload it with "
