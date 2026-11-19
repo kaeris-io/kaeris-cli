@@ -27,7 +27,7 @@ server by test_detector_parity) is not touched.
 ## Steps
 
 1. `kaeris/detectors.py`: `_PLURAL_RED_SINCE_043` (the 13 languages above) and
-   `_icu_fault_severity(msg, lang)`; `string_faults` tags each `_icu_faults` message with it.
+   `_icu_fault_severity(msg)`; `string_faults` tags each `_icu_faults` message with it.
 2. `kaeris/check.py`: `_plural_set_faults` returns (msg, severity); a warning goes to
    `result["warnings"]` with severity `warn`, so `ok` stays true and exit is 0 without --strict.
 3. npm port: `PLURAL_RED_SINCE_043` in tables.js (gen_tables.py), `icuFaultSeverity` in
@@ -36,11 +36,20 @@ server by test_detector_parity) is not touched.
    npm cases through pairs/baselines (gen_baselines.py), parity case for the new helper.
 5. Regenerate npm baselines/tables; full pytest and `node --test`.
 6. Live table: 0.2.43 / A / B / B --strict, Python and npm, same samples.
+7. README and npm README: the new plural findings are listed under the warnings.
 
 ## Server (i18n_tool), not changed here
 
-- `backend/translator.py`: the same `_PLURAL_RED_SINCE_043` and `_icu_fault_severity`.
-- `backend/checker.py` `string_faults`: `add("icu_broken", T._icu_fault_severity(msg, lang), msg)`
-  instead of ERROR, or /api/check fails what `kaeris check` passes.
-- test_detector_parity.py on this branch compares `_icu_fault_severity` with the backend's:
-  without step 1 on the server the `detector-parity` job of a same-named i18n_tool branch is red.
+Against release-1066 (94114a89); tried on a throwaway copy, not committed (the patch and runs are
+in i18n_tool docs/p23/checks/variant-b/):
+
+- `backend/translator.py`, after `_NO_SINGULAR` (line 1136): `_PLURAL_RED_SINCE_043`,
+  `_ICU_FORMS_MSG_RE`, `_ICU_NESTED_MSG_RE`; before `def _icu_faults` (line 1761):
+  `_icu_fault_severity(msg)` returning "error"/"warn", same as kaeris/detectors.py.
+- `backend/checker.py` line 105: `add("icu_broken", T._icu_fault_severity(msg), msg)` instead of
+  ERROR, or /api/check fails what `kaeris check` passes (de/fr/es/it without `one`, nested, cy).
+- `backend/tests/test_check_matches_cli.py`: a de value without `one` in the corpus; today's
+  corpus has none, so it would not notice the page and the CLI disagreeing.
+- test_detector_parity.py on this branch compares `_icu_fault_severity` with the backend's: when
+  this reaches the kaeris-cli branch the i18n_tool CI clones (same name, else main), the
+  `detector-parity` job is red until translator.py has the function.
