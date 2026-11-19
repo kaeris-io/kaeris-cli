@@ -347,7 +347,9 @@ account and no network. **RED** problems fail the build; **YELLOW** are advisory
 - **Broken entities / encoding** — double-encoded (`&amp;amp;`) or malformed `\u` escapes.
 - **Lost inline tags** — an HTML/markup tag (`<b>`, `</b>`, …) present in the source is gone.
 - **ICU / CLDR plural completeness** — the target language is missing a plural category its
-  CLDR rules require.
+  CLDR rules require: a top-level ICU plural or an i18next `_one`/`_other` set in Russian,
+  Ukrainian, Polish, Czech, Slovak, Croatian, Serbian, Lithuanian, Romanian, Arabic, Latvian,
+  Slovenian or Hebrew, and an ICU block without `other`.
 - **Glossary term dropped** (opt-in) — a term listed under `keep` in kaeris.json (or passed as
   `kaeris check --glossary "KAERIS,GitHub"`) isn't carried into the translation.
 - **Glossary term translated another way** (opt-in) — a term of `kaeris-glossary.json` is in the
@@ -360,6 +362,10 @@ account and no network. **RED** problems fail the build; **YELLOW** are advisory
 - **Register / casing drift**, **cross-key inconsistency**, and **UI-overflow risk** (a
   translation much longer than its source, relative to that language's typical expansion).
 - **Extra/stale keys** — present in a target but not the source.
+- **Plural forms checked since 0.2.45** — a plural without `one` in a language that has one
+  (`{n, plural, other {# Dateien}}` in de/fr/es/it…, which renders "1 Dateien"), a plural nested
+  in a `select` or another plural, a Rails `items.one`/`items.other` set, Welsh. Named in the
+  report; `--strict` fails on them.
 
 Exit codes: `0` clean, `1` a RED problem was found (or a YELLOW under `--strict`), `2` bad
 usage (source not found, no languages given, etc.) — drop it straight into CI:
