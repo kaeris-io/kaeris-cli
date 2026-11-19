@@ -259,8 +259,9 @@ function fmtReceipt(rec) {
   const backup = (rec.fallback || {}).model;
   const served = (rec.models_served || []).filter(Boolean).map((m) => (backup && m === backup ? `${m} (backup)` : m));
   const plan = rec.plan in PLAN_NAMES ? PLAN_NAMES[rec.plan] : rec.plan;
+  const nStrings = rec.strings || 0;
   const lines = [
-    `Run: ${served.length ? served.join(" + ") : rec.model || "?"} · ${plan || "plan hidden"} · ${delivered.length}/${(langs.requested || []).length} languages · ${rec.strings || 0} strings · ${rec.seconds || 0}s`,
+    `Run: ${served.length ? served.join(" + ") : rec.model || "?"} · ${plan || "plan hidden"} · ${delivered.length}/${(langs.requested || []).length} languages · ${nStrings} string${nStrings === 1 ? "" : "s"} · ${rec.seconds || 0}s`,
   ];
   if (!mine) {
     lines.push("     spend and settings are the job owner's — not shown here");

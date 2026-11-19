@@ -488,6 +488,14 @@ function osMessage(e) {
 
 // ── entry point ───────────────────────────────────────────────────────────────
 
+// The line bin/kaeris.js prints when a command throws: it names the command that stopped, so a
+// crash in `translate` does not read as "kaeris check stopped".
+export function crashLine(argv, e) {
+  const cmd = (argv || []).find((a) => a === "check" || a === "translate");
+  const what = cmd ? `kaeris ${cmd}` : "kaeris";
+  return `✗ ${what} stopped on an internal error: ${e && e.message ? e.message : e}`;
+}
+
 export function main(argv) {
   try {
     const g = readOptions(GLOBAL_OPTIONS, argv, 0, true);

@@ -469,3 +469,32 @@ describe("translate: help", () => {
     assert.doesNotMatch(r.stdout, /The other commands \(translate,/);
   });
 });
+
+describe("translate: words on the screen (pre-tag round 2)", () => {
+  test("one string is '1 string' on the Run line", async () => {
+    scene = defaultScene();
+    scene.members = { "de.json": DE };
+    scene.receipt = () => [200, { model: "test-model", plan: "anonymous", strings: 1, seconds: 1, languages: { requested: ["de"], delivered: ["de"], failed: [] } }];
+    const dir = tmp();
+    write(dir, "en.json", EN);
+    const r = await kaeris(["translate", "en.json", "--langs", "de"], { cwd: dir });
+    assert.equal(r.code, 0, r.stderr);
+    assert.match(r.stderr, / · 1 string · /);
+    assert.doesNotMatch(r.stderr, /1 strings/);
+  });
+
+  test("a crash names the command that crashed", async () => {
+    const { crashLine } = await import("../src/cli.js");
+    const e = new Error("boom");
+    assert.equal(crashLine(["translate", "en.json"], e), "✗ kaeris translate stopped on an internal error: boom");
+    assert.equal(crashLine(["--key", "k", "translate"], e), "✗ kaeris translate stopped on an internal error: boom");
+    assert.equal(crashLine(["check", "--source", "en.json"], e), "✗ kaeris check stopped on an internal error: boom");
+    assert.equal(crashLine([], e), "✗ kaeris stopped on an internal error: boom");
+  });
+
+  test("the main help says what fails the check without --strict", async () => {
+    const r = await kaeris(["--help"], { cwd: tmp() });
+    assert.match(r.stdout, /keys are\s+missing or placeholders are broken/);
+    assert.doesNotMatch(r.stdout, /keys are missing or extra/);
+  });
+});
