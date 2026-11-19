@@ -76,6 +76,16 @@ for _cid, (_source, _files, _lang, _missing) in sorted(PLURALS.CASES.items()):
     case("plurals-" + re.sub(r"[^a-z0-9]+", "-", _cid.lower()).strip("-"), dict(_files),
          ["--source", _source, "--langs", _lang])
 
+# ── B0b. variant B (tests/test_plurals_variant_b.py): a plural finding 0.2.43 passed warns, one it
+# failed still fails; with and without --strict, and next to a real error ─────────────────────────
+VARIANT_B = _load("plurals_variant_b", os.path.join(ROOT, "tests", "test_plurals_variant_b.py"))
+for _sid, (_files, _source, _langs, *_rest) in sorted({**VARIANT_B.SAMPLES, **VARIANT_B.MIXED}.items()):
+    _name = "plurals-b-" + re.sub(r"[^a-z0-9]+", "-", _sid.lower()).strip("-")
+    case(_name, dict(_files), ["--source", _source, "--langs", _langs])
+    case(_name + "-strict", dict(_files), ["--source", _source, "--langs", _langs, "--strict"])
+case("plurals-b-de-without-one-sarif", dict(VARIANT_B.SAMPLES["de ICU without one"][0]),
+     ["--source", "en.json", "--langs", "de", "--sarif", "out.sarif"])
+
 # ── B. native plurals (fixtures from the same suite) ─────────────────────────────────────────────
 AP, items = EVERY.ANDROID_PLURALS, EVERY._items
 ANDROID_EN = AP % items([("one", "%d file"), ("other", "%d files")])
@@ -484,6 +494,15 @@ HAND = [
     ("Check for updates", "#-#-#-#-#  pt-PT.po (App 2.3.0)  #-#-#-#-#\nVerificar\n#-#-#-#-#  pt-PT.po (App 2.3.0)  #-#-#-#-#\nProcurar", "pt", None),
     ("Delete 5 files", "#-#-#-#-#  pt-PT.po (App 2.3.0)  #-#-#-#-#\nExcluir 50 arquivos", "pt", None),
     ("Check for updates", "#-#-#-#-#  a.po  #-#-#-#-#", "pt", None), ("Ünïcode ß ſ K", "ünïcode SS s k", "de", ["ß"]),
+    # variant B: the level of each plural finding (warn where 0.2.43 was silent)
+    ("{n, plural, one {# file} other {# files}}", "{n, plural, other {# Dateien}}", "de", None),
+    ("{n, plural, one {# file} other {# files}}", "{n, plural, other {# fichiers}}", "fr-CA", None),
+    ("{n, plural, one {# file} other {# files}}", "{n, plural, one {# ffeil} other {# ffeiliau}}", "cy", None),
+    ("{g, select, male {{n, plural, one {# file} other {# files}}} other {x}}",
+     "{g, select, male {{n, plural, one {# plik} other {# pliku}}} other {x}}", "pl", None),
+    ("{g, select, male {{n, plural, one {# file} other {# files}}} other {x}}",
+     "{g, select, male {{n, plural, one {# plik}}} other {x}}", "pl", None),
+    ("{n, plural, one {# file} other {# files}}", "{n, plural, other {# файлов}}", "ru", None),
 ]
 WORDS = {
     "de": ["Speichern", "Abbrechen", "Datei", "Einstellungen", "Willkommen", "Sie", "du", "dein", "Ihnen", "Konto", "löschen", "Weiter"],

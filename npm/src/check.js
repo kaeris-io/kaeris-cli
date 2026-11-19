@@ -182,11 +182,14 @@ function pluralSetFaults(sourceFlat, targetFlat, missing, extra, lang) {
     }
     if (single && targetFlat.has(other)) for (const c of srcForms) optional.add(`${base}${sep}${c}`);
     if (!forms) continue;
+    // 0.2.43 judged i18next `_` sets in its own table only: a dotted (Rails) or Welsh set warns.
+    const old = sep === "_" && det.PLURAL_RED_SINCE_043.has(baseLang);
     for (const cat of sorted(forms)) {
       const key = `${base}${sep}${cat}`;
       owned.add(key);
       if (!sourceFlat.has(key) && !targetFlat.has(key)) {
-        faults.push(`plural form missing: ${key} — ${baseLang} needs the ${CLDR_ORDER_LOCAL.filter((c) => forms.has(c)).join("/")} forms of '${base}'`);
+        faults.push([`plural form missing: ${key} — ${baseLang} needs the ${CLDR_ORDER_LOCAL.filter((c) => forms.has(c)).join("/")} forms of '${base}'`,
+          old ? det.ERROR : det.WARN]);
       }
     }
   }
@@ -240,9 +243,11 @@ export function checkLocales(sourceObj, langs, loadTarget, glossary = null) {
       result.missing.set(lang, missing);
       result.ok = false;
     }
-    for (const msg of pluralFaults) {
-      result.faults.push({ lang, key: "", msg, severity: "error" });
-      result.ok = false;
+    for (const [msg, severity] of pluralFaults) {
+      if (severity === det.ERROR) {
+        result.faults.push({ lang, key: "", msg, severity: "error" });
+        result.ok = false;
+      } else result.warnings.push({ lang, key: "", msg, severity: "warn" });
     }
     if (extraLeft.length) result.extra.set(lang, extraLeft);
     for (const issue of issues) result.placeholder_issues.push({ lang, ...issue });

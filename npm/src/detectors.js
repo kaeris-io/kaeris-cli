@@ -430,6 +430,11 @@ function lineBreakFaults(original, translated, softBreaks = false) {
 export const CLDR_REQUIRED = new Map(Object.entries(T.CLDR_REQUIRED).map(([k, v]) => [k, new Set(v)]));
 // Languages with `other` as their only plural form: `one` is not owed by their translation.
 export const NO_SINGULAR = new Set(T.NO_SINGULAR);
+// Languages whose plurals 0.2.43 already failed on a missing form: a plural-form finding outside
+// them, or in a nested block, is a warning (variant B). See _icu_fault_severity in detectors.py.
+export const PLURAL_RED_SINCE_043 = new Set(T.PLURAL_RED_SINCE_043);
+const ICU_FORMS_MSG_RE = /^ICU plural is missing the [a-z/]+ form\(s\) (\S+) requires$/;
+const ICU_NESTED_MSG_RE = /^ICU \w+ inside the .* is missing the /;
 
 // Top-level ICU plural/select/selectordinal blocks as [type, full segment].
 function icuBlocks(text) {
@@ -787,6 +792,15 @@ function answeredInsteadOfTranslating(original, translated) {
 
 // ── the two doors ─────────────────────────────────────────────────────────────
 
+// ERROR, or WARN for a plural-form finding 0.2.43 did not report (a nested block, or a language
+// outside PLURAL_RED_SINCE_043). See _icu_fault_severity in kaeris/detectors.py.
+export function icuFaultSeverity(msg) {
+  if (ICU_NESTED_MSG_RE.test(msg)) return WARN;
+  const m = ICU_FORMS_MSG_RE.exec(msg);
+  if (m && !PLURAL_RED_SINCE_043.has(m[1])) return WARN;
+  return ERROR;
+}
+
 // All per-string faults between one source value and one target value, each tagged error
 // (breaks the build) or warn (advisory).
 export function stringFaults(src, tgt, lang, glossary = null) {
@@ -810,7 +824,7 @@ export function stringFaults(src, tgt, lang, glossary = null) {
   for (const msg of numericFaults(src, tgt, lang)) out.push({ severity: ERROR, msg });
   for (const msg of entityFaults(src, tgt)) out.push({ severity: ERROR, msg });
   for (const msg of currencyFaults(src, tgt)) out.push({ severity: ERROR, msg });
-  for (const msg of icuFaults(src, tgt, lang)) out.push({ severity: ERROR, msg });
+  for (const msg of icuFaults(src, tgt, lang)) out.push({ severity: icuFaultSeverity(msg), msg });
   for (const tag of lostTags(src, tgt)) out.push({ severity: ERROR, msg: `lost inline tag ${tag}` });
   for (const msg of lineBreakFaults(src, tgt)) out.push({ severity: WARN, msg });
   if (glossary && glossary.length) {

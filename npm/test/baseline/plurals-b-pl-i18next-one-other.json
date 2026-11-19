@@ -1,0 +1,34 @@
+{
+ "json": {
+  "code": 1,
+  "stdout": {
+   "ok": false,
+   "missing": {},
+   "extra": {},
+   "placeholder_issues": [],
+   "missing_files": [],
+   "faults": [
+    {
+     "lang": "pl",
+     "key": "",
+     "msg": "plural form missing: files_few — pl needs the one/few/many/other forms of 'files'",
+     "severity": "error"
+    },
+    {
+     "lang": "pl",
+     "key": "",
+     "msg": "plural form missing: files_many — pl needs the one/few/many/other forms of 'files'",
+     "severity": "error"
+    }
+   ],
+   "warnings": []
+  },
+  "stderr": ""
+ },
+ "human": {
+  "code": 1,
+  "stdout": "",
+  "stderr": "✗ pl: 2 translation fault(s):\n    plural form missing: files_few — pl needs the one/few/many/other forms of 'files'\n    plural form missing: files_many — pl needs the one/few/many/other forms of 'files'\n✗ 2 translation faults\n"
+ },
+ "sarif": null
+}

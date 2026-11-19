@@ -761,6 +761,14 @@ _CLDR_REQUIRED: dict[str, set[str]] = {
 # demanded of their translation (a false alarm teaches people to ignore the check). The
 # same set as backend/translator.py, checked against CLDR there.
 _NO_SINGULAR = {"ja", "zh", "ko", "vi", "th", "id", "ms", "km", "lo", "my", "yo", "ig", "jv", "su"}
+# The languages whose plurals 0.2.43 already failed on a missing CLDR form: the table above as it
+# stood then (Welsh came in 0.2.45). A plural-form finding outside what 0.2.43 reported is a
+# warning (variant B, P1.3, 19.11): it fails only with --strict, so an upgrade turns no CI red
+# that was green, while everything 0.2.43 failed still fails.
+_PLURAL_RED_SINCE_043 = frozenset({"ru", "uk", "pl", "cs", "sk", "hr", "sr", "lt", "ro", "ar",
+                                   "lv", "sl", "he"})
+_ICU_FORMS_MSG_RE = re.compile(r"^ICU plural is missing the [a-z/]+ form\(s\) (\S+) requires$")
+_ICU_NESTED_MSG_RE = re.compile(r"^ICU \w+ inside the .* is missing the ")
 _ICU_HEAD_RE = re.compile(r"\{\s*[\w\d_]+\s*,\s*(plural|selectordinal|select)\s*,")
 
 def _icu_blocks(text: str) -> list[tuple[str, str]]:
@@ -1418,6 +1426,20 @@ def warning_group(message: str) -> str:
 _MERGE_MARKER_RE = re.compile(r"#-#-#-#-#[^\n]*?#-#-#-#-#[ \t]*\n?")
 
 
+def _icu_fault_severity(msg: str) -> str:
+    """ERROR, or WARN for a plural-form finding 0.2.43 did not report: a block nested in another
+    block's arm (0.2.43 read top-level blocks only), or missing forms in a language outside
+    _PLURAL_RED_SINCE_043 (the `one` rule for de/fr/es/it…, Welsh). A top-level block in one of
+    those languages: every entry there holds `one`, so any form found missing now means 0.2.43
+    failed the same block, and it stays an error. Read from the message, which parity pins."""
+    if _ICU_NESTED_MSG_RE.match(msg):
+        return WARN
+    m = _ICU_FORMS_MSG_RE.match(msg)
+    if m and m.group(1) not in _PLURAL_RED_SINCE_043:
+        return WARN
+    return ERROR
+
+
 def string_faults(src, tgt, lang, glossary=None):
     """All per-string faults between one source value and one target value,
     each tagged error (breaks build) or warn (advisory). Pure/offline."""
@@ -1445,7 +1467,7 @@ def string_faults(src, tgt, lang, glossary=None):
     for msg in _currency_faults(src, tgt):
         out.append({"severity": ERROR, "msg": msg})
     for msg in _icu_faults(src, tgt, lang):
-        out.append({"severity": ERROR, "msg": msg})
+        out.append({"severity": _icu_fault_severity(msg), "msg": msg})
     for tag in _lost_tags(src, tgt):
         out.append({"severity": ERROR, "msg": f"lost inline tag {tag}"})
     for msg in _line_break_faults(src, tgt):

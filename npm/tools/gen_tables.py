@@ -53,6 +53,7 @@ def build():
         "EMPHASIS_RE": pat(d._EMPHASIS_RE),
         "CLDR_REQUIRED": {k: sorted(v) for k, v in d._CLDR_REQUIRED.items()},
         "NO_SINGULAR": sorted(d._NO_SINGULAR),
+        "PLURAL_RED_SINCE_043": sorted(d._PLURAL_RED_SINCE_043),
         "REGISTER_MARKERS": {k: [pat(a), pat(b)] for k, (a, b) in d._REGISTER_MARKERS.items()},
         "LANG_EXPANSION": d._LANG_EXPANSION,
         "WRAPS_RE": pat(d._WRAPS_RE),

@@ -1,0 +1,46 @@
+{
+ "json": {
+  "code": 1,
+  "stdout": {
+   "ok": true,
+   "missing": {},
+   "extra": {},
+   "placeholder_issues": [],
+   "missing_files": [],
+   "faults": [],
+   "warnings": [
+    {
+     "lang": "cy",
+     "key": "",
+     "msg": "plural form missing: files_few — cy needs the zero/one/two/few/many/other forms of 'files'",
+     "severity": "warn"
+    },
+    {
+     "lang": "cy",
+     "key": "",
+     "msg": "plural form missing: files_many — cy needs the zero/one/two/few/many/other forms of 'files'",
+     "severity": "warn"
+    },
+    {
+     "lang": "cy",
+     "key": "",
+     "msg": "plural form missing: files_two — cy needs the zero/one/two/few/many/other forms of 'files'",
+     "severity": "warn"
+    },
+    {
+     "lang": "cy",
+     "key": "",
+     "msg": "plural form missing: files_zero — cy needs the zero/one/two/few/many/other forms of 'files'",
+     "severity": "warn"
+    }
+   ]
+  },
+  "stderr": ""
+ },
+ "human": {
+  "code": 1,
+  "stdout": "",
+  "stderr": "✗ cy: 4 warning(s):\n    : plural form missing: files_few — cy needs the zero/one/two/few/many/other forms of 'files'\n    : plural form missing: files_many — cy needs the zero/one/two/few/many/other forms of 'files'\n    : plural form missing: files_two — cy needs the zero/one/two/few/many/other forms of 'files'\n    : plural form missing: files_zero — cy needs the zero/one/two/few/many/other forms of 'files'\n✗ 4 warnings (--strict)\n"
+ },
+ "sarif": null
+}

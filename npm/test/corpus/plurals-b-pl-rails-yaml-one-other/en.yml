@@ -1,0 +1,4 @@
+en:
+  files:
+    one: "%{count} file"
+    other: "%{count} files"
