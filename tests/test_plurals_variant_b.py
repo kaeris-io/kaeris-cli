@@ -10,6 +10,9 @@ plural with one/other only failed in 0.2.43 already and still does.
 
 SAMPLES is also read by the live comparison run (0.2.43 / variant A / variant B, Python and npm),
 so the table in the release notes comes from these very files.
+
+"0.2.43" is the release as PUBLISHED on PyPI: its package is commit c9a026e, newer than the git
+tag v0.2.43 (572bf51), and it already let a block of `=N` arms + `other` owe no CLDR form.
 """
 import json
 import os
@@ -94,6 +97,53 @@ SAMPLES = {
     "pl ICU inside select full": ({"en.json": J(SRC_SEL), "pl.json": J({"files": sel(PL_FULL)})}, "en.json", "pl", None),
 }
 
+
+# ── round 2 (critic, 19.11): the top-level shapes PyPI 0.2.43 passed or failed. The PUBLISHED
+# 0.2.43 (= c9a026e, not the tag v0.2.43 = 572bf51) owed no CLDR form at all to a block that spells
+# its cases out (`=N` arms and no category keyword besides `other`): `{n, plural, =0 {…} other {…}}`
+# passed in Polish. 0.2.45 still owes such a block `one` (unless it has `=1`): a warning in B. ──
+def one_key(lang, src, tgt):
+    return ({"en.json": J({"files": src}), f"{lang}.json": J({"files": tgt})}, "en.json", lang)
+
+
+SRC_EQ0 = icu([("=0", "no files")] + EN_ARMS)
+SRC_EQ = icu([("=0", "no files"), ("=1", "one file"), ("=2", "two files"), ("other", "# files")])
+SRC_OFFSET = "{n, plural, offset:1 =0 {nobody} =1 {you} one {you and # other} other {you and # others}}"
+SRC_TWO = SRC_EQ0 + " / " + icu(EN_ARMS).replace("{n,", "{m,")
+SRC_ORD = "{n, selectordinal, one {#st} two {#nd} few {#rd} other {#th}}"
+SRC_PL_SEL = "{n, plural, one {{g, select, male {his file} other {their file}}} other {# files}}"
+for _lang, _zero in (("pl", "brak"), ("ru", "нет"), ("cs", "nic"), ("uk", "немає"), ("he", "אין"),
+                     ("lv", "nav"), ("ar", "لا ملفات")):
+    SAMPLES[f"{_lang} ICU =0 and other only"] = (
+        *one_key(_lang, SRC_EQ0, icu([("=0", _zero), ("other", "# X")])), "warning")
+SAMPLES.update({
+    "pl ICU =0 =1 and other": (*one_key("pl", SRC_EQ, icu([("=0", "brak"), ("=1", "jeden"), ("=2", "dwa"),
+                                                          ("other", "# plików")])), None),
+    "ru ICU =1 =2 and other": (*one_key("ru", SRC_EQ, icu([("=0", "нет"), ("=1", "один"), ("=2", "два"),
+                                                          ("other", "# файлов")])), None),
+    "pl ICU other only": (*one_key("pl", SRC_ICU["files"], icu([("other", "# plików")])), "error"),
+    "ru ICU few/many/other without one": (*one_key("ru", SRC_ICU["files"], icu(RU_FULL[1:])), "error"),
+    "pl ICU =0 one other": (*one_key("pl", SRC_EQ0, icu([("=0", "brak")] + PL_SHORT)), "error"),
+    "pl ICU offset =0 =1 and other": (*one_key("pl", SRC_OFFSET, "{n, plural, offset:1 =0 {nikt} =1 {ty} "
+                                                                 "other {ty i # innych}}"), None),
+    "pl ICU offset =0 and other": (*one_key("pl", "{n, plural, offset:1 =0 {nobody} other {you and # others}}",
+                                            "{n, plural, offset:1 =0 {nikt} other {ty i # innych}}"), "warning"),
+    "pl ICU offset one/other": (*one_key("pl", SRC_OFFSET, "{n, plural, offset:1 =0 {nikt} =1 {ty} "
+                                                           "one {ty i # inny} other {ty i # innych}}"), "error"),
+    "pl ICU =0 without other": (*one_key("pl", icu([("=0", "none"), ("other", "some")]), icu([("=0", "brak")])),
+                                {"error", "warning"}),
+    "pl two blocks: =0 and other + one/other": (
+        *one_key("pl", SRC_TWO, icu([("=0", "brak"), ("other", "# X")]) + " / "
+                 + icu(PL_SHORT).replace("{n,", "{m,")), {"error", "warning"}),
+    "pl plural one/other with a select inside": (
+        *one_key("pl", SRC_PL_SEL, "{n, plural, one {{g, select, male {jego plik} other {ich plik}}} "
+                                   "other {# plików}}"), "error"),
+    "pl selectordinal other only": (*one_key("pl", SRC_ORD, "{n, selectordinal, other {#.}}"), None),
+    "de ICU =0 =1 and other": (*one_key("de", SRC_EQ, icu([("=0", "keine"), ("=1", "eine"), ("=2", "zwei"),
+                                                          ("other", "# Dateien")])), None),
+    "ja ICU =0 and other": (*one_key("ja", SRC_EQ0, icu([("=0", "なし"), ("other", "#個")])), None),
+})
+
 # A run with a real error next to a new plural warning: the error decides, exit 1.
 MIXED = {
     "de without one + a missing key": (
@@ -143,8 +193,9 @@ def test_new_plural_findings_warn_old_ones_fail(tmp_path, sid):
         assert code == 0 and not found and not body["warnings"], (sid, body, human)
         assert check(tmp_path, source, langs, "--strict")[0] == 0, sid
         return
-    assert found and {lvl for lvl, _, _ in found} == {level}, (sid, found)
-    if level == "error":
+    want = level if isinstance(level, set) else {level}
+    assert found and {lvl for lvl, _, _ in found} == want, (sid, found)
+    if "error" in want:
         assert code == 1 and body["ok"] is False, (sid, code, human)
     else:
         assert code == 0 and body["ok"] is True and not body["faults"], (sid, code, human)
@@ -171,31 +222,78 @@ def test_the_warning_is_a_warning_in_sarif(tmp_path):
     assert [(r["ruleId"], r["level"]) for r in results] == [("translation-warning", "warning")], results
 
 
-@pytest.mark.parametrize("msg,level", [
-    ("ICU plural is missing the one form(s) de requires", det.WARN),
-    ("ICU plural is missing the one form(s) fr requires", det.WARN),
-    ("ICU plural is missing the few/many/two/zero form(s) cy requires", det.WARN),
-    ("ICU plural inside the select arm 'male' is missing the few/many form(s) pl requires", det.WARN),
-    ("ICU plural inside the select arm 'male' › plural arm 'one' is missing the one form(s) ru requires", det.WARN),
-    ("ICU select inside the plural arm 'one' is missing the required 'other' branch", det.WARN),
-    ("ICU plural is missing the few/many form(s) pl requires", det.ERROR),
-    ("ICU plural is missing the one form(s) ru requires", det.ERROR),
-    ("ICU plural is missing the few/many/two/zero form(s) ar requires", det.ERROR),
-    ("ICU plural is missing the required 'other' branch", det.ERROR),
-    ("ICU select is missing the required 'other' branch", det.ERROR),
-    ("ICU plural/select construct dropped or broken (1 in source, 0 in translation)", det.ERROR),
-    ("ICU exact-match branch =0 {…} was dropped in the translation", det.ERROR),
-])
-def test_icu_fault_severity(msg, level):
-    assert det._icu_fault_severity(msg) == level
+_REQUIRED_043 = {  # kaeris/detectors.py _CLDR_REQUIRED as published in 0.2.43 (no Welsh)
+    "ru": {"one", "few", "many"}, "uk": {"one", "few", "many"}, "pl": {"one", "few", "many"},
+    "cs": {"one", "few"}, "sk": {"one", "few"}, "hr": {"one", "few"}, "sr": {"one", "few"},
+    "lt": {"one", "few"}, "ro": {"one", "few"}, "ar": {"zero", "one", "two", "few", "many"},
+    "lv": {"zero", "one"}, "sl": {"one", "two", "few"}, "he": {"one", "two"},
+}
 
 
-def test_every_language_of_the_old_table_holds_one():
-    """The split by message rests on this: in a 0.2.43 language, any form missing now (the `one`
-    rule included) is a form 0.2.43 found missing in the same block."""
-    for lang in det._PLURAL_RED_SINCE_043:
-        assert "one" in det._CLDR_REQUIRED[lang], lang
-    assert set(det._CLDR_REQUIRED) - det._PLURAL_RED_SINCE_043 == {"cy"}
+def icu_faults_043(original, translated, lang):
+    """`_icu_faults` of the PUBLISHED 0.2.43 (PyPI = c9a026e), its loop copied verbatim: top-level
+    blocks only, the 0.2.43 table, a block of `=N` arms + `other` owes no form."""
+    src, tr = det._icu_blocks(original), det._icu_blocks(translated)
+    faults = []
+    if len(src) > len(tr):
+        faults.append("dropped")
+    base = (lang or "").replace("_", "-").split("-")[0].lower()
+    for typ, seg in tr:
+        arms = det._icu_arms(seg)
+        if not arms:
+            continue
+        _, kws, exact_set = arms
+        if "other" not in kws:
+            faults.append("other")
+        if typ == "plural" and not (exact_set and kws <= {"other"}):
+            if _REQUIRED_043.get(base, set()) - kws:
+                faults.append("forms")
+    se = [a[2] for a in (det._icu_arms(s) for _, s in src) if a]
+    te = [a[2] for a in (det._icu_arms(s) for _, s in tr) if a]
+    if (set().union(*se) if se else set()) - (set().union(*te) if te else set()):
+        faults.append("exact")
+    return faults
+
+
+def _corpus():
+    """Every top-level shape the critic named and their nesting, in every language that has a
+    table entry or a singular: arm sets × =N sets × offset × wrapped in a select or not."""
+    import itertools
+    arm_sets = [(), ("one",), ("few", "many"), ("one", "few"), ("one", "few", "many"), ("zero", "one", "two"),
+                ("zero", "one", "two", "few", "many"), ("two",)]
+    exact_sets = [(), ("=0",), ("=1",), ("=0", "=1"), ("=1", "=2"), ("=0", "=2")]
+    langs = sorted(_REQUIRED_043) + ["cy", "de", "fr", "en", "ja", "pt-BR"]
+    for arms, exacts, other, offset, wrap in itertools.product(arm_sets, exact_sets, (True, False),
+                                                               (False, True), (None, "select", "plural")):
+        body = " ".join([f"{e} {{x}}" for e in exacts] + [f"{a} {{# x}}" for a in arms] + (["other {# x}"] if other else []))
+        block = "{n, plural, " + ("offset:1 " if offset else "") + body + "}"
+        src = "{n, plural, " + ("offset:1 " if offset else "") + " ".join(f"{e} {{x}}" for e in exacts) + " one {# x} other {# x}}"
+        if wrap == "select":
+            block, src = f"{{g, select, male {{{block}}} other {{x}}}}", f"{{g, select, male {{{src}}} other {{x}}}}"
+        elif wrap == "plural":
+            block = f"{{m, plural, one {{{block}}} few {{a}} many {{b}} other {{c}}}}"
+            src = f"{{m, plural, one {{{src}}} other {{c}}}}"
+        for lang in langs:
+            yield src, block, lang
+
+
+def test_b_errors_exactly_where_published_043_failed():
+    """The promise of B on ICU, string by string: an ICU error now iff published 0.2.43 had one."""
+    n = flips = 0
+    for src, tgt, lang in _corpus():
+        n += 1
+        red_043 = bool(icu_faults_043(src, tgt, lang))
+        red_b = any(level == det.ERROR for _, level in det._icu_findings(src, tgt, lang))
+        assert red_b == red_043, (src, tgt, lang, icu_faults_043(src, tgt, lang), det._icu_findings(src, tgt, lang))
+        flips += red_043 != bool(det._icu_faults(src, tgt, lang))
+    assert n > 10000 and flips > 100, (n, flips)   # the corpus does hold shapes A fails and 0.2.43 passed
+
+
+def test_findings_are_the_faults_with_a_level():
+    for src, tgt, lang in _corpus():
+        found = det._icu_findings(src, tgt, lang)
+        assert [m for m, _ in found] == det._icu_faults(src, tgt, lang)
+        assert {lvl for _, lvl in found} <= {det.ERROR, det.WARN}
 
 
 def test_string_faults_carries_the_level():
