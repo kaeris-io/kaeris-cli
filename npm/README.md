@@ -51,7 +51,8 @@ Fails the build:
 - numbers and currencies that changed, double-encoded entities, lost inline tags
 - terms from `--glossary` that were dropped
 
-Warns (fails only with `--strict`): extra keys, empty translations, text left in the source
+Warns (fails only with `--strict`): plural forms checked since 0.2.45 (a plural without `one` in
+de/fr/es/it…, a plural nested in a `select`, Rails `items.one`/`items.other`, Welsh), extra keys, empty translations, text left in the source
 language, a lost line break or `*emphasis*`, mixed formal and informal address, a label that grew
 past what a button holds, the same source text translated two ways.
 
