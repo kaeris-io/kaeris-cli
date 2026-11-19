@@ -79,7 +79,7 @@ for _cid, (_source, _files, _lang, _missing) in sorted(PLURALS.CASES.items()):
 # ── B0b. variant B (tests/test_plurals_variant_b.py): a plural finding 0.2.43 passed warns, one it
 # failed still fails; with and without --strict, and next to a real error ─────────────────────────
 VARIANT_B = _load("plurals_variant_b", os.path.join(ROOT, "tests", "test_plurals_variant_b.py"))
-for _sid, (_files, _source, _langs, *_rest) in sorted({**VARIANT_B.SAMPLES, **VARIANT_B.MIXED}.items()):
+for _sid, (_files, _source, _langs, *_rest) in sorted({**VARIANT_B.SAMPLES, **VARIANT_B.MIXED, **VARIANT_B.NO_ONE}.items()):
     _name = "plurals-b-" + re.sub(r"[^a-z0-9]+", "-", _sid.lower()).strip("-")
     case(_name, dict(_files), ["--source", _source, "--langs", _langs])
     case(_name + "-strict", dict(_files), ["--source", _source, "--langs", _langs, "--strict"])
