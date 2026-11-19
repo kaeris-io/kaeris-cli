@@ -2,9 +2,10 @@
 
 A Polish plural with only `one` and `other` renders "5 przedmiotu" for five things: valid ICU,
 valid JSON, wrong grammar for every number from 2 up, and no compiler says a word. The check
-must fail the build on it (exit 1) in every format that has plurals, including a plural that
-sits inside a select or inside another plural, and must stay quiet where the language really
-has fewer forms (Japanese: `other` only; English: one/other).
+must name it in every format that has plurals, including a plural that sits inside a select or
+inside another plural, and must stay quiet where the language really has fewer forms (Japanese:
+`other` only; English: one/other). What 0.2.43 failed fails (exit 1); what it passed is a
+warning that fails with --strict (variant B, NEW_SINCE_043 below).
 
 The fixtures are also the corpus of docs/PLURALS-VS-I18NEXT-1118.md, where the same files are
 run through `i18next-cli lint`.
@@ -19,9 +20,9 @@ import pytest
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
-def run(root, source, langs):
+def run(root, source, langs, *extra):
     r = subprocess.run(
-        [sys.executable, "-m", "kaeris", "check", "--source", str(root / source), "--langs", langs],
+        [sys.executable, "-m", "kaeris", "check", "--source", str(root / source), "--langs", langs, *extra],
         capture_output=True, text=True, encoding="utf-8",
         env={**os.environ, "NO_COLOR": "1", "PYTHONIOENCODING": "utf-8"})
     return r.returncode, r.stdout + r.stderr
@@ -251,6 +252,16 @@ case("yaml pl: complete", "en.yml", yml("pl", PL_FULL), "pl", None)
 case("yaml ja: other only", "en.yml", yml("ja", JA_ARMS), "ja", None)
 
 
+# Incomplete plurals 0.2.43 passed (live run 19.11: nested blocks, Rails sets, Welsh). Variant B
+# (tests/test_plurals_variant_b.py): they are named as warnings, exit 0, and fail with --strict.
+NEW_SINCE_043 = {
+    "arb pl: plural inside select one/other", "icu-json ar: plural inside plural one/other",
+    "icu-json cy: flat plural one/other", "icu-json cy: plural inside select one/other",
+    "icu-json pl: plural inside plural one/other", "icu-json pl: plural inside select one/other",
+    "yaml pl: one/other",
+}
+
+
 @pytest.mark.parametrize("cid", sorted(CASES))
 def test_plural_forms_follow_the_target_language(tmp_path, cid):
     source, files, lang, missing = CASES[cid]
@@ -258,10 +269,18 @@ def test_plural_forms_follow_the_target_language(tmp_path, cid):
     code, out = run(tmp_path, source, lang)
     if missing is None:
         assert code == 0, f"{cid}: a correct plural failed the check\n{out}"
-    else:
-        assert code == 1, f"{cid}: an incomplete plural passed the check (exit {code})\n{out}"
-        for word in missing:
-            assert word in out, f"{cid}: the report does not name '{word}'\n{out}"
+        return
+    want = 0 if cid in NEW_SINCE_043 else 1
+    assert code == want, f"{cid}: exit {code}, expected {want}\n{out}"
+    for word in missing:
+        assert word in out, f"{cid}: the report does not name '{word}'\n{out}"
+    if want == 0:
+        code, out = run(tmp_path, source, lang, "--strict")
+        assert code == 1, f"{cid}: --strict passed an incomplete plural\n{out}"
+
+
+def test_new_since_043_are_real_cases():
+    assert NEW_SINCE_043 <= {c for c, v in CASES.items() if v[3] is not None}
 
 
 def test_a_select_is_not_held_to_plural_forms(tmp_path):

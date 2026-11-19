@@ -220,7 +220,10 @@ def _plural_set_faults(source_flat, target_flat, missing, extra, lang):
     (i18next itself never reads `_one` for Japanese). The same holds for Rails `items.one`, for
     a .po plural whose header has one form (msgstr[0] only), and for i18next ordinals, which
     owe only `_ordinal_other`. Languages outside det._CLDR_REQUIRED / det._NO_SINGULAR are not
-    judged: the same conservative tables the ICU check uses."""
+    judged: the same conservative tables the ICU check uses.
+
+    Each fault is (msg, severity). 0.2.43 judged i18next `_` sets in its own table only, so a
+    dotted (Rails) set and a Welsh set are WARN: they fail only with --strict (variant B)."""
     base_lang = (lang or "").replace("_", "-").split("-")[0].lower()
     forms, single = _language_forms(lang)
     faults, owned, optional = [], set(), set()
@@ -234,12 +237,14 @@ def _plural_set_faults(source_flat, target_flat, missing, extra, lang):
             optional.update(f"{base}{sep}{c}" for c in src_forms)
         if not forms:
             continue
+        old = sep == "_" and base_lang in det._PLURAL_RED_SINCE_043
         for cat in sorted(forms):
             key = f"{base}{sep}{cat}"
             owned.add(key)
             if key not in source_flat and key not in target_flat:
-                faults.append(f"plural form missing: {key} — {base_lang} needs the "
-                              f"{'/'.join(c for c in CLDR_ORDER_LOCAL if c in forms)} forms of '{base}'")
+                faults.append((f"plural form missing: {key} — {base_lang} needs the "
+                               f"{'/'.join(c for c in CLDR_ORDER_LOCAL if c in forms)} forms of '{base}'",
+                               det.ERROR if old else det.WARN))
     if single:
         # gettext: msgid_plural is the second form, and a one-form language has no second.
         optional.update(k for k in missing if k.endswith(_PLURAL_KEY)
@@ -306,9 +311,12 @@ def check_locales(source_obj, langs, load_target, glossary=None, terms=None):
         if missing:
             result["missing"][lang] = missing
             result["ok"] = False
-        for msg in plural_faults:
-            result["faults"].append({"lang": lang, "key": "", "msg": msg, "severity": "error"})
-            result["ok"] = False
+        for msg, severity in plural_faults:
+            if severity == det.ERROR:
+                result["faults"].append({"lang": lang, "key": "", "msg": msg, "severity": "error"})
+                result["ok"] = False
+            else:
+                result["warnings"].append({"lang": lang, "key": "", "msg": msg, "severity": "warn"})
         if extra:
             result["extra"][lang] = extra
         for issue in issues:

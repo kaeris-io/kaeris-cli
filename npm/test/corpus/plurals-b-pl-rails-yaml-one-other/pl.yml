@@ -1,0 +1,4 @@
+pl:
+  files:
+    one: "%{count} plik"
+    other: "%{count} pliku"

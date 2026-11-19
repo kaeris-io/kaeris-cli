@@ -1260,6 +1260,82 @@
    ]
   },
   {
+   "src": "{n, plural, one {# file} other {# files}}",
+   "tgt": "{n, plural, other {# Dateien}}",
+   "lang": "de",
+   "glossary": null,
+   "expect": [
+    {
+     "severity": "warn",
+     "msg": "ICU plural is missing the one form(s) de requires"
+    }
+   ]
+  },
+  {
+   "src": "{n, plural, one {# file} other {# files}}",
+   "tgt": "{n, plural, other {# fichiers}}",
+   "lang": "fr-CA",
+   "glossary": null,
+   "expect": [
+    {
+     "severity": "warn",
+     "msg": "ICU plural is missing the one form(s) fr requires"
+    }
+   ]
+  },
+  {
+   "src": "{n, plural, one {# file} other {# files}}",
+   "tgt": "{n, plural, one {# ffeil} other {# ffeiliau}}",
+   "lang": "cy",
+   "glossary": null,
+   "expect": [
+    {
+     "severity": "warn",
+     "msg": "ICU plural is missing the few/many/two/zero form(s) cy requires"
+    }
+   ]
+  },
+  {
+   "src": "{g, select, male {{n, plural, one {# file} other {# files}}} other {x}}",
+   "tgt": "{g, select, male {{n, plural, one {# plik} other {# pliku}}} other {x}}",
+   "lang": "pl",
+   "glossary": null,
+   "expect": [
+    {
+     "severity": "warn",
+     "msg": "ICU plural inside the select arm 'male' is missing the few/many form(s) pl requires"
+    }
+   ]
+  },
+  {
+   "src": "{g, select, male {{n, plural, one {# file} other {# files}}} other {x}}",
+   "tgt": "{g, select, male {{n, plural, one {# plik}}} other {x}}",
+   "lang": "pl",
+   "glossary": null,
+   "expect": [
+    {
+     "severity": "warn",
+     "msg": "ICU plural inside the select arm 'male' is missing the required 'other' branch"
+    },
+    {
+     "severity": "warn",
+     "msg": "ICU plural inside the select arm 'male' is missing the few/many form(s) pl requires"
+    }
+   ]
+  },
+  {
+   "src": "{n, plural, one {# file} other {# files}}",
+   "tgt": "{n, plural, other {# файлов}}",
+   "lang": "ru",
+   "glossary": null,
+   "expect": [
+    {
+     "severity": "error",
+     "msg": "ICU plural is missing the few/many/one form(s) ru requires"
+    }
+   ]
+  },
+  {
    "src": "Line one\nLine two",
    "tgt": "Line one\nLine two",
    "lang": "de",
@@ -2047,7 +2123,7 @@
    "glossary": null,
    "expect": [
     {
-     "severity": "error",
+     "severity": "warn",
      "msg": "ICU plural is missing the one form(s) it requires"
     }
    ]
@@ -16449,7 +16525,7 @@
      "msg": "double-encoded entity &amp;amp; — the & was re-escaped (renders literally)"
     },
     {
-     "severity": "error",
+     "severity": "warn",
      "msg": "ICU plural is missing the one form(s) fa requires"
     },
     {
@@ -19029,7 +19105,7 @@
      "msg": "ICU plural is missing the required 'other' branch"
     },
     {
-     "severity": "error",
+     "severity": "warn",
      "msg": "ICU plural is missing the one form(s) en requires"
     }
    ]

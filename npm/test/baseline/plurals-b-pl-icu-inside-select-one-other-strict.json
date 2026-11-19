@@ -1,0 +1,34 @@
+{
+ "json": {
+  "code": 1,
+  "stdout": {
+   "ok": true,
+   "missing": {},
+   "extra": {},
+   "placeholder_issues": [],
+   "missing_files": [],
+   "faults": [],
+   "warnings": [
+    {
+     "lang": "pl",
+     "key": "files",
+     "msg": "ICU plural inside the select arm 'male' is missing the few/many form(s) pl requires",
+     "severity": "warn"
+    },
+    {
+     "lang": "pl",
+     "key": "files",
+     "msg": "ICU plural inside the select arm 'other' is missing the few/many form(s) pl requires",
+     "severity": "warn"
+    }
+   ]
+  },
+  "stderr": ""
+ },
+ "human": {
+  "code": 1,
+  "stdout": "",
+  "stderr": "✗ pl: 2 warning(s):\n    files: ICU plural inside the select arm 'male' is missing the few/many form(s) pl requires\n    files: ICU plural inside the select arm 'other' is missing the few/many form(s) pl requires\n✗ 2 warnings (--strict)\n"
+ },
+ "sarif": null
+}

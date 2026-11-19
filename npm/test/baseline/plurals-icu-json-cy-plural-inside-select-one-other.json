@@ -1,40 +1,40 @@
 {
  "json": {
-  "code": 1,
+  "code": 0,
   "stdout": {
-   "ok": false,
+   "ok": true,
    "missing": {},
    "extra": {},
    "placeholder_issues": [],
    "missing_files": [],
-   "faults": [
+   "faults": [],
+   "warnings": [
     {
      "lang": "cy",
      "key": "cart.items",
      "msg": "ICU plural inside the select arm 'male' is missing the few/many/two/zero form(s) cy requires",
-     "severity": "error"
+     "severity": "warn"
     },
     {
      "lang": "cy",
      "key": "cart.items",
      "msg": "ICU plural inside the select arm 'female' is missing the few/many/two/zero form(s) cy requires",
-     "severity": "error"
+     "severity": "warn"
     },
     {
      "lang": "cy",
      "key": "cart.items",
      "msg": "ICU plural inside the select arm 'other' is missing the few/many/two/zero form(s) cy requires",
-     "severity": "error"
+     "severity": "warn"
     }
-   ],
-   "warnings": []
+   ]
   },
   "stderr": ""
  },
  "human": {
-  "code": 1,
+  "code": 0,
   "stdout": "",
-  "stderr": "✗ cy: 3 translation fault(s):\n    cart.items: ICU plural inside the select arm 'male' is missing the few/many/two/zero form(s) cy requires\n    cart.items: ICU plural inside the select arm 'female' is missing the few/many/two/zero form(s) cy requires\n    cart.items: ICU plural inside the select arm 'other' is missing the few/many/two/zero form(s) cy requires\n✗ 3 translation faults\n"
+  "stderr": "! cy: 3 warning(s):\n    cart.items: ICU plural inside the select arm 'male' is missing the few/many/two/zero form(s) cy requires\n    cart.items: ICU plural inside the select arm 'female' is missing the few/many/two/zero form(s) cy requires\n    cart.items: ICU plural inside the select arm 'other' is missing the few/many/two/zero form(s) cy requires\n! 3 warning(s) — non-blocking (use --strict to fail on them)\n"
  },
  "sarif": null
 }

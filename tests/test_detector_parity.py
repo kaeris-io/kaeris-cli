@@ -107,6 +107,11 @@ class TestDetectorParity(unittest.TestCase):
             self.assertEqual(d._numeric_faults(src, tr), BK._numeric_faults(src, tr), (src, tr))
             self.assertEqual(d._entity_faults(src, tr), BK._entity_faults(src, tr), (src, tr))
             self.assertEqual(d._icu_faults(src, tr, lang), BK._icu_faults(src, tr, lang), (src, tr, lang))
+            # Variant B (19.11): the level of each ICU finding. /api/check (backend/checker.py)
+            # must fail what `kaeris check` fails and warn where it warns.
+            self.assertEqual([d._icu_fault_severity(m) for m in d._icu_faults(src, tr, lang)],
+                             [BK._icu_fault_severity(m) for m in BK._icu_faults(src, tr, lang)],
+                             (src, tr, lang))
             self.assertEqual(d._lost_tags(src, tr), BK._lost_tags(src, tr), (src, tr))
             self.assertEqual(d._untranslated_string(src, tr, lang),
                              BK._untranslated_string(src, tr, lang), (src, tr, lang))

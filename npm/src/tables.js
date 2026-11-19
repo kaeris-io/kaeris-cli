@@ -285,6 +285,21 @@ export default {
   "yo",
   "zh"
  ],
+ "PLURAL_RED_SINCE_043": [
+  "ar",
+  "cs",
+  "he",
+  "hr",
+  "lt",
+  "lv",
+  "pl",
+  "ro",
+  "ru",
+  "sk",
+  "sl",
+  "sr",
+  "uk"
+ ],
  "REGISTER_MARKERS": {
   "de": [
    {
