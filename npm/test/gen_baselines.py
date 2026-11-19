@@ -503,6 +503,13 @@ HAND = [
     ("{g, select, male {{n, plural, one {# file} other {# files}}} other {x}}",
      "{g, select, male {{n, plural, one {# plik}}} other {x}}", "pl", None),
     ("{n, plural, one {# file} other {# files}}", "{n, plural, other {# файлов}}", "ru", None),
+    # round 2: one message, two levels (=0 + other passed the published 0.2.43, few/many/other did not)
+    ("{n, plural, =0 {no files} one {# file} other {# files}}", "{n, plural, =0 {brak} other {# plików}}", "pl", None),
+    ("{n, plural, one {# file} other {# files}}", "{n, plural, few {# файла} many {# файлов} other {# файла}}", "ru", None),
+    ("{n, plural, offset:1 =0 {nobody} other {you and # others}}", "{n, plural, offset:1 =0 {nikt} other {ty i # innych}}", "pl", None),
+    ("{n, plural, =0 {none} other {some}}", "{n, plural, =0 {brak}}", "pl", None),
+    ("{n, plural, =0 {a} one {# b} other {# c}} {m, plural, one {# d} other {# e}}",
+     "{n, plural, =0 {a} other {# c}} {m, plural, one {# d} other {# e}}", "cs", None),
 ]
 WORDS = {
     "de": ["Speichern", "Abbrechen", "Datei", "Einstellungen", "Willkommen", "Sie", "du", "dein", "Ihnen", "Konto", "löschen", "Weiter"],

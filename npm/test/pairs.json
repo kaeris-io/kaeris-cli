@@ -1336,6 +1336,74 @@
    ]
   },
   {
+   "src": "{n, plural, =0 {no files} one {# file} other {# files}}",
+   "tgt": "{n, plural, =0 {brak} other {# plików}}",
+   "lang": "pl",
+   "glossary": null,
+   "expect": [
+    {
+     "severity": "warn",
+     "msg": "ICU plural is missing the one form(s) pl requires"
+    }
+   ]
+  },
+  {
+   "src": "{n, plural, one {# file} other {# files}}",
+   "tgt": "{n, plural, few {# файла} many {# файлов} other {# файла}}",
+   "lang": "ru",
+   "glossary": null,
+   "expect": [
+    {
+     "severity": "error",
+     "msg": "ICU plural is missing the one form(s) ru requires"
+    }
+   ]
+  },
+  {
+   "src": "{n, plural, offset:1 =0 {nobody} other {you and # others}}",
+   "tgt": "{n, plural, offset:1 =0 {nikt} other {ty i # innych}}",
+   "lang": "pl",
+   "glossary": null,
+   "expect": [
+    {
+     "severity": "warn",
+     "msg": "ICU plural is missing the one form(s) pl requires"
+    }
+   ]
+  },
+  {
+   "src": "{n, plural, =0 {none} other {some}}",
+   "tgt": "{n, plural, =0 {brak}}",
+   "lang": "pl",
+   "glossary": null,
+   "expect": [
+    {
+     "severity": "error",
+     "msg": "ICU plural is missing the required 'other' branch"
+    },
+    {
+     "severity": "warn",
+     "msg": "ICU plural is missing the one form(s) pl requires"
+    }
+   ]
+  },
+  {
+   "src": "{n, plural, =0 {a} one {# b} other {# c}} {m, plural, one {# d} other {# e}}",
+   "tgt": "{n, plural, =0 {a} other {# c}} {m, plural, one {# d} other {# e}}",
+   "lang": "cs",
+   "glossary": null,
+   "expect": [
+    {
+     "severity": "warn",
+     "msg": "ICU plural is missing the one form(s) cs requires"
+    },
+    {
+     "severity": "error",
+     "msg": "ICU plural is missing the few form(s) cs requires"
+    }
+   ]
+  },
+  {
    "src": "Line one\nLine two",
    "tgt": "Line one\nLine two",
    "lang": "de",

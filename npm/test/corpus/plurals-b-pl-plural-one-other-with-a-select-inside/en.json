@@ -1,0 +1,1 @@
+{"files": "{n, plural, one {{g, select, male {his file} other {their file}}} other {# files}}"}

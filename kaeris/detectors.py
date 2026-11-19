@@ -761,14 +761,12 @@ _CLDR_REQUIRED: dict[str, set[str]] = {
 # demanded of their translation (a false alarm teaches people to ignore the check). The
 # same set as backend/translator.py, checked against CLDR there.
 _NO_SINGULAR = {"ja", "zh", "ko", "vi", "th", "id", "ms", "km", "lo", "my", "yo", "ig", "jv", "su"}
-# The languages whose plurals 0.2.43 already failed on a missing CLDR form: the table above as it
-# stood then (Welsh came in 0.2.45). A plural-form finding outside what 0.2.43 reported is a
-# warning (variant B, P1.3, 19.11): it fails only with --strict, so an upgrade turns no CI red
-# that was green, while everything 0.2.43 failed still fails.
+# The languages whose plurals the published 0.2.43 already failed on a missing CLDR form: the
+# table above as it stood then (Welsh came in 0.2.45). A plural finding 0.2.43 did not report is
+# a warning (variant B, P1.3, 19.11): it fails only with --strict, so an upgrade turns no CI red
+# that was green, while everything 0.2.43 failed still fails. See _icu_findings.
 _PLURAL_RED_SINCE_043 = frozenset({"ru", "uk", "pl", "cs", "sk", "hr", "sr", "lt", "ro", "ar",
                                    "lv", "sl", "he"})
-_ICU_FORMS_MSG_RE = re.compile(r"^ICU plural is missing the [a-z/]+ form\(s\) (\S+) requires$")
-_ICU_NESTED_MSG_RE = re.compile(r"^ICU \w+ inside the .* is missing the ")
 _ICU_HEAD_RE = re.compile(r"\{\s*[\w\d_]+\s*,\s*(plural|selectordinal|select)\s*,")
 
 def _icu_blocks(text: str) -> list[tuple[str, str]]:
@@ -851,11 +849,22 @@ def _icu_faults(original: str, translated: str, lang: str) -> list[str]:
     case); and a plural missing a CLDR form the TARGET language requires (Russian few/many).
     The 'other' arm and the CLDR forms are judged for every block, top-level or nested in
     another block's arm."""
+    return [msg for msg, _ in _icu_findings(original, translated, lang)]
+
+
+def _icu_findings(original: str, translated: str, lang: str) -> list[tuple[str, str]]:
+    """_icu_faults with a level each: "error", or "warn" where the published 0.2.43 did not fail
+    (variant B). 0.2.43 read top-level blocks only, required the forms of _PLURAL_RED_SINCE_043
+    and none of a block of `=N` arms + `other`; so a nested block, Welsh, the `one` rule outside
+    that table and the `one` owed by such a spelled-out block are "warn". The level is decided per
+    block, not from the message: `{n, plural, =0 {..} other {..}}` and `few/many/other` in Polish
+    both read "missing the one form(s) pl requires", and only the second failed in 0.2.43."""
     src = _icu_blocks(original)
     tr = _icu_blocks(translated)
-    faults: list[str] = []
+    faults: list[tuple[str, str]] = []
     if len(src) > len(tr):
-        faults.append(f"ICU plural/select construct dropped or broken ({len(src)} in source, {len(tr)} in translation)")
+        faults.append((f"ICU plural/select construct dropped or broken ({len(src)} in source, "
+                       f"{len(tr)} in translation)", "error"))
     base = (lang or "").replace("_", "-").split("-")[0].lower()
     for top_typ, top_seg in tr:
         for typ, seg, where in [(top_typ, top_seg, ())] + _icu_inner_blocks(top_seg):
@@ -865,7 +874,8 @@ def _icu_faults(original: str, translated: str, lang: str) -> list[str]:
             _, kws, exact_set = arms
             name = f"ICU {typ}" + (f" inside the {' › '.join(where)}" if where else "")
             if "other" not in kws:
-                faults.append(f"{name} is missing the required 'other' branch")
+                faults.append((f"{name} is missing the required 'other' branch",
+                               "warn" if where else "error"))
             # Only cardinal `plural`. _CLDR_REQUIRED holds CARDINAL categories; ordinal ones
             # differ, so applying them to `selectordinal` false-flags a correct ordinal (Russian
             # ordinals need only `other`). We have no ordinal table, so skip completeness for
@@ -883,7 +893,13 @@ def _icu_faults(original: str, translated: str, lang: str) -> list[str]:
                 if base not in _NO_SINGULAR and "one" not in kws and "=1" not in exact_set:
                     missing = missing | {"one"}
                 if missing:
-                    faults.append(f"{name} is missing the {'/'.join(sorted(missing))} form(s) {base} requires")
+                    # What 0.2.43 failed: a top-level, not spelled-out block of a table language
+                    # lacking a form of that table (every entry holds `one`, so the `one` rule
+                    # adds nothing new there).
+                    red = (not where and not spelled and base in _PLURAL_RED_SINCE_043
+                           and bool(_CLDR_REQUIRED[base] - kws))
+                    faults.append((f"{name} is missing the {'/'.join(sorted(missing))} form(s) {base} requires",
+                                   "error" if red else "warn"))
     # dropped literal =N branches (pair blocks positionally when counts match; else union)
     def _exacts(blocks):
         return [a[2] for a in (_icu_arms(s) for _, s in blocks) if a]
@@ -891,7 +907,7 @@ def _icu_faults(original: str, translated: str, lang: str) -> list[str]:
     src_ex = set().union(*se) if se else set()
     tr_ex = set().union(*te) if te else set()
     for ex in sorted(src_ex - tr_ex):
-        faults.append(f"ICU exact-match branch {ex} {{…}} was dropped in the translation")
+        faults.append((f"ICU exact-match branch {ex} {{…}} was dropped in the translation", "error"))
     return faults
 
 # Formal/informal (T–V) register markers per base language. Informal is matched
@@ -1426,20 +1442,6 @@ def warning_group(message: str) -> str:
 _MERGE_MARKER_RE = re.compile(r"#-#-#-#-#[^\n]*?#-#-#-#-#[ \t]*\n?")
 
 
-def _icu_fault_severity(msg: str) -> str:
-    """ERROR, or WARN for a plural-form finding 0.2.43 did not report: a block nested in another
-    block's arm (0.2.43 read top-level blocks only), or missing forms in a language outside
-    _PLURAL_RED_SINCE_043 (the `one` rule for de/fr/es/it…, Welsh). A top-level block in one of
-    those languages: every entry there holds `one`, so any form found missing now means 0.2.43
-    failed the same block, and it stays an error. Read from the message, which parity pins."""
-    if _ICU_NESTED_MSG_RE.match(msg):
-        return WARN
-    m = _ICU_FORMS_MSG_RE.match(msg)
-    if m and m.group(1) not in _PLURAL_RED_SINCE_043:
-        return WARN
-    return ERROR
-
-
 def string_faults(src, tgt, lang, glossary=None):
     """All per-string faults between one source value and one target value,
     each tagged error (breaks build) or warn (advisory). Pure/offline."""
@@ -1466,8 +1468,8 @@ def string_faults(src, tgt, lang, glossary=None):
         out.append({"severity": ERROR, "msg": msg})
     for msg in _currency_faults(src, tgt):
         out.append({"severity": ERROR, "msg": msg})
-    for msg in _icu_faults(src, tgt, lang):
-        out.append({"severity": _icu_fault_severity(msg), "msg": msg})
+    for msg, level in _icu_findings(src, tgt, lang):
+        out.append({"severity": ERROR if level == "error" else WARN, "msg": msg})
     for tag in _lost_tags(src, tgt):
         out.append({"severity": ERROR, "msg": f"lost inline tag {tag}"})
     for msg in _line_break_faults(src, tgt):
