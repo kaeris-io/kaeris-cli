@@ -127,6 +127,25 @@ export function fixText(total, largest, command, { plans = PLANS, npm = false } 
   return `${head}: ${why}; ${NAMES[tier]} $${plans[tier].price}/month ${covers}, or ${life}. ${FIX_URL}`;
 }
 
+// After a refused `translate`: kaeris/cta.py retag, is_limit, limit_line.
+export const LIMIT_LINE = `Limit reached. Plans and limits: ${PRICING_URL}`;
+const LIMIT_RE = /File exceeds free tier|File exceeds limit|on your plan\)|languages per file|Verify meaning works on up to|today's free allowance|free demo is at capacity|free tier is at capacity|are left of your|Monthly volume limit reached|Webhooks are available on/i;
+
+// The API marks its pricing link utm_source=api; printed by this CLI it is the CLI's.
+export const retag = (message) => String(message || "").replace(/(kaeris\.dev\/[\w./-]*\?utm_source=)api\b/g, "$1cli");
+export const isLimit = (message) => LIMIT_RE.test(message || "");
+
+let limitSaid = false;
+
+// The line to print after a refused run, or null. Once per process. A 402 is a plan limit
+// whatever its sentence says.
+export function limitLine(message, { env = process.env, status = null } = {}) {
+  if (limitSaid || disabled(env) || !(isLimit(message) || status === 402)) return null;
+  if (retag(message).includes(PRICING_URL)) return null; // the server's sentence carries the link
+  limitSaid = true;
+  return LIMIT_LINE;
+}
+
 export function fixLine(total, largest, command, { env = process.env, isTTY = process.stderr.isTTY, machine = false, ci = false } = {}) {
   try {
     if (total <= 0 || quiet(env, isTTY, machine, ci)) return null;

@@ -1,6 +1,5 @@
 // The `check` command: flags, kaeris.json, how a source file finds its translations, the report,
 // and the exit code (0 clean, 1 a problem was found, 2 bad usage or an unreadable file).
-import fs from "node:fs";
 import { checkLocales } from "./check.js";
 import { checkLine, fixCommand, fixLine, gapUnits } from "./cta.js";
 import { flattenAll } from "./flatten.js";
@@ -8,29 +7,23 @@ import { readText, UnknownEncoding } from "./encoding.js";
 import { ValueError } from "./errors.js";
 import * as fm from "./formats.js";
 import { dumps, parse as parseJson } from "./json.js";
-import { reprList, rx, strip } from "./py.js";
+import { reprList, strip } from "./py.js";
 import * as pp from "./pypath.js";
 import { TooDeep } from "./flatten.js";
 import * as sarif from "./sarif.js";
 import { version } from "./version.js";
+import { info, ok, warn, err, out } from "./say.js";
+import { layoutState, lprojSibling, outPath, splitLangs } from "./layout.js";
+import { cmdTranslate, TRANSLATE_OPTIONS, TRANSLATE_HELP } from "./translate.js";
 
 const CONFIG_FILENAME = "kaeris.json";
-
-// ── output ────────────────────────────────────────────────────────────────────
-
-const color = (text, code) => (process.env.NO_COLOR || !process.stderr.isTTY ? text : `\x1b[${code}m${text}\x1b[0m`);
-const out = (line) => process.stderr.write(line + "\n");
-const info = (msg) => out(`${color("→", "36")} ${msg}`);
-const ok = (msg) => out(`${color("✓", "32")} ${msg}`);
-const warn = (msg) => out(`${color("!", "33")} ${msg}`);
-const err = (msg) => out(`${color("✗", "31")} ${msg}`);
 
 class KaerisError extends Error {}
 
 // ── arguments, the way argparse reads them ────────────────────────────────────
 
-const PYPI_COMMANDS = ["translate", "fix", "languages", "init", "quota"];
-const COMMANDS = ["check", ...PYPI_COMMANDS];
+const PYPI_COMMANDS = ["fix", "languages", "init", "quota"];
+const COMMANDS = ["check", "translate", ...PYPI_COMMANDS];
 
 const GLOBAL_OPTIONS = [
   { long: "--version", flag: true },
@@ -57,11 +50,12 @@ const CHECK_OPTIONS = [
 
 class UsageError extends Error {}
 
-// Longest unambiguous prefix wins, as in argparse.
-function findOption(options, token) {
-  const exact = options.find((o) => o.long === token || o.short === token);
+// Longest unambiguous prefix wins, as in argparse. `translate` takes exact names only, as the
+// Python package does since `--to de,fr` was read as `--tone` (newcomer run, 03.11).
+function findOption(options, token, exactOnly = false) {
+  const exact = options.find((o) => o.long === token || o.short === token || (o.aliases || []).includes(token));
   if (exact) return exact;
-  if (token.startsWith("--")) {
+  if (token.startsWith("--") && !exactOnly) {
     const hits = options.filter((o) => o.long.startsWith(token));
     if (hits.length === 1) return hits[0];
     if (hits.length > 1) throw new UsageError(`ambiguous option: ${token} could match ${hits.map((h) => h.long).join(", ")}`);
@@ -70,7 +64,7 @@ function findOption(options, token) {
 }
 
 // Reads options out of argv until a non-option (the command) when `stopAtPositional`.
-function readOptions(options, argv, start, stopAtPositional) {
+function readOptions(options, argv, start, stopAtPositional, exactOnly = false) {
   const values = {};
   const positional = [];
   const unknown = [];
@@ -96,7 +90,7 @@ function readOptions(options, argv, start, stopAtPositional) {
       name = tok.slice(0, 2);
       inline = tok.slice(2);
     }
-    const opt = findOption(options, name);
+    const opt = findOption(options, name, exactOnly);
     if (!opt) {
       unknown.push(tok);
       continue;
@@ -104,7 +98,8 @@ function readOptions(options, argv, start, stopAtPositional) {
     const dest = opt.dest ?? opt.long.slice(2).replace(/-/g, "_");
     if (opt.flag) {
       if (inline !== null && tok.startsWith("--")) throw new UsageError(`argument ${opt.long}: ignored explicit argument '${inline}'`);
-      values[dest] = true;
+      values[dest] = opt.const !== undefined ? opt.const : true;
+      if (opt.unsupported) (values._unsupported ||= []).push(opt.long);
     } else {
       let v = inline;
       if (v === null) {
@@ -114,6 +109,7 @@ function readOptions(options, argv, start, stopAtPositional) {
         i++;
       }
       values[dest] = v;
+      if (opt.unsupported) (values._unsupported ||= []).push(opt.long);
     }
   }
   return { values, positional, unknown, next: i };
@@ -158,12 +154,13 @@ const MAIN_USAGE = "usage: kaeris [-h] [--version] [--config CONFIG] {check,tran
 
 const MAIN_HELP = `${MAIN_USAGE}
 
-kaeris check: the i18n firewall. Compares a source locale file with its translations and fails
-CI when strings are untranslated, keys are missing or extra, or placeholders are broken. Runs
-offline; no key, no account.
+commands:
+  check      Compare a source locale file with its translations; fails CI when strings are
+             untranslated, keys are missing or extra, or placeholders are broken. Offline.
+  translate  Translate a strings file through the KAERIS API and write the translations
+             next to it. Without a key it runs as the free demo with smaller limits.
 
-The other commands (translate, fix, languages, init, quota) are in the Python package:
-  pipx install kaeris
+fix, languages, init and quota are in the Python package: pipx install kaeris
 
 options:
   -h, --help       show this help message and exit
@@ -212,110 +209,7 @@ function resolveSource(rawPath) {
   return matches[0];
 }
 
-let layoutWarned = false;
-
-// The output path for `lang`'s translation of `srcPath`, mirroring common locale-file layouts.
-function targetPath(srcPath, lang, outDir, sourceLang) {
-  const [stem, ext] = pp.splitext(pp.basename(srcPath));
-  let srcDir = pp.dirname(srcPath);
-
-  const parent = pp.basename(srcDir);
-  if (ext.toLowerCase() === ".xml" && (parent === "values" || parent.startsWith("values-"))) {
-    const resDir = outDir || pp.dirname(srcDir);
-    return pp.join(resDir, `values-${lang}`, pp.basename(srcPath));
-  }
-
-  if (stem === sourceLang) {
-    const d = outDir ? outDir : srcDir;
-    return pp.join(d, `${lang}${ext}`);
-  }
-
-  if (pp.altsep) srcDir = srcDir.split(pp.altsep).join(pp.sep);
-  const segs = srcDir ? srcDir.split(pp.sep) : [];
-  let lastIdx = null;
-  segs.forEach((seg, i) => {
-    if (seg === sourceLang) lastIdx = i;
-  });
-  if (lastIdx !== null) {
-    const newSegs = [...segs];
-    newSegs[lastIdx] = lang;
-    if (outDir) return pp.join(outDir, ...newSegs.slice(lastIdx), pp.basename(srcPath));
-    return pp.join(newSegs.join(pp.sep), pp.basename(srcPath));
-  }
-
-  // Prefixed single-file convention: app_en.arb -> app_de.arb (Flutter), messages_en -> messages_de.
-  if (stem.endsWith("_" + sourceLang) && stem.length > sourceLang.length + 1) {
-    const prefix = stem.slice(0, -(sourceLang.length + 1));
-    const d = outDir ? outDir : srcDir;
-    return pp.join(d, `${prefix}_${lang}${ext}`);
-  }
-
-  if (!layoutWarned) {
-    warn(`Could not detect a known locale-file layout for '${srcPath}' (source_lang='${sourceLang}') — nesting output by language instead`);
-    layoutWarned = true;
-  }
-  const baseDir = outDir || srcDir;
-  return pp.join(baseDir, lang, pp.basename(srcPath));
-}
-
-// A file or folder name as it is compared with a language code: lower case, `_` read as `-`.
-const langFold = (text) => text.toLowerCase().replace(/_/g, "-");
-
-// `path`, with each part that names `lang` spelled the way it already is on disk (zh-Hant.json
-// next to a requested zh-hant.json, pt_BR.json for pt-BR). An exact match always wins.
-function existingCase(path, lang) {
-  const [drive, rest] = pp.splitdrive(pp.normpath(path));
-  const parts = rest.split(pp.sep);
-  const want = langFold(lang);
-  for (let i = 0; i < parts.length; i++) {
-    const part = parts[i];
-    if (!part || !langFold(part).includes(want)) continue;
-    const parent = drive + (parts.slice(0, i).join(pp.sep) || (rest.startsWith(pp.sep) ? pp.sep : "."));
-    let names;
-    try {
-      names = fs.readdirSync(parent);
-    } catch {
-      break;
-    }
-    if (names.includes(part)) continue;
-    const same = names.filter((n) => langFold(n) === langFold(part));
-    if (same.length === 1) parts[i] = same[0];
-  }
-  return drive + parts.join(pp.sep);
-}
-
-const outPath = (srcPath, lang, outDir, sourceLang) => existingCase(targetPath(srcPath, lang, outDir, sourceLang), lang);
-
-// Xcode's own layout: en.lproj/Localizable.strings -> de.lproj/Localizable.strings.
-function lprojSibling(srcPath, lang, sourceLang, outDir) {
-  const folder = pp.dirname(srcPath);
-  if (pp.basename(folder) !== `${sourceLang}.lproj`) return null;
-  return pp.join(outDir || pp.dirname(folder), `${lang}.lproj`, pp.basename(srcPath));
-}
-
-// ── language codes ────────────────────────────────────────────────────────────
-
-const LANG_TAG_RE = rx("^[A-Za-z]{2,3}(?:[-_](?:[A-Za-z]{2}|[A-Za-z]{4}|\\d{3}))*$");
-
-// 'fr-ca' -> 'fr-CA', 'zh_hant' -> 'zh-Hant', 'PT-pt' -> 'pt-PT'. Anything that is not shaped like
-// a language tag comes back as it was written, so it can be refused by name.
-function canonLang(tag) {
-  tag = strip(String(tag));
-  if (!LANG_TAG_RE.test(tag)) return tag;
-  const [first, ...rest] = tag.split(/[-_]/);
-  return [first.toLowerCase(), ...rest.map((p) => (p.length === 2 ? p.toUpperCase() : p.length === 4 ? p[0].toUpperCase() + p.slice(1).toLowerCase() : p))].join("-");
-}
-
-// 'fr-ca, pt_PT' (or a list from kaeris.json) -> ['fr-CA', 'pt-PT'], each language once.
-function splitLangs(raw) {
-  const items = typeof raw === "string" ? raw.split(",") : Array.isArray(raw) ? raw : [];
-  const result = [];
-  for (const item of items) {
-    const s = strip(String(item));
-    if (s && !result.includes(canonLang(s))) result.push(canonLang(s));
-  }
-  return result;
-}
+// Where target files are, and language codes: ./layout.js (shared with `translate`).
 
 // A String Catalog's synthetic sub-keys, readable: `cart⟦sub:count⟧⟦plural⟧` -> `cart (sub count, plural)`.
 const XC_MARKER_RE = /((?:⟦[^⟦⟧]*⟧)+)/g;
@@ -381,7 +275,7 @@ function cmdCheck(args, globals) {
   const outDirRaw = args.out || cfgGet(config, "out") || null;
   const outDir = typeof outDirRaw === "string" ? outDirRaw : null;
   let sourceLang = cfgGet(config, "source_lang") || "en";
-  layoutWarned = false; // warn at most once per check run
+  layoutState.warned = false; // warn at most once per check run
 
   const resolveTarget = (lang) => {
     if (args.pattern) {
@@ -411,7 +305,7 @@ function cmdCheck(args, globals) {
       if (kind === "csv") {
         // `translate` writes the CSV with its language columns beside the source, in a folder of
         // its own (translations/<name>.csv): read those columns too.
-        layoutWarned = true;
+        layoutState.warned = true;
         const written = outPath(path, "translations", outDir, sourceLang);
         if (pp.isfile(written) && pp.abspath(written) !== pp.abspath(path)) byLang = new Map([...byLang, ...fm.readMerged(written)[1]]);
       }
@@ -610,8 +504,25 @@ export function main(argv) {
     if (!COMMANDS.includes(command)) {
       throw new UsageError(`argument command: invalid choice: '${command}' (choose from ${COMMANDS.map((c) => `'${c}'`).join(", ")})`);
     }
+    if (command === "translate") {
+      const t = readOptions(TRANSLATE_OPTIONS, argv, g.next + 1, false, true);
+      if (t.values.help) {
+        process.stdout.write(TRANSLATE_HELP);
+        return 0;
+      }
+      if (t.unknown.length) throw new UsageError(`unrecognized arguments: ${t.unknown.join(" ")}`);
+      return cmdTranslate({ ...t.values, files: t.positional }, g.values, loadConfig).catch((e) => {
+        if (e instanceof KaerisError || e instanceof TooDeep) {
+          err(e.message);
+          return 2;
+        }
+        err(`kaeris translate stopped on an internal error: ${e && e.message ? e.message : e}`);
+        if (process.env.KAERIS_DEBUG && e && e.stack) out(e.stack);
+        return 2;
+      });
+    }
     if (command !== "check") {
-      err(`kaeris ${command} is not in this package: it needs the Python version, which has translate, fix, languages, init and quota. Install it with: pipx install kaeris`);
+      err(`kaeris ${command} is not in this package: it needs the Python version, which has fix, languages, init and quota. Install it with: pipx install kaeris`);
       return 2;
     }
     const c = readOptions(CHECK_OPTIONS, argv, g.next + 1, false);

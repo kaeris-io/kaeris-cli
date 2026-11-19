@@ -2,7 +2,8 @@
 import { main } from "../src/cli.js";
 
 try {
-  process.exitCode = main(process.argv.slice(2));
+  // `check` answers at once; `translate` talks to the API and answers with a promise.
+  process.exitCode = await main(process.argv.slice(2));
 } catch (e) {
   // A crash must not look like a clean run, and must not look like "a translation is broken"
   // (exit 1) either: 2 is "the check itself could not be done".
