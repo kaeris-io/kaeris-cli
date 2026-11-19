@@ -1,7 +1,7 @@
 {
   "name": "kaeris",
-  "version": "0.2.45",
-  "description": "i18n firewall for CI: fails the build when translations are missing, extra or break placeholders. 13 locale formats, offline, no dependencies.",
+  "version": "0.2.46",
+  "description": "npx kaeris translate: AI translation of locale files into 46 languages. npx kaeris check: an offline i18n check for CI that fails on missing or extra keys and broken placeholders. 13 formats, no dependencies.",
   "keywords": ["i18n", "l10n", "localization", "translation", "ci", "lint", "check", "placeholders", "xcstrings", "arb", "po", "xliff", "fluent", "properties", "resx"],
   "homepage": "https://kaeris.dev",
   "repository": {
