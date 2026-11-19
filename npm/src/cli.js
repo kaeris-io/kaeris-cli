@@ -159,8 +159,8 @@ const MAIN_USAGE = "usage: kaeris [-h] [--version] [--config CONFIG] {check,tran
 const MAIN_HELP = `${MAIN_USAGE}
 
 kaeris check: the i18n firewall. Compares a source locale file with its translations and fails
-CI when strings are untranslated, keys are missing or extra, or placeholders are broken. Runs
-offline; no key, no account.
+CI when keys are missing or placeholders are broken; extra keys and warnings (such as text left
+untranslated) fail it with --strict. Runs offline; no key, no account.
 
 The other commands (translate, fix, languages, init, quota) are in the Python package:
   pipx install kaeris

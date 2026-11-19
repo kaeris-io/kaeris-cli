@@ -8,8 +8,9 @@
 [![install size](https://img.shields.io/badge/dependencies-0-brightgreen)](https://www.npmjs.com/package/kaeris?activeTab=dependencies)
 
 An i18n check for CI. It compares your source locale file with its translations and exits non-zero
-when a translation is missing, a key is left over, or a placeholder was lost or renamed:
-`Hello {name}` that became `Bonjour`, `%s` that became `%d`, an ICU plural without its `other` branch.
+when a translation is missing or a placeholder was lost or renamed: `Hello {name}` that became
+`Bonjour`, `%s` that became `%d`, an ICU plural without its `other` branch. Keys left over and
+warnings fail it only with `--strict`.
 
 It runs offline, reads 13 formats, and has no dependencies. Node 18 or newer.
 

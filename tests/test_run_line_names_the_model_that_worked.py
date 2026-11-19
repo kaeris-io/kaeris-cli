@@ -26,6 +26,13 @@ def test_both_are_named_when_both_worked():
     assert "google/gemini-2.5-flash-lite + openai/gpt-4.1-mini" in lines[0]
 
 
+def test_one_string_is_not_strings():
+    lines, _ = K._fmt_receipt(_rec(strings=1))
+    assert " · 1 string · " in lines[0], lines[0]
+    lines, _ = K._fmt_receipt(_rec(strings=2))
+    assert " · 2 strings · " in lines[0], lines[0]
+
+
 def test_an_older_server_without_the_field_still_reads():
     lines, _ = K._fmt_receipt(_rec())
     assert lines[0].startswith("Run: google/gemini-2.5-flash-lite ·")

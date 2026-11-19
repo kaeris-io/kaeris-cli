@@ -219,11 +219,12 @@ def _fmt_receipt(rec):
     served = [m for m in (rec.get("models_served") or []) if m]
     backup = (rec.get("fallback") or {}).get("model")
     served = [f"{m} (backup)" if backup and m == backup else m for m in served]
+    n_strings = rec.get('strings', 0)
     lines.append(
         f"Run: {' + '.join(served) if served else rec.get('model', '?')} · "
         f"{_PLAN_NAMES.get(rec.get('plan'), rec.get('plan')) or 'plan hidden'} · "
         f"{len(delivered)}/{len(langs.get('requested') or [])} languages · "
-        f"{rec.get('strings', 0)} strings · {rec.get('seconds', 0)}s")
+        f"{n_strings} string{'' if n_strings == 1 else 's'} · {rec.get('seconds', 0)}s")
     if not mine:
         lines.append("     spend and settings are the job owner's — not shown here")
         return lines, failed
@@ -2618,7 +2619,8 @@ def build_parser():
                         "whose words change shape (ru, pl, fi, de compounds...) a miss is a "
                         "warning, since an inflected form is still matched by its stem.")
     c.add_argument("--strict", action="store_true",
-                   help="Also fail (non-zero exit) if a target has extra/stale keys not in the source")
+                   help="Also fail (non-zero exit) if a target has extra/stale keys not in the source, "
+                        "or any warning")
     c.add_argument("--json", action="store_true", help="Machine-readable JSON output instead of the human report")
     c.add_argument("--sarif", metavar="PATH", default=None,
                    help="Also write a SARIF 2.1.0 report to PATH. Upload it with "
