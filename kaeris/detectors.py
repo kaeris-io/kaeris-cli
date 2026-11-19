@@ -768,7 +768,8 @@ _NO_SINGULAR = {"ja", "zh", "ko", "vi", "th", "id", "ms", "km", "lo", "my", "yo"
 # Generated from babel 2.18's CLDR (an integer 0..200 falls into `one`, as in
 # backend/tests/test_check_keeps_going.py), plus cv/ie/kok, which have `one` in CLDR 47 (Node 24
 # Intl), and the legacy codes CLDR still lists (tl, iw, ji, mo, sh).
-# tests/test_plurals_variant_b.py::test_has_one_is_what_babel_cldr_says checks it.
+# The backend checks it against babel for every language KAERIS translates
+# (backend/tests/test_check_keeps_going.py::test_missing_one_is_flagged_exactly_where_cldr_has_it).
 _HAS_ONE = frozenset({
     "af", "ak", "am", "an", "ar", "as", "asa", "ast", "az", "bal", "be", "bem", "bez", "bg",
     "bho", "blo", "bn", "br", "brx", "bs", "ca", "ce", "ceb", "cgg", "chr", "ckb", "cs", "csw",
