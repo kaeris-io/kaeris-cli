@@ -97,6 +97,10 @@ CORPUS += [
     ("{n, plural, offset:1 =0 {nobody} other {you and # others}}",
      "{n, plural, offset:1 =0 {nikt} other {ty i # innych}}", "pl"),
     ("{n, plural, =0 {none} other {some}}", "{n, plural, =0 {brak}}", "pl"),
+    # Round 5 (19.11): `one` only where CLDR has a singular: Cantonese and an unknown code owe none.
+    ("{n, plural, one {# file} other {# files}}", "{n, plural, other {# 個檔案}}", "yue"),
+    ("{n, plural, one {# file} other {# files}}", "{n, plural, other {# x}}", "xx"),
+    ("{n, plural, one {# file} other {# files}}", "{n, plural, other {# x}}", "tl"),
 ]
 
 GLOSSARY = ["KAERIS"]
