@@ -1,0 +1,28 @@
+{
+ "json": {
+  "code": 1,
+  "stdout": {
+   "ok": false,
+   "missing": {},
+   "extra": {},
+   "placeholder_issues": [],
+   "missing_files": [],
+   "faults": [
+    {
+     "lang": "pl",
+     "key": "files",
+     "msg": "ICU plural is missing the few/many/one form(s) pl requires",
+     "severity": "error"
+    }
+   ],
+   "warnings": []
+  },
+  "stderr": ""
+ },
+ "human": {
+  "code": 1,
+  "stdout": "",
+  "stderr": "✗ pl: 1 translation fault(s):\n    files: ICU plural is missing the few/many/one form(s) pl requires\n✗ 1 translation fault\n"
+ },
+ "sarif": null
+}

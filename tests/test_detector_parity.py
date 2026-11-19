@@ -90,6 +90,13 @@ CORPUS += [
     ("{n, plural, =0 {No files} other {# files}}", "{n, plural, =0 {Keine Dateien} other {# Dateien}}", "de"),
     ("{n, plural, =0 {No files} one {# file} other {# files}}",
      "{n, plural, =0 {Нет} =1 {Один файл} other {# файлов}}", "ru"),
+    # Variant B (19.11): the same message, two levels. `=0 + other` passed the published 0.2.43
+    # (warn now); `few/many/other` without `one` failed it (still an error).
+    ("{n, plural, =0 {no files} one {# file} other {# files}}", "{n, plural, =0 {brak} other {# plików}}", "pl"),
+    ("{n, plural, one {# file} other {# files}}", "{n, plural, few {# файла} many {# файлов} other {# файла}}", "ru"),
+    ("{n, plural, offset:1 =0 {nobody} other {you and # others}}",
+     "{n, plural, offset:1 =0 {nikt} other {ty i # innych}}", "pl"),
+    ("{n, plural, =0 {none} other {some}}", "{n, plural, =0 {brak}}", "pl"),
 ]
 
 GLOSSARY = ["KAERIS"]
@@ -109,8 +116,7 @@ class TestDetectorParity(unittest.TestCase):
             self.assertEqual(d._icu_faults(src, tr, lang), BK._icu_faults(src, tr, lang), (src, tr, lang))
             # Variant B (19.11): the level of each ICU finding. /api/check (backend/checker.py)
             # must fail what `kaeris check` fails and warn where it warns.
-            self.assertEqual([d._icu_fault_severity(m) for m in d._icu_faults(src, tr, lang)],
-                             [BK._icu_fault_severity(m) for m in BK._icu_faults(src, tr, lang)],
+            self.assertEqual(d._icu_findings(src, tr, lang), BK._icu_findings(src, tr, lang),
                              (src, tr, lang))
             self.assertEqual(d._lost_tags(src, tr), BK._lost_tags(src, tr), (src, tr))
             self.assertEqual(d._untranslated_string(src, tr, lang),
