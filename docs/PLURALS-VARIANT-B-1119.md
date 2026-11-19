@@ -21,6 +21,7 @@ the tag and missed it (critic, 19.11).
 | top-level ICU plural, language of the 0.2.43 table (ru uk pl cs sk hr sr lt ro ar lv sl he), not `=N`+`other` only, lacking a form of that table | error | error |
 | the same block when it is `=N` arms + `other` only: 0.45 owes it `one` unless it has `=1` | none | warning |
 | top-level ICU plural, any other language (de fr es it pt nl ... cy): the `one` rule C7, Welsh | none | warning |
+| the same in a language CLDR gives no singular (ja zh yue ko ...) or no plural rules at all (`xx`) | none | none |
 | ICU plural/select nested in another block's arm, forms or `other` | none | warning |
 | top-level ICU block without `other`; dropped block; dropped `=N` | error | error |
 | i18next `_one/_other` set, language of the 0.2.43 table | error | error |
@@ -56,7 +57,18 @@ docs/p23/checks/variant-b/round2/):
   `_icu_faults` returns its messages — the same as kaeris/detectors.py.
 - `backend/checker.py` line 104-105: `for msg, level in T._icu_findings(src, tgt, lang):
   add("icu_broken", level, msg)`.
+- `backend/translator.py`: `_NO_SINGULAR` gains `yue`, and `_HAS_ONE` (the languages whose CLDR
+  rules have `one`) comes with it: `_icu_findings` owes `one` only there (round 5, critic 4 item 4:
+  B warned "missing the one form(s) xx requires" for Cantonese and for an unknown code, and
+  `--strict` failed on it where 0.2.43 passed). The CLI's text from `_NO_SINGULAR = ` to
+  `_ICU_HEAD_RE = `, verbatim.
 - `backend/tests/test_check_matches_cli.py`: a de value without `one` and a pl `=0 + other` in the
-  corpus; today's corpus has neither, so it would not notice the page and the CLI disagreeing.
+  corpus (a case `json+plurals` and `test_the_plural_samples_are_warnings_on_both_sides`); the
+  corpus had neither, so it did not notice the page and the CLI disagreeing (critic 4: 6 of 9
+  plural cases differed while it was green). Red on the unpatched server, green with the patch.
+- Outside ICU the page does not judge what the CLI does: plural key sets (i18next `_one/_other`,
+  nested `items.one/other`, as in 0.2.43) and Welsh (`cy.json` gets 400 `lang_unknown`). Not in
+  this patch; `test_known_gap_outside_icu` marks the three cases xfail(strict), so the day the
+  page covers one of them the run turns red and the list is updated.
 - test_detector_parity.py compares `_icu_findings`: once this reaches the kaeris-cli branch the
   i18n_tool CI clones (same name, else main), `detector-parity` is red until translator.py has it.
