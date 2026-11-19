@@ -301,3 +301,53 @@ def test_string_faults_carries_the_level():
     assert got == [{"severity": det.WARN, "msg": "ICU plural is missing the one form(s) de requires"}]
     got = det.string_faults("{n, plural, one {# file} other {# files}}", "{n, plural, one {# plik} other {# pliku}}", "pl")
     assert got == [{"severity": det.ERROR, "msg": "ICU plural is missing the few/many form(s) pl requires"}]
+
+
+# ── round 5 (critic 4, item 4, 19.11): no `one` is owed where CLDR gives no singular (Cantonese
+# `yue` has `other` alone) or has no plural rules at all (an unknown code such as `xx`). B warned
+# "missing the one form(s) xx requires" there, and --strict turned that into exit 1 where
+# 0.2.43 passed. These go to the npm corpus too (npm/test/gen_baselines.py). ──
+YUE_OTHER = [("other", "# 個檔案")]
+NO_ONE = {
+    "yue ICU other only": one_key("yue", SRC_ICU["files"], icu(YUE_OTHER)),
+    "yue ICU inside select other only": ({"en.json": J(SRC_SEL), "yue.json": J({"files": sel(YUE_OTHER)})},
+                                         "en.json", "yue"),
+    "yue i18next _other only": ({"en.json": J(SRC_I18N), "yue.json": J(i18n(YUE_OTHER))}, "en.json", "yue"),
+    "yue-HK ICU other only": one_key("yue-HK", SRC_ICU["files"], icu(YUE_OTHER)),
+    "xx ICU other only": one_key("xx", SRC_ICU["files"], icu([("other", "# x")])),
+    "xx ICU inside select other only": ({"en.json": J(SRC_SEL), "xx.json": J({"files": sel([("other", "# x")])})},
+                                        "en.json", "xx"),
+}
+
+
+@pytest.mark.parametrize("nid", sorted(NO_ONE))
+def test_no_one_is_owed_without_a_cldr_singular(tmp_path, nid):
+    files, source, langs = NO_ONE[nid]
+    put(tmp_path, files)
+    code, body, human = check(tmp_path, source, langs)
+    assert code == 0 and not plural_findings(body) and not body["warnings"] and not body["faults"], (nid, body, human)
+    assert check(tmp_path, source, langs, "--strict")[0] == 0, (nid, human)
+
+
+def test_the_singular_tables_follow_cldr():
+    assert "yue" in det._NO_SINGULAR and not det._HAS_ONE & det._NO_SINGULAR
+    assert set(det._CLDR_REQUIRED) <= det._HAS_ONE      # every table language has a `one`
+    assert {"en", "de", "fr", "es", "it", "pt", "tr", "fil", "tl"} <= det._HAS_ONE
+    assert not {"xx", "yue", "ja", "zh"} & det._HAS_ONE
+    assert det._icu_findings(SRC_ICU["files"], icu([("other", "# Dateien")]), "de") == [
+        ("ICU plural is missing the one form(s) de requires", det.WARN)]
+
+
+def test_has_one_is_what_babel_cldr_says():
+    """Against CLDR itself where babel is installed (as backend/tests/test_check_keeps_going.py)."""
+    babel = pytest.importorskip("babel")
+    from babel import Locale, localedata
+    newer = {"cv", "ie", "kok"}     # `one` in CLDR 47 (Node 24 Intl), not yet in babel's CLDR
+    aliases = {"tl", "iw", "ji", "mo", "sh"}   # legacy codes CLDR's plurals.json still lists
+    for ident in localedata.locale_identifiers():
+        base = ident.split("_")[0]
+        if base == "root":
+            continue
+        has = "one" in {Locale.parse(base).plural_form(n) for n in range(0, 201)}
+        assert has == (base in det._HAS_ONE) or base in newer, (base, babel.__version__)
+    assert newer | aliases <= det._HAS_ONE

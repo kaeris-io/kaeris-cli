@@ -760,7 +760,30 @@ _CLDR_REQUIRED: dict[str, set[str]] = {
 # Languages with no separate singular: CLDR gives them `other` only, so `one` must not be
 # demanded of their translation (a false alarm teaches people to ignore the check). The
 # same set as backend/translator.py, checked against CLDR there.
-_NO_SINGULAR = {"ja", "zh", "ko", "vi", "th", "id", "ms", "km", "lo", "my", "yo", "ig", "jv", "su"}
+_NO_SINGULAR = {"ja", "zh", "ko", "vi", "th", "id", "ms", "km", "lo", "my", "yo", "ig", "jv", "su",
+                "yue"}
+# The base languages whose CLDR cardinal rules have a `one` category: only these owe `one` in an
+# ICU plural. A language CLDR gives `other` alone (Cantonese) and a code CLDR has no rules for
+# (`xx`) owe nothing, so --strict does not fail on a form nobody can name (critic 4, 19.11).
+# Generated from babel 2.18's CLDR (an integer 0..200 falls into `one`, as in
+# backend/tests/test_check_keeps_going.py), plus cv/ie/kok, which have `one` in CLDR 47 (Node 24
+# Intl), and the legacy codes CLDR still lists (tl, iw, ji, mo, sh).
+# tests/test_plurals_variant_b.py::test_has_one_is_what_babel_cldr_says checks it.
+_HAS_ONE = frozenset({
+    "af", "ak", "am", "an", "ar", "as", "asa", "ast", "az", "bal", "be", "bem", "bez", "bg",
+    "bho", "blo", "bn", "br", "brx", "bs", "ca", "ce", "ceb", "cgg", "chr", "ckb", "cs", "csw",
+    "cv", "cy", "da", "de", "doi", "dsb", "dv", "ee", "el", "en", "eo", "es", "et", "eu", "fa",
+    "ff", "fi", "fil", "fo", "fr", "fur", "fy", "ga", "gd", "gl", "gsw", "gu", "gv", "ha",
+    "haw", "he", "hi", "hr", "hsb", "ht", "hu", "hy", "ia", "ie", "io", "is", "it", "iu", "iw",
+    "jgo", "ji", "jmc", "ka", "kab", "kaj", "kcg", "kk", "kkj", "kl", "kn", "kok", "ks", "ksb",
+    "ksh", "ku", "kw", "ky", "lag", "lb", "lg", "lij", "lld", "ln", "lt", "lv", "mas", "mg",
+    "mgo", "mk", "ml", "mn", "mo", "mr", "mt", "naq", "nb", "nd", "ne", "nl", "nn", "nnh", "no",
+    "nr", "nso", "ny", "nyn", "om", "or", "os", "pa", "pap", "pcm", "pl", "prg", "ps", "pt",
+    "rm", "ro", "rof", "ru", "rwk", "saq", "sat", "sc", "scn", "sd", "sdh", "se", "seh", "sh",
+    "shi", "si", "sk", "sl", "sma", "smj", "smn", "sms", "sn", "so", "sq", "sr", "ss", "ssy",
+    "st", "sv", "sw", "syr", "ta", "te", "teo", "ti", "tig", "tk", "tl", "tn", "tr", "ts",
+    "tzm", "ug", "uk", "ur", "uz", "ve", "vec", "vo", "vun", "wa", "wae", "xh", "xog", "yi",
+    "zu"})
 # The languages whose plurals the published 0.2.43 already failed on a missing CLDR form: the
 # table above as it stood then (Welsh came in 0.2.45). A plural finding 0.2.43 did not report is
 # a warning (variant B, P1.3, 19.11): it fails only with --strict, so an upgrade turns no CI red
@@ -890,7 +913,8 @@ def _icu_findings(original: str, translated: str, lang: str) -> list[tuple[str, 
                 # "extra" ones (the plural repair reads it as well). Audit 25.10 (C7):
                 # `{n, plural, other {# Dateien}}` in de passed clean and "1 Dateien" shipped,
                 # and `=0 {keine} other {einige}` renders "1 einige". An exact =1 covers it.
-                if base not in _NO_SINGULAR and "one" not in kws and "=1" not in exact_set:
+                # Only where CLDR has a singular: not Cantonese, not a code CLDR does not know.
+                if base in _HAS_ONE and "one" not in kws and "=1" not in exact_set:
                     missing = missing | {"one"}
                 if missing:
                     # What 0.2.43 failed: a top-level, not spelled-out block of a table language

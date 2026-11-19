@@ -430,6 +430,8 @@ function lineBreakFaults(original, translated, softBreaks = false) {
 export const CLDR_REQUIRED = new Map(Object.entries(T.CLDR_REQUIRED).map(([k, v]) => [k, new Set(v)]));
 // Languages with `other` as their only plural form: `one` is not owed by their translation.
 export const NO_SINGULAR = new Set(T.NO_SINGULAR);
+// Languages whose CLDR rules have a `one` category: only these owe `one` (not yue, not an unknown code).
+export const HAS_ONE = new Set(T.HAS_ONE);
 // Languages whose plurals the published 0.2.43 already failed on a missing form (variant B).
 // See _PLURAL_RED_SINCE_043 and _icu_findings in kaeris/detectors.py.
 export const PLURAL_RED_SINCE_043 = new Set(T.PLURAL_RED_SINCE_043);
@@ -521,7 +523,7 @@ export function icuFindings(original, translated, lang) {
         // =N branches with only `other` beside them: no extra CLDR forms owed, `one` still is.
         const spelled = exactSet.size > 0 && [...kws].every((k) => k === "other");
         const missing = new Set(spelled ? [] : [...(CLDR_REQUIRED.get(base) ?? [])].filter((x) => !kws.has(x)));
-        if (!NO_SINGULAR.has(base) && !kws.has("one") && !exactSet.has("=1")) missing.add("one");
+        if (HAS_ONE.has(base) && !kws.has("one") && !exactSet.has("=1")) missing.add("one");
         if (missing.size) {
           // What 0.2.43 failed: a top-level, not spelled-out block of a table language lacking a
           // form of that table.
