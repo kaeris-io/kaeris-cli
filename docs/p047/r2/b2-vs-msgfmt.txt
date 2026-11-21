@@ -1,0 +1,13 @@
+$ (cd C:/Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121) python docs/p047/harness/b2_msgfmt.py C:/Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121
+# kaeris C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py
+case                                   expect  py  npm msgfmt  msgfmt says
+ar-many-without-number                 fail     1    1      1  number of format specifications in 'msgid_plural' and 'msgstr[4]' does not match
+ar-zero-one-two-without-number         pass     0    0      0  ok
+he-nplurals-below-values               fail     1    1      1  nplurals = 2 but plural expression can produce values as large as 2
+he-two-without-number                  pass     0    0      0  ok
+pl-few-without-number                  fail     1    1      1  number of format specifications in 'msgid_plural' and 'msgstr[1]' does not match
+pl-one-without-number                  pass     0    0      0  ok
+ru-formula-plural-n                    fail     1    1      1  nplurals = 3 but plural expression can produce values as large as 3
+ru-hebrew-formula                      fail     1    1      0  ok
+
+# exit 0

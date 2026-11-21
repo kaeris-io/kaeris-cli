@@ -160,6 +160,30 @@ function poRecords(text) {
 // enforced: those are where a header copied from an English file ("nplurals=2") is certainly wrong.
 const NPLURALS = { ru: 3, uk: 3, hr: 3, sr: 3, pl: 3, cs: 3, sk: 3, ro: 3, lt: 3, lv: 3, sl: 4, ar: 6 };
 
+// The server's gettext table (backend/translator.py _PLURAL_RULES), as in kaeris/formats.py
+// PLURAL_RULES (test/po-slots.test.js compares the two ports, tests/test_detector_parity.py the
+// Python one with the server). `check` reads a slot loosely only when a file's formula means the
+// same as its language's row (poLooseSlots).
+const SLAVIC_E = "(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)";
+const CS_SK = "(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2";
+export const PLURAL_RULES = {
+  ja: [1, "0"], zh: [1, "0"], ko: [1, "0"], vi: [1, "0"],
+  th: [1, "0"], id: [1, "0"], ms: [1, "0"], fa: [2, "(n > 1)"],
+  fr: [2, "(n > 1)"], pt: [2, "(n > 1)"],
+  hi: [2, "(n > 1)"], bn: [2, "(n > 1)"],
+  he: [3, "(n==1 ? 0 : n==2 ? 1 : 2)"],
+  "pt-pt": [2, "(n != 1)"],
+  tl: [2, "(n != 1 && n != 2 && n != 3 && (n%10 == 4 || n%10 == 6 || n%10 == 9))"],
+  ru: [3, SLAVIC_E], uk: [3, SLAVIC_E], hr: [3, SLAVIC_E], sr: [3, SLAVIC_E],
+  pl: [3, "(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)"],
+  cs: [3, CS_SK], sk: [3, CS_SK],
+  ro: [3, "(n==1 ? 0 : (n==0 || (n%100>0 && n%100<20)) ? 1 : 2)"],
+  lt: [3, "(n%10==1 && n%100!=11 ? 0 : n%10>=2 && (n%100<10 || n%100>=20) ? 1 : 2)"],
+  lv: [3, "(n%10==0 || (n%100>=11 && n%100<=19) ? 0 : n%10==1 && n%100!=11 ? 1 : 2)"],
+  sl: [4, "(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3)"],
+  ar: [6, "(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5)"],
+};
+
 // Keys are the msgid (with ⟦ctx:…⟧ for a msgctxt, ⟦plural⟧ for the plural form, ⟦dup:n⟧ for a
 // repeat). As a target, an empty msgstr is absent, and msgstr[2..n] are kept as ⟦plural:2⟧… with
 // a note for a plural that has fewer forms than its header declares.
@@ -209,7 +233,7 @@ function readPo(text, role = "source", lang = "") {
   }
   if (role === "target") {
     poPluralNotes(out, records, header, lang);
-    for (const i of singleNumberSlots(header) ?? []) {
+    for (const i of poLooseSlots(header, lang)) {
       for (const k0 of pluralKeys) {
         out.countOptional.add(i === 0 ? k0 : i === 1 ? key(k0, "plural") : key(k0, `plural:${i}`));
       }
@@ -297,24 +321,67 @@ function pfEval(tokens, n) {
   return value;
 }
 
-// The msgstr indexes the header's formula gives for exactly one n in 0..upto; null when there is
-// no formula or it does not parse.
-export function singleNumberSlots(header, upto = 1000) {
-  const m = PF_RE.exec(header || "");
-  const tokens = m ? pfTokens(m[1]) : null;
+const PF_N_RE = /nplurals\s*=\s*(\d+)/;
+const PF_LANG_RE = /^\s*Language\s*:\s*([A-Za-z]{2,3}(?:[-_][A-Za-z0-9]+)*)/m;
+const PF_UPTO = 1000;
+
+// [slot for n in 0..upto], or null when the formula does not parse or gives a slot outside
+// 0..nplurals-1 (msgfmt -c rejects such a file).
+function pfSlots(nplurals, expr, upto = PF_UPTO) {
+  const tokens = pfTokens(expr);
   if (!tokens || !tokens.length) return null;
-  const hits = new Map();
+  const slots = [];
   try {
-    for (let n = 0; n <= upto; n++) {
-      const i = pfEval(tokens, n);
-      if (!hits.has(i)) hits.set(i, new Set());
-      hits.get(i).add(n);
-    }
+    for (let n = 0; n <= upto; n++) slots.push(pfEval(tokens, n));
   } catch (e) {
     if (e instanceof ValueError || e instanceof RangeError) return null;
     throw e;
   }
+  return slots.every((s) => s >= 0 && s < nplurals) ? slots : null;
+}
+
+// [nplurals, formula] of a Plural-Forms header, or null.
+function pfHeader(header) {
+  const m = PF_RE.exec(header || "");
+  const n = PF_N_RE.exec(header || "");
+  return m && n ? [parseInt(n[1], 10), m[1]] : null;
+}
+
+// The msgstr indexes the header's formula gives for exactly one n in 0..upto; null when there is
+// no formula, it does not parse, or it gives a slot the file does not have.
+export function singleNumberSlots(header, upto = PF_UPTO) {
+  const pf = pfHeader(header);
+  const slots = pf ? pfSlots(pf[0], pf[1], upto) : null;
+  if (slots === null) return null;
+  const hits = new Map();
+  slots.forEach((i, n) => {
+    if (!hits.has(i)) hits.set(i, new Set());
+    hits.get(i).add(n);
+  });
   return new Set([...hits].filter(([, ns]) => ns.size === 1).map(([i]) => i));
+}
+
+// [nplurals, formula] of the server's table for a language code — full code first, then the base
+// subtag (pt-PT is not pt) — or null for a language the table does not have.
+export function pluralRuleFor(lang) {
+  const code = (lang || "").replaceAll("_", "-").toLowerCase();
+  return PLURAL_RULES[code] ?? PLURAL_RULES[code.split("-")[0]] ?? null;
+}
+
+// The msgstr slots `check` may read without the number (critic 21.11, B2): the slots the file's
+// formula gives for exactly one n — only when that formula is sound AND gives the same slot for
+// every n 0..1000 as the formula of the file's language (its `Language:` header, else `lang`) in
+// PLURAL_RULES. Otherwise the empty set: the strict reading of every version before 0.2.47.
+export function poLooseSlots(header, lang = "") {
+  const pf = pfHeader(header);
+  const m = PF_LANG_RE.exec(header || "");
+  const rule = pluralRuleFor(m ? m[1] : lang);
+  if (!pf || !rule || pf[0] !== rule[0]) return new Set();
+  const mine = pfSlots(pf[0], pf[1]);
+  const theirs = pfSlots(rule[0], rule[1]);
+  if (mine === null || theirs === null || mine.length !== theirs.length
+      || mine.some((s, i) => s !== theirs[i])) return new Set();
+  return singleNumberSlots(header) ?? new Set();
 }
 
 const NPLURALS_RE = rx("nplurals\\s*=\\s*(\\d+)");

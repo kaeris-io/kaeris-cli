@@ -179,6 +179,17 @@ class TestDetectorParity(unittest.TestCase):
             self.assertTrue(all(0 <= fm._pf_eval(tokens, k) < n for k in range(1001)), (code, expr))
             cats = BK._po_slot_cats(code, n)
             self.assertTrue({cats[i] for i in loose} <= {"zero", "one", "two"}, (code, loose, cats))
+            # the file the server writes for this language is read loosely exactly there
+            lang = code.replace("-", "_")
+            self.assertEqual(fm.po_loose_slots(f"Language: {lang}\n{header}"), loose, code)
+
+    def test_po_gate_table_is_the_servers(self):
+        """`check` trusts a .po formula only when it means the same as its language's row of
+        formats.PLURAL_RULES (critic 21.11, B2): that table must be the server's _PLURAL_RULES
+        (what `translate` writes), row for row."""
+        from kaeris import formats as fm
+        self.assertEqual(fm.PLURAL_RULES, dict(BK._PLURAL_RULES))
+        self.assertEqual(BK._PLURAL_DEFAULT, (2, "(n != 1)"))
 
 if __name__ == "__main__":
     unittest.main()

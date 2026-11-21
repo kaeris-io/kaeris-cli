@@ -59,6 +59,33 @@ def test_slots_one_number_selects_are_found_from_the_formula():
     assert fm.single_number_slots(f"Plural-Forms: {JA}\n") == set()
 
 
+def test_loose_slots_need_a_valid_formula_that_is_the_languages_own():
+    """Critic 21.11 (B2): the slots are read loosely only when the file's formula is sound
+    (every value below nplurals) AND gives the same slot for every n as the formula of the
+    file's Language in the server's gettext table (formats.PLURAL_RULES). Else: strict."""
+    head = lambda lang, rule: (f"Language: {lang}\n" if lang else "") + f"Plural-Forms: {rule}\n"
+    assert fm.po_loose_slots(head("ar", AR)) == {0, 1, 2}
+    assert fm.po_loose_slots(head("pl", PL)) == {0}
+    assert fm.po_loose_slots(head("he", HE)) == {0, 1}
+    # full code first, then the base (pt-PT counts 0 as plural, Brazilian pt does not)
+    assert fm.po_loose_slots(head("pt_PT", "nplurals=2; plural=(n != 1);")) == {0}
+    assert fm.po_loose_slots(head("pt_BR", "nplurals=2; plural=(n != 1);")) == set()
+    # the same rule spelled another way is the same rule
+    assert fm.po_loose_slots(head("he", "nplurals=3; plural=n==1 ? 0 : (n==2 ? 1 : 2);")) == {0, 1}
+    # no Language header: the language check was asked for
+    assert fm.po_loose_slots(head("", AR), "ar") == {0, 1, 2}
+    # broken: values past nplurals
+    assert fm.po_loose_slots(head("ru", "nplurals=3; plural=n;")) == set()
+    assert fm.po_loose_slots(head("he", "nplurals=2; plural=(n==1 ? 0 : n==2 ? 1 : 2);")) == set()
+    assert fm.single_number_slots("Plural-Forms: nplurals=3; plural=n;\n") is None
+    # sound, but another language's formula
+    assert fm.po_loose_slots(head("ru", HE)) == set()
+    assert fm.po_loose_slots(head("pl", CS)) == set()
+    # a language the table does not know, or no language at all
+    assert fm.po_loose_slots(head("xx", AR)) == set()
+    assert fm.po_loose_slots(head("", AR)) == set()
+
+
 def test_a_formula_that_does_not_parse_selects_nothing():
     assert fm.single_number_slots("Plural-Forms: nplurals=2; plural=(n != 1;\n") is None
     assert fm.single_number_slots("Plural-Forms: nplurals=2; plural=n ? import os : 1;\n") is None
@@ -81,6 +108,17 @@ CASES = {
                               ["Jeden plik", "%d pliki", "%d plików"], True),
     "he-two-without-number": ("he", HE, ["הודעה אחת", "שתי הודעות", "%d הודעות"],
                               ["קובץ אחד", "שני קבצים", "%d קבצים"], True),
+    # Critic 21.11 (B2): the loose reading must not trust a formula the file got wrong.
+    # `plural=n` gives every slot "one n" — a broken formula (values up to 1000 >= nplurals=3).
+    "ru-formula-plural-n": ("ru", "nplurals=3; plural=n;",
+                            ["%d сообщение", "%d сообщения", "%d сообщений"],
+                            ["%d файл", "файла", "файлов"], False),
+    # A valid formula, but Hebrew's in a Russian file: ru msgstr[1] is few (2-4, 22-24…).
+    "ru-hebrew-formula": ("ru", HE, ["%d сообщение", "%d сообщения", "%d сообщений"],
+                          ["%d файл", "файла", "%d файлов"], False),
+    # Hebrew's own formula, but nplurals=2: the formula gives slot 2, which does not exist.
+    "he-nplurals-below-values": ("he", "nplurals=2; plural=(n==1 ? 0 : n==2 ? 1 : 2);",
+                                 ["הודעה אחת", "%d הודעות"], ["קובץ אחד", "שני קבצים"], False),
 }
 
 

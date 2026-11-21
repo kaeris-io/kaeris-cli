@@ -1,0 +1,14 @@
+msgid ""
+msgstr ""
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "One message"
+msgid_plural "%d messages"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "%d file"
+msgid_plural "%d files"
+msgstr[0] ""
+msgstr[1] ""

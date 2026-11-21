@@ -1,0 +1,80 @@
+$ (cd C:/Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121) python -m pytest tests/test_po_single_number_slots.py -q -p no:cacheprovider -rf
+.F...F...FF                                                              [100%]
+================================== FAILURES ===================================
+_______ test_loose_slots_need_a_valid_formula_that_is_the_languages_own _______
+
+    def test_loose_slots_need_a_valid_formula_that_is_the_languages_own():
+        """Critic 21.11 (B2): the slots are read loosely only when the file's formula is sound
+        (every value below nplurals) AND gives the same slot for every n as the formula of the
+        file's Language in the server's gettext table (formats.PLURAL_RULES). Else: strict."""
+        head = lambda lang, rule: (f"Language: {lang}\n" if lang else "") + f"Plural-Forms: {rule}\n"
+>       assert fm.po_loose_slots(head("ar", AR)) == {0, 1, 2}
+               ^^^^^^^^^^^^^^^^^
+E       AttributeError: module 'kaeris.formats' has no attribute 'po_loose_slots'
+
+tests\test_po_single_number_slots.py:67: AttributeError
+_ test_check_reads_single_number_slots_loosely_and_the_rest_strictly[he-nplurals-below-values] _
+
+tmp_path = WindowsPath('C:/Users/Inzagi/AppData/Local/Temp/pytest-of-Inzagi/pytest-7528/test_check_reads_single_number2')
+name = 'he-nplurals-below-values'
+
+    @pytest.mark.parametrize("name", sorted(CASES))
+    def test_check_reads_single_number_slots_loosely_and_the_rest_strictly(tmp_path, name):
+        lang, _rule, _msg, _fil, passes = CASES[name]
+        code, out = run(tmp_path, lang, files(name)[f"{lang}.po"])
+        if passes:
+            assert code == 0, out
+        else:
+>           assert code == 1 and "%d" in out, out
+E           AssertionError: ✓ he: complete & placeholder-safe
+E             ✓ all locales complete & placeholder-safe
+E             
+E           assert (0 == 1)
+
+tests\test_po_single_number_slots.py:137: AssertionError
+_ test_check_reads_single_number_slots_loosely_and_the_rest_strictly[ru-formula-plural-n] _
+
+tmp_path = WindowsPath('C:/Users/Inzagi/AppData/Local/Temp/pytest-of-Inzagi/pytest-7528/test_check_reads_single_number6')
+name = 'ru-formula-plural-n'
+
+    @pytest.mark.parametrize("name", sorted(CASES))
+    def test_check_reads_single_number_slots_loosely_and_the_rest_strictly(tmp_path, name):
+        lang, _rule, _msg, _fil, passes = CASES[name]
+        code, out = run(tmp_path, lang, files(name)[f"{lang}.po"])
+        if passes:
+            assert code == 0, out
+        else:
+>           assert code == 1 and "%d" in out, out
+E           AssertionError: ✓ ru: complete & placeholder-safe
+E             ✓ all locales complete & placeholder-safe
+E             
+E           assert (0 == 1)
+
+tests\test_po_single_number_slots.py:137: AssertionError
+_ test_check_reads_single_number_slots_loosely_and_the_rest_strictly[ru-hebrew-formula] _
+
+tmp_path = WindowsPath('C:/Users/Inzagi/AppData/Local/Temp/pytest-of-Inzagi/pytest-7528/test_check_reads_single_number7')
+name = 'ru-hebrew-formula'
+
+    @pytest.mark.parametrize("name", sorted(CASES))
+    def test_check_reads_single_number_slots_loosely_and_the_rest_strictly(tmp_path, name):
+        lang, _rule, _msg, _fil, passes = CASES[name]
+        code, out = run(tmp_path, lang, files(name)[f"{lang}.po"])
+        if passes:
+            assert code == 0, out
+        else:
+>           assert code == 1 and "%d" in out, out
+E           AssertionError: ✓ ru: complete & placeholder-safe
+E             ✓ all locales complete & placeholder-safe
+E             
+E           assert (0 == 1)
+
+tests\test_po_single_number_slots.py:137: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/test_po_single_number_slots.py::test_loose_slots_need_a_valid_formula_that_is_the_languages_own
+FAILED tests/test_po_single_number_slots.py::test_check_reads_single_number_slots_loosely_and_the_rest_strictly[he-nplurals-below-values]
+FAILED tests/test_po_single_number_slots.py::test_check_reads_single_number_slots_loosely_and_the_rest_strictly[ru-formula-plural-n]
+FAILED tests/test_po_single_number_slots.py::test_check_reads_single_number_slots_loosely_and_the_rest_strictly[ru-hebrew-formula]
+4 failed, 7 passed in 1.35s
+
+# exit 1

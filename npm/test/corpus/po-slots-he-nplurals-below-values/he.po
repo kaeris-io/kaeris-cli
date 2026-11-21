@@ -1,0 +1,15 @@
+msgid ""
+msgstr ""
+"Language: he\n"
+"Plural-Forms: nplurals=2; plural=(n==1 ? 0 : n==2 ? 1 : 2);\n"
+
+msgid "One message"
+msgid_plural "%d messages"
+msgstr[0] "הודעה אחת"
+msgstr[1] "%d הודעות"
+
+msgid "%d file"
+msgid_plural "%d files"
+msgstr[0] "קובץ אחד"
+msgstr[1] "שני קבצים"
+

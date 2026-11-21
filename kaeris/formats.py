@@ -185,6 +185,31 @@ def _po_records(text):
 _NPLURALS = {"ru": 3, "uk": 3, "hr": 3, "sr": 3, "pl": 3, "cs": 3, "sk": 3, "ro": 3, "lt": 3,
              "lv": 3, "sl": 4, "ar": 6}
 
+# The server's gettext table itself (backend/translator.py _PLURAL_RULES: what `translate`
+# writes into a target's Plural-Forms), mirrored here; tests/test_detector_parity.py fails on any
+# difference. `check` reads a slot loosely only when a file's formula means the same as its
+# language's row (po_loose_slots). Languages without a row (de, es, it…) use n != 1 on the
+# server, whose only single-number slot is msgstr[0] — loose already.
+_SLAVIC_E = "(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)"
+_CS_SK = "(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2"
+PLURAL_RULES = {
+    "ja": (1, "0"), "zh": (1, "0"), "ko": (1, "0"), "vi": (1, "0"),
+    "th": (1, "0"), "id": (1, "0"), "ms": (1, "0"), "fa": (2, "(n > 1)"),
+    "fr": (2, "(n > 1)"), "pt": (2, "(n > 1)"),
+    "hi": (2, "(n > 1)"), "bn": (2, "(n > 1)"),
+    "he": (3, "(n==1 ? 0 : n==2 ? 1 : 2)"),
+    "pt-pt": (2, "(n != 1)"),
+    "tl": (2, "(n != 1 && n != 2 && n != 3 && (n%10 == 4 || n%10 == 6 || n%10 == 9))"),
+    "ru": (3, _SLAVIC_E), "uk": (3, _SLAVIC_E), "hr": (3, _SLAVIC_E), "sr": (3, _SLAVIC_E),
+    "pl": (3, "(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)"),
+    "cs": (3, _CS_SK), "sk": (3, _CS_SK),
+    "ro": (3, "(n==1 ? 0 : (n==0 || (n%100>0 && n%100<20)) ? 1 : 2)"),
+    "lt": (3, "(n%10==1 && n%100!=11 ? 0 : n%10>=2 && (n%100<10 || n%100>=20) ? 1 : 2)"),
+    "lv": (3, "(n%10==0 || (n%100>=11 && n%100<=19) ? 0 : n%10==1 && n%100!=11 ? 1 : 2)"),
+    "sl": (4, "(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3)"),
+    "ar": (6, "(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5)"),
+}
+
 
 def read_po(text, role="source", lang=""):
     """Keys are the msgid (with ⟦ctx:…⟧ for a msgctxt, ⟦plural⟧ for the plural form, ⟦dup:n⟧ for
@@ -231,7 +256,7 @@ def read_po(text, role="source", lang=""):
                     out[key(k0, f"plural:{n}")] = r["strs"][n]
     if role == "target":
         _po_plural_notes(out, records, header, lang)
-        for i in single_number_slots(header) or ():
+        for i in po_loose_slots(header, lang):
             for k0 in plural_keys:
                 out.count_optional.add(k0 if i == 0 else key(k0, "plural") if i == 1
                                        else key(k0, f"plural:{i}"))
@@ -323,20 +348,67 @@ def _pf_eval(tokens, n):
     return value
 
 
-def single_number_slots(header, upto=1000):
-    """The msgstr indexes the header's formula gives for exactly one n in 0..upto; None when
-    there is no formula or it does not parse."""
-    m = _PF_RE.search(header or "")
-    tokens = _pf_tokens(m.group(1)) if m else None
+_PF_N_RE = re.compile(r"nplurals\s*=\s*(\d+)")
+_PF_LANG_RE = re.compile(r"^\s*Language\s*:\s*([A-Za-z]{2,3}(?:[-_][A-Za-z0-9]+)*)", re.MULTILINE)
+_PF_UPTO = 1000
+
+
+def _pf_slots(nplurals, expr, upto=_PF_UPTO):
+    """[slot for n in 0..upto], or None when the formula does not parse or gives a slot
+    outside 0..nplurals-1 (msgfmt -c rejects such a file: "plural expression can produce
+    values as large as …")."""
+    tokens = _pf_tokens(expr)
     if not tokens:
         return None
-    hits = {}
     try:
-        for n in range(upto + 1):
-            hits.setdefault(_pf_eval(tokens, n), set()).add(n)
+        slots = [_pf_eval(tokens, n) for n in range(upto + 1)]
     except (ValueError, RecursionError):
         return None
+    return slots if all(0 <= s < nplurals for s in slots) else None
+
+
+def _pf_header(header):
+    """(nplurals, formula) of a Plural-Forms header, or None."""
+    m, n = _PF_RE.search(header or ""), _PF_N_RE.search(header or "")
+    return (int(n.group(1)), m.group(1)) if m and n else None
+
+
+def single_number_slots(header, upto=_PF_UPTO):
+    """The msgstr indexes the header's formula gives for exactly one n in 0..upto; None when
+    there is no formula, it does not parse, or it gives a slot the file does not have."""
+    pf = _pf_header(header)
+    slots = _pf_slots(pf[0], pf[1], upto) if pf else None
+    if slots is None:
+        return None
+    hits = {}
+    for n, i in enumerate(slots):
+        hits.setdefault(i, set()).add(n)
     return {i for i, ns in hits.items() if len(ns) == 1}
+
+
+def plural_rule_for(lang):
+    """(nplurals, formula) of the server's table for a language code — full code first, then
+    the base subtag (pt-PT is not pt) — or None for a language the table does not have."""
+    code = (lang or "").replace("_", "-").lower()
+    return PLURAL_RULES.get(code) or PLURAL_RULES.get(code.split("-")[0])
+
+
+def po_loose_slots(header, lang=""):
+    """The msgstr slots `check` may read without the number (critic 21.11, B2): the slots the
+    file's formula gives for exactly one n — only when that formula is sound AND gives the same
+    slot for every n 0..1000 as the formula of the file's language (its `Language:` header, else
+    `lang`) in PLURAL_RULES. A broken formula (`plural=n`), another language's formula (Hebrew's
+    in a Russian file) or a language the table does not know: the empty set, i.e. the strict
+    reading every version before 0.2.47 had (msgstr[0] stays loose as it always was)."""
+    pf = _pf_header(header)
+    m = _PF_LANG_RE.search(header or "")
+    rule = plural_rule_for(m.group(1) if m else lang)
+    if not pf or not rule or pf[0] != rule[0]:
+        return set()
+    mine, theirs = _pf_slots(*pf), _pf_slots(*rule)
+    if mine is None or mine != theirs:
+        return set()
+    return single_number_slots(header) or set()
 
 
 def _po_plural_notes(out, records, header, lang):
