@@ -128,5 +128,69 @@
   "header": "Language: ar\nPlural-Forms: nplurals=6; plural=- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - (n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5);\n",
   "lang": "ar",
   "loose": []
+ },
+ {
+  "name": "critic round 3: ar formula with NBSP for a space (gettext reads space and tab only)",
+  "header": "Language: ar\nPlural-Forms: nplurals=6; plural=(n==0\u00a0?\u00a00\u00a0: n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5);\n",
+  "lang": "ar",
+  "loose": []
+ },
+ {
+  "name": "critic round 3: ar formula with BOM/ZWNBSP for a space (gettext reads space and tab only)",
+  "header": "Language: ar\nPlural-Forms: nplurals=6; plural=(n==0\ufeff?\ufeff0\ufeff: n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5);\n",
+  "lang": "ar",
+  "loose": []
+ },
+ {
+  "name": "critic round 3: ar formula with NEL for a space (gettext reads space and tab only)",
+  "header": "Language: ar\nPlural-Forms: nplurals=6; plural=(n==0\u0085?\u00850\u0085: n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5);\n",
+  "lang": "ar",
+  "loose": []
+ },
+ {
+  "name": "critic round 3: ar formula with 0x1f for a space (gettext reads space and tab only)",
+  "header": "Language: ar\nPlural-Forms: nplurals=6; plural=(n==0\u001f?\u001f0\u001f: n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5);\n",
+  "lang": "ar",
+  "loose": []
+ },
+ {
+  "name": "critic round 3: ar formula with 0x1c for a space (gettext reads space and tab only)",
+  "header": "Language: ar\nPlural-Forms: nplurals=6; plural=(n==0\u001c?\u001c0\u001c: n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5);\n",
+  "lang": "ar",
+  "loose": []
+ },
+ {
+  "name": "critic round 3: ar formula with ideographic space for a space (gettext reads space and tab only)",
+  "header": "Language: ar\nPlural-Forms: nplurals=6; plural=(n==0\u3000?\u30000\u3000: n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5);\n",
+  "lang": "ar",
+  "loose": []
+ },
+ {
+  "name": "critic round 3: ar formula ending in an ideographic space",
+  "header": "Language: ar\nPlural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5)\u3000;\n",
+  "lang": "ar",
+  "loose": []
+ },
+ {
+  "name": "critic round 3: nplurals in Arabic-Indic digits",
+  "header": "Language: ar\nPlural-Forms: nplurals=\u0666; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5);\n",
+  "lang": "ar",
+  "loose": []
+ },
+ {
+  "name": "critic round 3: NEL after Language: (not read; --langs ar decides)",
+  "header": "Language:\u0085ar\nPlural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5);\n",
+  "lang": "ar",
+  "loose": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "name": "critic round 3: NEL after Language: checked as ru (not read; ru's formula is not this one)",
+  "header": "Language:\u0085ar\nPlural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5);\n",
+  "lang": "ru",
+  "loose": []
  }
 ]

@@ -37,3 +37,17 @@ def test_the_snapshot_is_whole():
     assert len(rules) >= 25 and rules["ar"][0] == 6 and rules["pl"][0] == 3, rules
     assert SNAP["CLDR_REQUIRED"]["pl"] == ["few", "many", "one"]
     assert "ja" in SNAP["NO_SINGULAR"] and "de" in SNAP["HAS_ONE"]
+
+
+def test_the_snapshot_pins_the_po_slot_order():
+    """_PO_SLOT_CATS: the order translate lays a target's .po slots out in (critic round 3: a
+    reordered ro row passed every guard). The CLI has no copy of it; the snapshot pins it so the
+    server's guard (backend/tests/test_plural_tables_snapshot.py, test_detector_parity) fails on
+    any change until both files are refreshed. Each row has nplurals slots of distinct CLDR
+    categories."""
+    slots = SNAP["PO_SLOT_CATS"]
+    assert slots["ar"] == ["zero", "one", "two", "few", "many", "other"], slots
+    assert slots["lv"] == ["zero", "one", "other"] and slots["ro"] == ["one", "few", "other"], slots
+    for lang, cats in slots.items():
+        assert len(cats) == SNAP["PLURAL_RULES"][lang][0] and len(set(cats)) == len(cats), lang
+        assert set(cats) <= {"zero", "one", "two", "few", "many", "other"}, lang

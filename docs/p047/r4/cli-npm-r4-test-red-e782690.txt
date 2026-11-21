@@ -1,0 +1,85 @@
+$ (cd npm) node --test test/translate.test.js test/po-slots.test.js   (kaeris-cli e782690 + these tests)
+✖ degenerate headers read as the Python port reads them (58.4649ms)
+▶ translate: files land where the Python CLI puts them
+▶ translate: refusals are one clear line and a non-zero exit
+▶ translate: glossary file
+▶ translate: help
+▶ translate: words on the screen (pre-tag round 2)
+▶ translate: the server's plural finding is printed
+  ✖ a .po entry written as before 0.2.47 is named, and no all-clear line (96.467ms)
+  ✖ a JSON set missing forms is named too (96.8668ms)
+✖ translate: the server's plural finding is printed (193.8577ms)
+ℹ tests 35
+ℹ suites 6
+ℹ pass 32
+ℹ fail 3
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 8708.5721
+
+✖ failing tests:
+
+test at npm\test\po-slots.test.js:66:1
+✖ degenerate headers read as the Python port reads them (58.4649ms)
+  AssertionError [ERR_ASSERTION]: critic round 3: ar formula with NBSP for a space (gettext reads space and tab only)
+  + actual - expected
+  
+  + [
+  +   0,
+  +   1,
+  +   2
+  + ]
+  - []
+  
+      at TestContext.<anonymous> (file:///C:/Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121/npm/test/po-slots.test.js:70:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [ 0, 1, 2 ],
+    expected: [],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at npm\test\translate.test.js:509:3
+✖ a .po entry written as before 0.2.47 is named, and no all-clear line (96.467ms)
+  AssertionError [ERR_ASSERTION]: ✗ Unknown language code: pl, ru. Codes offered: en, de, fr, zh-Hant
+  
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///C:/Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121/npm/test/translate.test.js:517:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Promise.all (index 0)
+      at async Suite.run (node:internal/test_runner/test:1869:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at npm\test\translate.test.js:524:3
+✖ a JSON set missing forms is named too (96.8668ms)
+  AssertionError [ERR_ASSERTION]: ✗ Unknown language code: pl. Codes offered: en, de, fr, zh-Hant
+  
+      at TestContext.<anonymous> (file:///C:/Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121/npm/test/translate.test.js:531:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Suite.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

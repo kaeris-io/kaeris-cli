@@ -498,3 +498,37 @@ describe("translate: words on the screen (pre-tag round 2)", () => {
     assert.doesNotMatch(r.stdout, /keys are missing or extra/);
   });
 });
+
+// P0.2.47, critic round 3, B4: the server's plural finding (`_qa[lang].plurals`) reached nobody;
+// a Polish .po whose msgstr[2] repeated msgstr[1] came with "no placeholder loss". Python twin:
+// tests/test_translate_says_plural_findings.py. The exit code stays 0 (a QA finding, the file is
+// what 0.2.46 wrote).
+describe("translate: the server's plural finding is printed", () => {
+  const PO_REPEAT = "'%d file': the answer had no many form; written as before 0.2.47: msgstr[0] (one) holds the singular, msgstr[2] (many) repeats msgstr[1] (few)";
+
+  test("a .po entry written as before 0.2.47 is named, and no all-clear line", async () => {
+    scene = defaultScene();
+    scene.members = { "pl.po": 'msgid ""\nmsgstr ""\n' };
+    scene.preview = () => [200, { _warnings: {}, _qa: { pl: { plurals: [PO_REPEAT] }, ru: { plurals: [PO_REPEAT] } } }];
+    const dir = tmp();
+    write(dir, "en.po", 'msgid ""\nmsgstr ""\n"Content-Type: text/plain; charset=UTF-8\n"\n\nmsgid "%d file"\nmsgid_plural "%d files"\nmsgstr[0] ""\nmsgstr[1] ""\n');
+    const r = await kaeris(["translate", "en.po", "--langs", "pl,ru"], { cwd: dir });
+    const said = r.stdout + r.stderr;
+    assert.equal(r.code, 0, said);
+    assert.ok(said.includes(`[pl] ${PO_REPEAT}`), said);
+    assert.ok(said.includes(`[ru] ${PO_REPEAT}`), said);
+    assert.match(said, /2 plural\(s\)/);
+    assert.doesNotMatch(said, /no placeholder loss/);
+  });
+
+  test("a JSON set missing forms is named too", async () => {
+    scene = defaultScene();
+    scene.preview = () => [200, { _warnings: {}, _qa: { pl: { plurals: ["'cart': plural is missing the few/many form(s) pl requires"] } } }];
+    const dir = tmp();
+    write(dir, "en.json", EN);
+    const r = await kaeris(["translate", "en.json", "--langs", "pl"], { cwd: dir });
+    const said = r.stdout + r.stderr;
+    assert.ok(said.includes("[pl] 'cart': plural is missing the few/many form(s) pl requires"), said);
+    assert.doesNotMatch(said, /no placeholder loss/);
+  });
+});

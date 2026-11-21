@@ -1,0 +1,78 @@
+$ python -m pytest -q --tb=line tests/test_translate_says_plural_findings.py tests/test_plural_tables_snapshot.py tests/test_po_single_number_slots.py   (kaeris-cli e782690 + these tests)
+kaeris from C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py
+FFF....F............................F.FFFFFF...                          [100%]
+================================== FAILURES ===================================
+E   AssertionError: \u2713 Translation QA: no placeholder loss, no overflow risks
+      
+    assert "[pl] '%d file': the answer had no many form; written as before 0.2.47: msgstr[0] (one) holds the singular, msgstr[2] (many) repeats msgstr[1] (few)" in '\u2713 Translation QA: no placeholder loss, no overflow risks\\n'
+C:\\Users\\Inzagi\\projects\\kaeris\\cli\\.claude\\worktrees\\plural-translate-1121\\tests\\test_translate_says_plural_findings.py:36: AssertionError: \u2713 Translation QA: no placeholder loss, no overflow risks
+E   AssertionError: \u2713 Translation QA: no placeholder loss, no overflow risks
+      
+    assert 'no placeholder loss' not in '\u2713 Translati...flow risks\\n'
+      
+      'no placeholder loss' is contained here:
+      ?                   --
+        \u2713 Translation QA: no placeholder loss, no overflow risks
+      ?                     +++++++++++++++++++++
+C:\\Users\\Inzagi\\projects\\kaeris\\cli\\.claude\\worktrees\\plural-translate-1121\\tests\\test_translate_says_plural_findings.py:43: AssertionError: \u2713 Translation QA: no placeholder loss, no overflow risks
+E   AssertionError: \u2713 Translation QA: no placeholder loss, no overflow risks
+      
+    assert ("[pl] 'cart': plural is missing the few/many form(s) pl requires" in '\u2713 Translation QA: no placeholder loss, no overflow risks\\n')
+C:\\Users\\Inzagi\\projects\\kaeris\\cli\\.claude\\worktrees\\plural-translate-1121\\tests\\test_translate_says_plural_findings.py:49: AssertionError: \u2713 Translation QA: no placeholder loss, no overflow risks
+E   KeyError: 'PO_SLOT_CATS'
+C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\tests\test_plural_tables_snapshot.py:48: KeyError: 'PO_SLOT_CATS'
+E   AssertionError: critic round 3: ar formula with NBSP for a space (gettext reads space and tab only)
+    assert [0, 1, 2] == []
+      
+      Left contains 3 more items, first extra item: 0
+      Use -v to get more diff
+C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\tests\test_po_single_number_slots.py:156: AssertionError: critic round 3: ar formula with NBSP for a space (gettext reads space and tab only)
+E   AssertionError: critic round 3: ar formula with NEL for a space (gettext reads space and tab only)
+    assert [0, 1, 2] == []
+      
+      Left contains 3 more items, first extra item: 0
+      Use -v to get more diff
+C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\tests\test_po_single_number_slots.py:156: AssertionError: critic round 3: ar formula with NEL for a space (gettext reads space and tab only)
+E   AssertionError: critic round 3: ar formula with 0x1f for a space (gettext reads space and tab only)
+    assert [0, 1, 2] == []
+      
+      Left contains 3 more items, first extra item: 0
+      Use -v to get more diff
+C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\tests\test_po_single_number_slots.py:156: AssertionError: critic round 3: ar formula with 0x1f for a space (gettext reads space and tab only)
+E   AssertionError: critic round 3: ar formula with 0x1c for a space (gettext reads space and tab only)
+    assert [0, 1, 2] == []
+      
+      Left contains 3 more items, first extra item: 0
+      Use -v to get more diff
+C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\tests\test_po_single_number_slots.py:156: AssertionError: critic round 3: ar formula with 0x1c for a space (gettext reads space and tab only)
+E   AssertionError: critic round 3: ar formula with ideographic space for a space (gettext reads space and tab only)
+    assert [0, 1, 2] == []
+      
+      Left contains 3 more items, first extra item: 0
+      Use -v to get more diff
+C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\tests\test_po_single_number_slots.py:156: AssertionError: critic round 3: ar formula with ideographic space for a space (gettext reads space and tab only)
+E   AssertionError: critic round 3: ar formula ending in an ideographic space
+    assert [0, 1, 2] == []
+      
+      Left contains 3 more items, first extra item: 0
+      Use -v to get more diff
+C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\tests\test_po_single_number_slots.py:156: AssertionError: critic round 3: ar formula ending in an ideographic space
+E   AssertionError: critic round 3: nplurals in Arabic-Indic digits
+    assert [0, 1, 2] == []
+      
+      Left contains 3 more items, first extra item: 0
+      Use -v to get more diff
+C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\tests\test_po_single_number_slots.py:156: AssertionError: critic round 3: nplurals in Arabic-Indic digits
+=========================== short test summary info ===========================
+FAILED tests/test_translate_says_plural_findings.py::test_a_plural_finding_is_printed
+FAILED tests/test_translate_says_plural_findings.py::test_no_all_clear_line_beside_a_plural_finding
+FAILED tests/test_translate_says_plural_findings.py::test_a_json_set_missing_forms_is_printed_too
+FAILED tests/test_plural_tables_snapshot.py::test_the_snapshot_pins_the_po_slot_order
+FAILED tests/test_po_single_number_slots.py::test_degenerate_headers_read_as_npm_reads_them[critic round 3: ar formula with NBSP for a space (gettext reads space and tab only)]
+FAILED tests/test_po_single_number_slots.py::test_degenerate_headers_read_as_npm_reads_them[critic round 3: ar formula with NEL for a space (gettext reads space and tab only)]
+FAILED tests/test_po_single_number_slots.py::test_degenerate_headers_read_as_npm_reads_them[critic round 3: ar formula with 0x1f for a space (gettext reads space and tab only)]
+FAILED tests/test_po_single_number_slots.py::test_degenerate_headers_read_as_npm_reads_them[critic round 3: ar formula with 0x1c for a space (gettext reads space and tab only)]
+FAILED tests/test_po_single_number_slots.py::test_degenerate_headers_read_as_npm_reads_them[critic round 3: ar formula with ideographic space for a space (gettext reads space and tab only)]
+FAILED tests/test_po_single_number_slots.py::test_degenerate_headers_read_as_npm_reads_them[critic round 3: ar formula ending in an ideographic space]
+FAILED tests/test_po_single_number_slots.py::test_degenerate_headers_read_as_npm_reads_them[critic round 3: nplurals in Arabic-Indic digits]
+11 failed, 36 passed in 3.36s
