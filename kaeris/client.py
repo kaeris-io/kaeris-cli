@@ -16,6 +16,9 @@ import urllib.parse
 from . import __version__
 
 DEFAULT_API = "https://kaeris.dev"
+# /api/translate `plurals`: this client takes the plural forms a target needs that its source
+# lacks. /api/config `plural_forms` says the server adds them (see KaerisClient.adds_plural_forms).
+PLURALS_CLAIM = "cldr"
 
 
 class KaerisError(Exception):
@@ -316,6 +319,18 @@ class KaerisClient:
     def config(self):
         return json.loads(self._get("/api/config").decode())
 
+    def adds_plural_forms(self):
+        """Whether this server adds the plural forms a target needs that its source lacks (it
+        says `plural_forms` in /api/config, server P0.2.47). Asked once per client: `--only-new`
+        sends a set only to complete its forms when it is true — a server that never adds them
+        would get the same set, and charge it, on every run. False when it cannot be asked."""
+        if getattr(self, "_plural_forms", None) is None:
+            try:
+                self._plural_forms = self.config().get("plural_forms") == PLURALS_CLAIM
+            except Exception:
+                self._plural_forms = False
+        return self._plural_forms
+
     def key_info(self):
         """Tier, allowance and model for the configured API key (anonymous limits without one).
         Includes `model_id` — the exact model this tier translates with, which the lock records
@@ -408,6 +423,13 @@ class KaerisClient:
             parts.append(b'Content-Disposition: form-data; name="verify_all"')
             parts.append(b"")
             parts.append(b"1")
+        # This client takes plural forms its source does not have (0.2.47): merge_translation
+        # puts `cart.saved_few` beside `cart.saved_other`, and check reads a .po slot one number
+        # selects without the number. A server sends the new forms only to a client that says so.
+        parts.append(b"--" + boundary.encode())
+        parts.append(b'Content-Disposition: form-data; name="plurals"')
+        parts.append(b"")
+        parts.append(PLURALS_CLAIM.encode())
         parts.append(b"--" + boundary.encode() + b"--")
         parts.append(b"")
         body = crlf.join(parts)

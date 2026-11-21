@@ -63,6 +63,22 @@ class PolishServer:
     def preview(self, job_id):
         return {}
 
+    def adds_plural_forms(self):
+        return True
+
+
+class ProdServer(PolishServer):
+    """The server as it is in production (94114a89): no `plural_forms` in /api/config, and a
+    set comes back in the source's own forms only."""
+
+    def adds_plural_forms(self):
+        return False
+
+    def download(self, job_id):
+        sent = inc.flatten(PolishServer.calls[int(job_id.rsplit("-", 1)[1]) - 1])
+        return {"pl.json": json.dumps(inc.unflatten({k: "PL " + v for k, v in sent.items()}),
+                                      ensure_ascii=False).encode()}
+
 
 class OnlyNew(unittest.TestCase):
     def setUp(self):
@@ -119,9 +135,136 @@ class OnlyNew(unittest.TestCase):
         """An ordinal set owes `_ordinal_other` only; Japanese has one form."""
         src = {"place_ordinal_one": "{{count}}st", "place_ordinal_other": "{{count}}th"}
         target = {"place_ordinal_one": "{{count}}.", "place_ordinal_other": "{{count}}."}
-        self.assertEqual(chk.plural_set_work(src, target, {}, "pl"), {})
+        self.assertEqual(chk.plural_set_work(src, target, {}, "pl"), ({}, {}))
         self.assertEqual(chk.plural_set_work({"a_one": "1", "a_other": "2"},
-                                             {"a_one": "x", "a_other": "y"}, {}, "ja"), {})
+                                             {"a_one": "x", "a_other": "y"}, {}, "ja"), ({}, {}))
+
+    def _out(self, *extra):
+        import contextlib
+        import io
+        buf = io.StringIO()
+        args = cli.build_parser().parse_args(
+            ["translate", self.en, "--langs", "pl", "--only-new", "--no-tm", *extra])
+        with contextlib.redirect_stdout(buf), contextlib.redirect_stderr(buf):
+            code = cli.cmd_translate(args)
+        return code, buf.getvalue()
+
+    def test_completing_a_set_alone_says_so_without_with_them(self):
+        """Critic 21.11: "N more key(s) of plural sets sent with them" was printed when nothing
+        else was sent — "with them" pointed at nothing."""
+        inc.dump_json(SRC, self.en)
+        inc.dump_json(PL_OLD, self.pl)
+        code, out = self._out("--assume-current")
+        self.assertEqual(code, 0, out)
+        self.assertNotIn("with them", out)
+        self.assertIn("pl: sending 2 key(s) of plural sets whole", out)
+
+    def test_a_set_beside_an_edit_is_sent_with_it(self):
+        inc.dump_json(SRC, self.en)
+        self.assertEqual(self._run(), 0)
+        edited = json.loads(json.dumps(SRC))
+        edited["cart"]["items_other"] = "{{count}} items in your cart"
+        inc.dump_json(edited, self.en)
+        code, out = self._out()
+        self.assertIn("pl: 1 more key(s) of plural sets sent with them", out)
+
+
+class OldServer(unittest.TestCase):
+    """CLI 0.2.47 against the production server (94114a89), which never adds a form: critic
+    21.11 saw every `--only-new` send the Polish set again and charge it, with no end."""
+
+    def setUp(self):
+        PolishServer.calls = []
+        self._real = cli.KaerisClient
+        cli.KaerisClient = ProdServer
+        self.tmp = tempfile.TemporaryDirectory()
+        self.en = os.path.join(self.tmp.name, "en.json")
+        self.pl = os.path.join(self.tmp.name, "pl.json")
+
+    def tearDown(self):
+        cli.KaerisClient = self._real
+        self.tmp.cleanup()
+
+    def _run(self, *extra):
+        args = cli.build_parser().parse_args(
+            ["translate", self.en, "--langs", "pl", "--only-new", "--quiet", "--no-tm", *extra])
+        return cli.cmd_translate(args)
+
+    def test_missing_forms_alone_are_not_work_for_a_server_that_does_not_add_them(self):
+        inc.dump_json(SRC, self.en)
+        inc.dump_json(PL_OLD, self.pl)
+        for flags in (("--assume-current",), (), ()):
+            self.assertEqual(self._run(*flags), 0)
+        self.assertEqual(PolishServer.calls, [], "nothing new: nothing sent, nothing charged")
+        self.assertEqual(inc.load_json(self.pl), PL_OLD, "the file is left as it was")
+
+    def test_a_new_key_goes_alone_and_lands_in_place(self):
+        inc.dump_json(SRC, self.en)
+        inc.dump_json(PL_OLD, self.pl)
+        self.assertEqual(self._run("--assume-current"), 0)
+        src = json.loads(json.dumps(SRC))
+        src["cart"]["saved_one"] = "{{count}} saved"
+        src["cart"]["saved_other"] = "{{count}} saved"
+        inc.dump_json(src, self.en)
+        self.assertEqual(self._run(), 0)
+        self.assertEqual(self._run(), 0)
+        self.assertEqual(len(PolishServer.calls), 1, PolishServer.calls)
+        self.assertEqual(PolishServer.calls[0], {"cart": {"saved_one": "{{count}} saved",
+                                                          "saved_other": "{{count}} saved"}})
+        out = inc.load_json(self.pl)
+        self.assertEqual(set(out), {"cart", "title"}, out)
+
+
+class Claims(unittest.TestCase):
+    def test_the_request_says_this_client_takes_new_forms(self):
+        from kaeris.client import KaerisClient
+        body, _ = KaerisClient("http://127.0.0.1:9")._multipart("en.json", b"{}", ["pl"])
+        self.assertIn(b'name="plurals"\r\n\r\ncldr', body)
+
+    def test_the_server_is_asked_once_whether_it_adds_forms(self):
+        from kaeris.client import KaerisClient
+        asked = []
+
+        class C(KaerisClient):
+            def config(self):
+                asked.append(1)
+                return {"plural_forms": "cldr"}
+
+        c = C("http://127.0.0.1:9")
+        self.assertTrue(c.adds_plural_forms() and c.adds_plural_forms())
+        self.assertEqual(len(asked), 1)
+
+        class Old(KaerisClient):
+            def config(self):
+                return {"max_keys": 1}
+
+        class Down(KaerisClient):
+            def config(self):
+                raise OSError("no route")
+
+        self.assertFalse(Old("http://127.0.0.1:9").adds_plural_forms())
+        self.assertFalse(Down("http://127.0.0.1:9").adds_plural_forms())
+
+
+class Memory(unittest.TestCase):
+    """Critic 21.11: "N of them come from the project memory" counted the Polish set, which the
+    server translates again (the memory holds only the source's forms)."""
+
+    def test_sets_a_language_needs_more_forms_of_are_not_remembered_lines(self):
+        flat = inc.flatten(SRC)
+        self.assertEqual(chk.plural_keys_translated_again(flat, "pl"),
+                         {"cart.items_one", "cart.items_other"})
+        self.assertEqual(chk.plural_keys_translated_again(flat, "de"), set())
+        self.assertEqual(chk.plural_keys_translated_again(flat, "ja"), set())
+
+    def test_the_count_leaves_them_out_only_where_the_server_folds(self):
+        hits = {"pl": {"cart.items_one": "a", "cart.items_other": "b", "title": "c"},
+                "de": {"cart.items_one": "a", "cart.items_other": "b"}}
+        flat = inc.flatten(SRC)
+        got, n = cli._without_retranslated(hits, flat, PolishServer())
+        self.assertEqual((got, n), ({"pl": {"title": "c"}, "de": hits["de"]}, 3))
+        got, n = cli._without_retranslated(hits, flat, ProdServer())
+        self.assertEqual((got, n), (hits, 5))
 
 
 class Merge(unittest.TestCase):

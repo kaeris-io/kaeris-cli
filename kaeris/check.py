@@ -214,22 +214,45 @@ def _language_forms(lang):
     return (required | {"other"} if required else None), False
 
 
-def plural_set_work(source_flat, target_flat, todo, lang):
-    """{key: source text} of every plural set `translate --only-new` must send WHOLE, beyond
-    `todo`: a set one of whose keys is in `todo` (the server folds a set into one ICU string only
-    when it gets all of it), and a set the target lacks a form of that `lang` needs — the forms
-    this module asks for (a Polish file with `items_one/items_other` only is not up to date).
+def plural_set_work(source_flat, target_flat, todo, lang, complete=True):
+    """({key: source text}, {key: source text}) of the plural sets `translate --only-new` must
+    send WHOLE, beyond `todo`: (1) a set one of whose keys is in `todo` (the server folds a set
+    into one ICU string only when it gets all of it); (2) a set the target lacks a form of that
+    `lang` needs — the forms this module asks for (a Polish file with `items_one/items_other`
+    only is not up to date). (2) only when `complete`: the server adds those forms (it says so
+    in /api/config); one that does not would get the set, and charge it, on every run.
     Ordinal sets owe only `_ordinal_other` and are translated form by form: never added."""
     forms, single = _language_forms(lang)
     need = set() if single or not forms else forms
-    work = {}
+    with_todo, to_complete = {}, {}
     for (base, sep), src_forms in _plural_sets(source_flat).items():
         if sep == "_" and base.endswith(_ORDINAL):
             continue
         keys = [f"{base}{sep}{c}" for c in CLDR_ORDER_LOCAL if c in src_forms]
-        if any(k in todo for k in keys) or any(f"{base}{sep}{c}" not in target_flat for c in need):
-            work.update((k, source_flat[k]) for k in keys if k not in todo)
-    return work
+        rest = {k: source_flat[k] for k in keys if k not in todo}
+        if any(k in todo for k in keys):
+            with_todo.update(rest)
+        elif complete and any(f"{base}{sep}{c}" not in target_flat for c in need):
+            to_complete.update(rest)
+    return with_todo, to_complete
+
+
+def plural_keys_translated_again(source_flat, lang):
+    """The keys of the plural sets a server with `plural_forms` translates again whatever the
+    project memory holds: a set the target needs a form of that its source lacks (Polish few and
+    many for `items_one/items_other`). The memory has only the source's forms, so the server
+    cannot reuse the set as a whole (its `_fold_reuse`), and the CLI must not count those lines
+    as remembered."""
+    forms, single = _language_forms(lang)
+    if single or not forms:
+        return set()
+    keys = set()
+    for (base, sep), src_forms in _plural_sets(source_flat).items():
+        if sep == "_" and base.endswith(_ORDINAL):
+            continue
+        if forms - set(src_forms):
+            keys.update(f"{base}{sep}{c}" for c in src_forms)
+    return keys
 
 
 def _plural_set_faults(source_flat, target_flat, missing, extra, lang):

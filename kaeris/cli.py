@@ -1359,7 +1359,13 @@ def _dry_plan(client, path, langs, args):
                                       gl.changed_terms(locked_terms.get(lang), fps))
                 if not settings_changed:
                     todo.update({k: source_flat[k] for k in stale if k not in todo})
-            reuse, _n = _tm_reuse(memory, todo, [lang], sig, entries)
+            with_todo, to_complete = chk.plural_set_work(
+                source_flat, existing_flat, todo, lang,
+                complete=bool(chk.plural_keys_translated_again(source_flat, lang))
+                and _adds_plural_forms(client))
+            todo.update(with_todo)
+            todo.update(to_complete)
+            reuse, _n = _tm_reuse(memory, todo, [lang], sig, entries, client)
             to_check = _tm_to_check(args, memory, todo, reuse, sig)
             rows[lang] = _dry_row(todo, _reused_keys(reuse, lang, todo), len(source_flat), verify,
                                   (to_check or {}).get(lang) or (),
@@ -1369,7 +1375,7 @@ def _dry_plan(client, path, langs, args):
     else:
         if not source_flat:
             raise ValueError("no translatable strings")
-        reuse, _n = _tm_reuse(memory, source_flat, langs, sig, entries)
+        reuse, _n = _tm_reuse(memory, source_flat, langs, sig, entries, client)
         to_check = _tm_to_check(args, memory, source_flat, reuse, sig)
         for lang in langs:
             rows[lang] = _dry_row(source_flat, _reused_keys(reuse, lang, source_flat),
@@ -1747,15 +1753,33 @@ def _term_entries(args):
     return g.entries if g else []
 
 
-def _tm_reuse(memory, source_flat, langs, sig, entries=None):
+def _tm_reuse(memory, source_flat, langs, sig, entries=None, client=None):
     """What the API can skip entirely. Handed over as its `reuse` map — strings it does not
     translate are strings it does not charge for. A remembered string that says a glossary term
     the old way is not served: the memory is keyed by text, so it would undo the glossary."""
     if memory is None:
         return None, 0
     hits = gl.filter_reuse(tmem.lookup(memory, source_flat, langs, sig), source_flat, entries)
-    n = sum(len(v) for v in hits.values())
+    hits, n = _without_retranslated(hits, source_flat, client)
     return (hits or None), n
+
+
+def _adds_plural_forms(client):
+    """client.adds_plural_forms(), False for a client that cannot say (None, a stand-in)."""
+    ask = getattr(client, "adds_plural_forms", None)
+    return bool(ask()) if callable(ask) else False
+
+
+def _without_retranslated(hits, source_flat, client):
+    """(hits, how many) without the lines of plural sets a server with `plural_forms` translates
+    again whatever the memory holds (check.plural_keys_translated_again: Polish few/many are not
+    in it). Counting them said "from the project memory" for lines the model wrote and charged
+    (critic 21.11). A server without it reuses them line by line, as before."""
+    if hits and _adds_plural_forms(client):
+        again = {lang: chk.plural_keys_translated_again(source_flat, lang) for lang in hits}
+        hits = {lang: {k: v for k, v in got.items() if k not in again[lang]}
+                for lang, got in hits.items()}
+    return hits, sum(len(v) for v in hits.values())
 
 
 def _tm_to_check(args, memory, source_flat, reuse, sig):
@@ -1866,7 +1890,7 @@ def _start_one(client, pool, path, langs, args, label=""):
                 (".json", ".arb")) else {}
         except (OSError, ValueError):
             source_flat = {}
-    reuse, n_reused = _tm_reuse(memory, source_flat, langs, sig, _term_entries(args))
+    reuse, n_reused = _tm_reuse(memory, source_flat, langs, sig, _term_entries(args), client)
     if n_reused:
         info(f"Project memory: {n_reused} string/language pair(s) reused, not re-translated")
     to_check = _tm_to_check(args, memory, source_flat, reuse, sig)
@@ -2178,11 +2202,21 @@ def _translate_incremental(client, path, out_dir, langs, args):
         # A plural set goes whole: when one of its forms is due, and when the target lacks a
         # form this language needs (what `check` asks for) — the server adds those forms only to
         # a set it gets entire (0.2.47).
-        plural = chk.plural_set_work(source_flat, existing_flat, todo, lang)
-        if plural:
-            info(f"{lang}: {len(plural)} more key(s) of plural sets sent with them, so every "
+        # Completing a set's forms only on a server that adds them (/api/config plural_forms):
+        # the production server before 0.2.47 never does, and the set would be sent and charged
+        # on every run with the file never up to date (critic 21.11).
+        with_todo, to_complete = chk.plural_set_work(
+            source_flat, existing_flat, todo, lang,
+            complete=bool(chk.plural_keys_translated_again(source_flat, lang))
+            and _adds_plural_forms(client))
+        if with_todo:
+            info(f"{lang}: {len(with_todo)} more key(s) of plural sets sent with them, so every "
                  f"form {lang} needs is written")
-            todo.update(plural)
+        if to_complete:
+            info(f"{lang}: sending {len(to_complete)} key(s) of plural sets whole, so every "
+                 f"form {lang} needs is written")
+        todo.update(with_todo)
+        todo.update(to_complete)
         if not todo:
             ok(f"{lang}: up to date ({len(existing_flat)} keys)")
             continue
@@ -2198,7 +2232,7 @@ def _translate_incremental(client, path, out_dir, langs, args):
         # Of the keys the lock says still need work, some are renames and moves of text we
         # have already translated. Those are exactly what the lock cannot see and the project
         # memory can — and the API does not charge for what it is told it already knows.
-        reuse, n_reused = _tm_reuse(memory, todo, [lang], sig, entries)
+        reuse, n_reused = _tm_reuse(memory, todo, [lang], sig, entries, client)
         if n_reused:
             info(f"{lang}: {n_reused} of them come from the project memory, not the model")
         to_check = _tm_to_check(args, memory, todo, reuse, sig)

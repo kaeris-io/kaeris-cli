@@ -6,6 +6,9 @@ import { readZip, BadZip } from "./zip.js";
 import { version } from "./version.js";
 
 export const DEFAULT_API = "https://kaeris.dev";
+// /api/translate `plurals`: this client takes the plural forms a target needs that its source
+// lacks (server P0.2.47 sends them only to a client that says so).
+export const PLURALS_CLAIM = "cldr";
 
 export class KaerisError extends Error {
   constructor(message, code = null) {
@@ -238,6 +241,10 @@ export class Client {
     if (opts.model) form.append("model", opts.model);
     if (opts.models && Object.keys(opts.models).length) form.append("models", JSON.stringify(opts.models));
     if (opts.terms && opts.terms.length) form.append("terms", JSON.stringify(opts.terms));
+    // This client takes plural forms its source does not have (0.2.47: check reads a .po slot
+    // one number selects without the number); the server sends them only to a client that says
+    // so. An older server ignores the field.
+    form.append("plurals", PLURALS_CLAIM);
     // Built once: FormData picks its boundary when it is turned into a body.
     const req = new Request("http://x/", { method: "POST", body: form });
     const body = Buffer.from(await req.arrayBuffer());
