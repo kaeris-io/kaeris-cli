@@ -1,0 +1,24 @@
+$ (cd C:/Users/Inzagi/AppData/Local/Temp/claude/a43205edf0b1eb40/1d41411c-380d-43ba-80ea-359c271f4a08/scratchpad/r3) python C:/Users/Inzagi/AppData/Local/Temp/claude/a43205edf0b1eb40/1d41411c-380d-43ba-80ea-359c271f4a08/scratchpad/r3/pf_probe.py C:/Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121/npm/test/po-degenerate.json C:/Users/Inzagi/AppData/Local/Temp/claude/a43205edf0b1eb40/1d41411c-380d-43ba-80ea-359c271f4a08/scratchpad/r3/cli-43dcd9f C:/Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121
+# 2026-11-21 10:53:01  exit 0  2s
+case | expected | cli-43dcd9f py | cli-43dcd9f npm | plural-translate-1121 py | plural-translate-1121 npm
+ar sound | [0, 1, 2] | [0, 1, 2] | [0, 1, 2] | [0, 1, 2] | [0, 1, 2]
+Language he in a file checked as ru | [] | [0, 1] | [0, 1] | [] | []
+Language he, checked as he | [0, 1] | [0, 1] | [0, 1] | [0, 1] | [0, 1]
+Language he, no --langs code | [0, 1] | [0, 1] | [0, 1] | [0, 1] | [0, 1]
+Language ar_EG checked as ar | [0, 1, 2] | [0, 1, 2] | [0, 1, 2] | [0, 1, 2] | [0, 1, 2]
+Language pt_BR checked as pt | [] | [] | [] | [] | []
+Language pt_PT checked as pt-PT | [0] | [0] | [0] | [0] | [0]
+Language pt_PT checked as pt | [] | [0] | [0] | [] | []
+200 nested parentheses round ar | [] | [] | [0, 1, 2] | [] | []
+30 nested parentheses round ar | [0, 1, 2] | [0, 1, 2] | [0, 1, 2] | [0, 1, 2] | [0, 1, 2]
+double loses the +1 (n^6) | [] | [0, 1, 2] | [] | [] | []
+n^5 stays exact in both | [0, 1, 2] | [0, 1, 2] | [0, 1, 2] | [0, 1, 2] | [0, 1, 2]
+a 17-digit literal | [] | [0, 1, 2] | [] | [] | []
+% of a negative | [] | [0, 1, 2] | [0, 1, 2] | [] | []
+formula of 1001 characters | [] | [0, 1, 2] | [0, 1, 2] | [] | []
+formula of 1000 characters | [0, 1, 2] | [0, 1, 2] | [0, 1, 2] | [0, 1, 2] | [0, 1, 2]
+51 unary minus pairs | [] | [0, 1, 2] | [0, 1, 2] | [] | []
+# cli-43dcd9f py: 10/17 as expected
+# cli-43dcd9f npm: 11/17 as expected
+# plural-translate-1121 py: 17/17 as expected
+# plural-translate-1121 npm: 17/17 as expected

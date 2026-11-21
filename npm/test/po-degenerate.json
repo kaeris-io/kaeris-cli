@@ -1,0 +1,132 @@
+[
+ {
+  "name": "ar sound",
+  "header": "Language: ar\nPlural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5);\n",
+  "lang": "ar",
+  "loose": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "name": "Language he in a file checked as ru",
+  "header": "Language: he\nPlural-Forms: nplurals=3; plural=(n==1 ? 0 : n==2 ? 1 : 2);\n",
+  "lang": "ru",
+  "loose": []
+ },
+ {
+  "name": "Language he, checked as he",
+  "header": "Language: he\nPlural-Forms: nplurals=3; plural=(n==1 ? 0 : n==2 ? 1 : 2);\n",
+  "lang": "he",
+  "loose": [
+   0,
+   1
+  ]
+ },
+ {
+  "name": "Language he, no --langs code",
+  "header": "Language: he\nPlural-Forms: nplurals=3; plural=(n==1 ? 0 : n==2 ? 1 : 2);\n",
+  "lang": "",
+  "loose": [
+   0,
+   1
+  ]
+ },
+ {
+  "name": "Language ar_EG checked as ar",
+  "header": "Language: ar_EG\nPlural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5);\n",
+  "lang": "ar",
+  "loose": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "name": "Language pt_BR checked as pt",
+  "header": "Language: pt_BR\nPlural-Forms: nplurals=2; plural=(n > 1);\n",
+  "lang": "pt",
+  "loose": []
+ },
+ {
+  "name": "Language pt_PT checked as pt-PT",
+  "header": "Language: pt_PT\nPlural-Forms: nplurals=2; plural=(n != 1);\n",
+  "lang": "pt-PT",
+  "loose": [
+   0
+  ]
+ },
+ {
+  "name": "Language pt_PT checked as pt",
+  "header": "Language: pt_PT\nPlural-Forms: nplurals=2; plural=(n != 1);\n",
+  "lang": "pt",
+  "loose": []
+ },
+ {
+  "name": "200 nested parentheses round ar",
+  "header": "Language: ar\nPlural-Forms: nplurals=6; plural=(((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));\n",
+  "lang": "ar",
+  "loose": []
+ },
+ {
+  "name": "30 nested parentheses round ar",
+  "header": "Language: ar\nPlural-Forms: nplurals=6; plural=(((((((((((((((((((((((((((((((n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5)))))))))))))))))))))))))))))));\n",
+  "lang": "ar",
+  "loose": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "name": "double loses the +1 (n^6)",
+  "header": "Language: ar\nPlural-Forms: nplurals=6; plural=((n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5)) + (n*n*n*n*n*n + 1 - n*n*n*n*n*n) - 1;\n",
+  "lang": "ar",
+  "loose": []
+ },
+ {
+  "name": "n^5 stays exact in both",
+  "header": "Language: ar\nPlural-Forms: nplurals=6; plural=((n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5)) + (n*n*n*n*n + 1 - n*n*n*n*n) - 1;\n",
+  "lang": "ar",
+  "loose": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "name": "a 17-digit literal",
+  "header": "Language: ar\nPlural-Forms: nplurals=6; plural=((n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5)) + 10000000000000000 - 10000000000000000;\n",
+  "lang": "ar",
+  "loose": []
+ },
+ {
+  "name": "% of a negative",
+  "header": "Language: ar\nPlural-Forms: nplurals=6; plural=((n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5)) + ((n-1000) % 7) * 0;\n",
+  "lang": "ar",
+  "loose": []
+ },
+ {
+  "name": "formula of 1001 characters",
+  "header": "Language: ar\nPlural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5) + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0;\n",
+  "lang": "ar",
+  "loose": []
+ },
+ {
+  "name": "formula of 1000 characters",
+  "header": "Language: ar\nPlural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        ;\n",
+  "lang": "ar",
+  "loose": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "name": "51 unary minus pairs",
+  "header": "Language: ar\nPlural-Forms: nplurals=6; plural=- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - (n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5);\n",
+  "lang": "ar",
+  "loose": []
+ }
+]

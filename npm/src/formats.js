@@ -275,10 +275,22 @@ function pfTokens(expr) {
   return out;
 }
 
-// The slot index the formula gives for `n`. Throws on a malformed formula.
+// Limits that make py and npm read a degenerate formula alike (critic round 2): stack sizes
+// differ, JavaScript numbers are doubles and Python's are exact, and the two round / and % of
+// negatives differently. Past any of these the formula is not trusted: the strict reading.
+// Python twin: kaeris/formats.py _PF_MAX_LEN / _PF_MAX_DEPTH / _PF_MAX_INT.
+const PF_MAX_LEN = 1000;
+const PF_MAX_DEPTH = 50;
+const PF_MAX_INT = Number.MAX_SAFE_INTEGER;
+
+// The slot index the formula gives for `n`. Throws on a malformed formula, on one nested deeper
+// than PF_MAX_DEPTH, on a value beyond PF_MAX_INT, and on / or % of a negative.
 function pfEval(tokens, n) {
   let pos = 0;
+  let depth = 0;
   const bad = () => { throw new ValueError("bad Plural-Forms formula"); };
+  const safe = (v) => (Math.abs(v) > PF_MAX_INT ? bad() : v);
+  const deeper = () => { depth += 1; if (depth > PF_MAX_DEPTH) bad(); };
   const peek = () => (pos < tokens.length ? tokens[pos] : null);
   const take = (expected = null) => {
     const tok = peek();
@@ -288,15 +300,19 @@ function pfEval(tokens, n) {
   };
   const unary = () => {
     const tok = take();
-    if (tok === "!") return unary() ? 0 : 1;
-    if (tok === "-") return -unary();
-    if (tok === "(") {
+    if (tok === "(") {                 // ternary() counts the level
       const v = ternary();
       take(")");
       return v;
     }
+    if (tok === "!" || tok === "-") {
+      deeper();
+      const v = tok === "!" ? (unary() ? 0 : 1) : -unary();
+      depth -= 1;
+      return v;
+    }
     if (tok === "n") return n;
-    if (/^[0-9]+$/.test(tok)) return parseInt(tok, 10);
+    if (/^[0-9]+$/.test(tok)) return tok.length <= 16 ? safe(parseInt(tok, 10)) : bad();
     return bad();
   };
   const binary = (level) => {
@@ -305,18 +321,23 @@ function pfEval(tokens, n) {
     while (PF_LEVELS[level].includes(peek())) {
       const op = take();
       const right = binary(level + 1);
-      if ((op === "/" || op === "%") && right === 0) bad();
-      left = PF_OPS[op](left, right);
+      if ((op === "/" || op === "%") && (right === 0 || left < 0 || right < 0)) bad();
+      left = safe(PF_OPS[op](left, right));
     }
     return left;
   };
   const ternary = () => {
+    deeper();
     const cond = binary(0);
-    if (peek() !== "?") return cond;
+    if (peek() !== "?") {
+      depth -= 1;
+      return cond;
+    }
     take("?");
     const yes = ternary();
     take(":");
     const no = ternary();
+    depth -= 1;
     return cond ? yes : no;
   };
   const value = ternary();
@@ -331,6 +352,7 @@ const PF_UPTO = 1000;
 // [slot for n in 0..upto], or null when the formula does not parse or gives a slot outside
 // 0..nplurals-1 (msgfmt -c rejects such a file).
 function pfSlots(nplurals, expr, upto = PF_UPTO) {
+  if (expr.length > PF_MAX_LEN) return null;      // a 40k-token formula took check 10 s
   const tokens = pfTokens(expr);
   if (!tokens || !tokens.length) return null;
   const slots = [];
@@ -375,9 +397,20 @@ export function pluralRuleFor(lang) {
 // formula gives for exactly one n — only when that formula is sound AND gives the same slot for
 // every n 0..1000 as the formula of the file's language (its `Language:` header, else `lang`) in
 // PLURAL_RULES. Otherwise the empty set: the strict reading of every version before 0.2.47.
+// `Language: pt_BR` and `--langs pt`: one language (same base, same row). `pt_PT`/`pt`, `he`/`ru`: not.
+function sameLanguage(a, b) {
+  [a, b] = [a, b].map((x) => x.replaceAll("_", "-").toLowerCase());
+  if (a === b) return true;
+  const ra = pluralRuleFor(a), rb = pluralRuleFor(b);
+  return a.split("-")[0] === b.split("-")[0]
+    && (ra === rb || (ra !== null && rb !== null && ra[0] === rb[0] && ra[1] === rb[1]));
+}
+
 export function poLooseSlots(header, lang = "") {
   const pf = pfHeader(header);
   const m = PF_LANG_RE.exec(header || "");
+  // a Language that is not the language the file is checked as (ru.po, Language: he): strict
+  if (m && lang && !sameLanguage(m[1], lang)) return new Set();
   const rule = pluralRuleFor(m ? m[1] : lang);
   if (!pf || !rule || pf[0] !== rule[0]) return new Set();
   const mine = pfSlots(pf[0], pf[1]);

@@ -293,9 +293,32 @@ def _pf_tokens(expr):
     return out
 
 
+# Limits that make py and npm read a degenerate formula alike (critic round 2): Python's
+# recursion limit and JavaScript's stack differ, Python integers are exact and JavaScript's are
+# doubles, and the two languages round // and % of negatives differently. Past any of these the
+# formula is not trusted: the strict reading. Real formulas stay far below (ar: depth 7, values
+# below 1000, nothing negative, 92 characters).
+_PF_MAX_LEN = 1000          # characters of the formula
+_PF_MAX_DEPTH = 50          # nested (, !, -, ?: at once
+_PF_MAX_INT = 2 ** 53 - 1   # Number.MAX_SAFE_INTEGER
+
+
 def _pf_eval(tokens, n):
-    """The slot index the formula gives for `n`. ValueError on a malformed formula."""
+    """The slot index the formula gives for `n`. ValueError on a malformed formula, on one nested
+    deeper than _PF_MAX_DEPTH, on a value beyond _PF_MAX_INT, and on / or % of a negative."""
     pos = 0
+    depth = 0
+
+    def safe(v):
+        if abs(v) > _PF_MAX_INT:
+            raise ValueError("Plural-Forms value too large")
+        return v
+
+    def deeper():
+        nonlocal depth
+        depth += 1
+        if depth > _PF_MAX_DEPTH:
+            raise ValueError("Plural-Forms formula nested too deep")
 
     def peek():
         return tokens[pos] if pos < len(tokens) else None
@@ -309,13 +332,17 @@ def _pf_eval(tokens, n):
         return tok
 
     def ternary():
+        nonlocal depth
+        deeper()
         cond = binary(0)
         if peek() != "?":
+            depth -= 1
             return cond
         take("?")
         yes = ternary()
         take(":")
         no = ternary()
+        depth -= 1
         return yes if cond else no
 
     def binary(level):
@@ -324,25 +351,27 @@ def _pf_eval(tokens, n):
         left = binary(level + 1)
         while peek() in _PF_LEVELS[level]:
             op, right = take(), binary(level + 1)
-            if op in ("/", "%") and right == 0:
-                raise ValueError("division by zero")
-            left = _PF_OPS[op](left, right)
+            if op in ("/", "%") and (right == 0 or left < 0 or right < 0):
+                raise ValueError("division by zero or of a negative")
+            left = safe(_PF_OPS[op](left, right))
         return left
 
     def unary():
+        nonlocal depth
         tok = take()
-        if tok == "!":
-            return int(not unary())
-        if tok == "-":
-            return -unary()
-        if tok == "(":
+        if tok == "(":                  # ternary() counts the level
             v = ternary()
             take(")")
+            return v
+        if tok in ("!", "-"):
+            deeper()
+            v = int(not unary()) if tok == "!" else -unary()
+            depth -= 1
             return v
         if tok == "n":
             return n
         if tok[0] in "0123456789":
-            return int(tok)
+            return safe(int(tok)) if len(tok) <= 16 else safe(_PF_MAX_INT + 1)
         raise ValueError("bad Plural-Forms formula")
 
     value = ternary()
@@ -359,7 +388,10 @@ _PF_UPTO = 1000
 def _pf_slots(nplurals, expr, upto=_PF_UPTO):
     """[slot for n in 0..upto], or None when the formula does not parse or gives a slot
     outside 0..nplurals-1 (msgfmt -c rejects such a file: "plural expression can produce
-    values as large as …")."""
+    values as large as …"). A formula longer than _PF_MAX_LEN is not read at all (a 40k-token
+    formula made `check` take 10 s, critic round 2)."""
+    if len(expr) > _PF_MAX_LEN:
+        return None
     tokens = _pf_tokens(expr)
     if not tokens:
         return None
@@ -396,15 +428,26 @@ def plural_rule_for(lang):
     return PLURAL_RULES.get(code) or PLURAL_RULES.get(code.split("-")[0])
 
 
+def _same_language(a, b):
+    """`Language: pt_BR` and `--langs pt`: one language (same base, same row of PLURAL_RULES).
+    `pt_PT` and `pt`, `he` and `ru`: not."""
+    a, b = (x.replace("_", "-").lower() for x in (a, b))
+    return a == b or (a.split("-")[0] == b.split("-")[0] and plural_rule_for(a) == plural_rule_for(b))
+
+
 def po_loose_slots(header, lang=""):
     """The msgstr slots `check` may read without the number (critic 21.11, B2): the slots the
     file's formula gives for exactly one n — only when that formula is sound AND gives the same
     slot for every n 0..1000 as the formula of the file's language (its `Language:` header, else
     `lang`) in PLURAL_RULES. A broken formula (`plural=n`), another language's formula (Hebrew's
     in a Russian file) or a language the table does not know: the empty set, i.e. the strict
-    reading every version before 0.2.47 had (msgstr[0] stays loose as it always was)."""
+    reading every version before 0.2.47 had (msgstr[0] stays loose as it always was).
+    A `Language:` that is not the language the file is checked as (`ru.po` with `Language: he`,
+    critic round 2) is the strict reading too: which of the two is right is not ours to guess."""
     pf = _pf_header(header)
     m = _PF_LANG_RE.search(header or "")
+    if m and lang and not _same_language(m.group(1), lang):
+        return set()
     rule = plural_rule_for(m.group(1) if m else lang)
     if not pf or not rule or pf[0] != rule[0]:
         return set()

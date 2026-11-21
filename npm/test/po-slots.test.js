@@ -60,3 +60,19 @@ test("a formula that does not parse selects nothing", () => {
   assert.equal(singleNumberSlots(H("nplurals=2; plural=n ? import os : 1;")), null);
   assert.equal(singleNumberSlots("Language: de\n"), null);
 });
+
+// critic round 2: Language against --langs, formula limits — the same corpus and verdicts as the
+// Python port (tests/test_po_single_number_slots.py reads this file too).
+test("degenerate headers read as the Python port reads them", () => {
+  const cases = JSON.parse(readFileSync(new URL("./po-degenerate.json", import.meta.url), "utf8"));
+  assert.ok(cases.length >= 15);
+  for (const c of cases) {
+    assert.deepEqual(sorted(poLooseSlots(c.header, c.lang)), c.loose, c.name);
+  }
+});
+
+test("a long formula is not evaluated", () => {
+  const t = Date.now();
+  assert.equal(singleNumberSlots(`Plural-Forms: nplurals=2; plural=(n != 1)${" + 0".repeat(10000)};\n`), null);
+  assert.ok(Date.now() - t < 500);
+});

@@ -140,3 +140,26 @@ def test_check_reads_single_number_slots_loosely_and_the_rest_strictly(tmp_path,
         assert code == 0, out
     else:
         assert code == 1 and "%d" in out, out
+
+
+# ── critic round 2: Language against --langs, formula limits, py and npm alike ───────────────
+# npm/test/po-degenerate.json is read by npm/test/po-slots.test.js too: both ports must give the
+# loose slots written there, so a formula one of them reads loosely and the other strictly fails.
+_DEGENERATE = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                           "npm", "test", "po-degenerate.json")
+with open(_DEGENERATE, encoding="utf-8") as _f:
+    _DEGENERATE_CASES = __import__("json").load(_f)
+
+
+@pytest.mark.parametrize("case", _DEGENERATE_CASES, ids=lambda c: c["name"])
+def test_degenerate_headers_read_as_npm_reads_them(case):
+    assert sorted(fm.po_loose_slots(case["header"], case["lang"])) == case["loose"], case["name"]
+
+
+def test_a_long_formula_is_not_evaluated():
+    """40k tokens took check 10 s (critic round 2): past 1000 characters nothing is evaluated."""
+    import time
+    expr = "(n != 1)" + " + 0" * 10000
+    t = time.time()
+    assert fm.single_number_slots(f"Plural-Forms: nplurals=2; plural={expr};\n") is None
+    assert time.time() - t < 0.5
