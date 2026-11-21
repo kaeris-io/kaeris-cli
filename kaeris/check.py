@@ -297,6 +297,13 @@ def _plural_set_faults(source_flat, target_flat, missing, extra, lang):
             [k for k in extra if k not in owned])
 
 
+def plural_set_faults(source_flat, target_flat, missing, extra, lang):
+    """The public name of _plural_set_faults (0.2.47), for kaeris-mcp: after diff_locale, read the
+    plural sets by the TARGET language's CLDR forms, exactly as `kaeris check` does. Without it
+    a Polish `items_few` that translate now writes is an "extra/stale" key an agent may delete."""
+    return _plural_set_faults(source_flat, target_flat, missing, extra, lang)
+
+
 def check_locales(source_obj, langs, load_target, glossary=None, terms=None):
     """Run the check across every target language.
 
