@@ -101,7 +101,7 @@ pl/ru/ar/ja, plus `--only-new` twice on targets cut back to one/other: **64/100 
 both (not one of its languages).
 
 Left as it is, on purpose:
-- `.po` slots past the source's two are a copy of the plural form (see "Not in scope").
+- ~~`.po` slots past the source's two are a copy of the plural form~~ — done in step 2 below.
 - With project memory, a Polish/Russian/Arabic plural set is translated again on every full run
   (the memory holds only the source's forms; German and Japanese sets are reused). The CLI line
   "N of them come from the project memory" still counts those members.
@@ -175,6 +175,34 @@ Plural-Forms formula picks for exactly ONE n may leave the number out (Arabic ze
 8. Tests: `tests/test_po_single_number_slots.py` (ar one/two without the number green; ar many
    without it red; pl few without it red; evaluator on every `_PLURAL_RULES` formula), seen red
    first; npm parity corpus cases + baselines regenerated (`npm/test/gen_baselines.py --write`).
+
+### Result (21.11)
+
+Server: bcd325e5 (test, red: 14 failed / 1 passed on 8a6b41cd,
+`docs/p047/server-po-test-red-8a6b41cd.txt` there), 8a8177ba (fix; green 49/49 with the JSON
+plural and .po convert tests, `server-po-test-green.txt`). CLI: de076ca (repro), a283e55 (test,
+red: 4 failed / 3 passed, `docs/p047/cli-po-slots-test-red-387fb1e.txt`), c908630 (check fix,
+py + npm; the existing 294 npm baselines unchanged, 5 new), parity against this server 48
+passed, nothing skipped (the new one: every server Plural-Forms parses and its loose slots are
+`zero/one/two` in `_PO_SLOT_CATS`).
+
+e2e `docs/p047/e2e-po-after.txt` (cli c908630 + server 8a8177ba): **134/134 green** — the 100
+earlier rows (all formats, py + npm, `--only-new` on JSON) plus `po-multi` check rows, the slot
+check on every `.po` target (pl/ru each slot its own word, ar six in zero..other order with the
+singular in msgstr[1], ja one slot = the plural form), and `--only-new` on `.po` (whole file,
+byte-identical, slots right). Before: `docs/p047/e2e-po-before-0e3eb54-8a6b41cd.txt`, 18/42.
+
+`--only-new` and the project memory on `.po`: the CLI still sends the whole file (JSON/ARB only)
+and builds no memory lookup for `.po`, so neither can lose or repeat a slot; the server's
+whole-entry reuse rule is covered by its unit tests (de reused, pl reused only with slot 2).
+
+Left as it is:
+- A slot whose category the model's answer lacks (and the repair could not add) takes the
+  `other` form; the run's ICU warnings still name the missing category.
+- A source `.po` whose language has 3+ slots and no `_PO_SLOT_CATS` row is not folded (old
+  behaviour); every 3+-slot language in `_PLURAL_RULES` has a row.
+- `check` reads a single-number slot loosely only for the count; the other placeholders are
+  compared as before.
 
 ## vs the leaders (missing plural forms when machine-translating)
 

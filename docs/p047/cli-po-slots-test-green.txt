@@ -1,0 +1,4 @@
+$ (cd C:/Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121) C:/Users/Inzagi/projects/kaeris/i18n_tool/.venv/Scripts/python.exe -m pytest -q -p no:cacheprovider tests/test_po_single_number_slots.py
+.......                                                                  [100%]
+7 passed in 1.51s
+[exit code 0]
