@@ -159,6 +159,23 @@ into every slot from 1 on — whatever category the target's Plural-Forms number
 6. e2e (this harness) py + npm, all cases; CLI full suites py + npm; server pytest 4 groups,
    failing ids vs 94114a89.
 
+Found by the e2e after steps 1-5 (server 8a8177ba, `docs/p047/harness` run `e2e-po-after`): all
+slots right, but `kaeris check --langs ar` RED on `po-multi` (py and npm): "One message (ctx
+mail, plural): lost placeholder %d". `check` reads msgstr[1] against msgid_plural, and Arabic's
+msgstr[1] is the `one` slot: "رسالة واحدة" is correct without the number. Before, that slot held
+the English plural with `%d`, so it never showed. gettext's own `msgfmt -c` allows it: a slot the
+Plural-Forms formula picks for exactly ONE n may leave the number out (Arabic zero/one/two = 0,
+1, 2; Polish/Czech one = 1; Hebrew one/two). CLI, both ports:
+
+7. `formats.read_po` (target): evaluate the file's own `plural=` expression (a small C-expression
+   evaluator, no table) for n = 0..1000; the slots hit by exactly one n join `count_optional`
+   (msgstr[0] already is). `check`: the target's `count_optional` joins the source's, and
+   `_pairs` applies it to the extra slots (`⟦plural:N⟧`) too. A slot that covers many numbers
+   (pl `many`, ru `one` past slot 0) still must keep the number.
+8. Tests: `tests/test_po_single_number_slots.py` (ar one/two without the number green; ar many
+   without it red; pl few without it red; evaluator on every `_PLURAL_RULES` formula), seen red
+   first; npm parity corpus cases + baselines regenerated (`npm/test/gen_baselines.py --write`).
+
 ## vs the leaders (missing plural forms when machine-translating)
 
 From the vendors' documentation (21.11, web; nothing run, no accounts):
