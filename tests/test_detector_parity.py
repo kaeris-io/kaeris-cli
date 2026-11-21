@@ -143,5 +143,27 @@ class TestDetectorParity(unittest.TestCase):
                                  BK._compute_overflow({"k": src}, {"k": tr}, lang, prose=prose),
                                  (src, tr, lang, prose))
 
+    def test_plural_sets_are_found_alike(self):
+        """`translate` adds the forms of exactly the sets `check` judges (0.2.47): the server's
+        finder (backend _json_plural_sets) and check._plural_sets must agree on what a set is."""
+        from kaeris import check as chk
+        if not hasattr(BK, "_json_plural_sets"):
+            self.fail("backend has no _json_plural_sets: run it against i18n_tool plural-translate-1121")
+        corpus = [
+            {"items_one": "a", "items_other": "b", "title": "t"},
+            {"cart": "x", "cart.items_one": "a", "cart.items_other": "b", "cart.items_few": "c"},
+            {"items.one": "a", "items.other": "b"},
+            {"step.one": "a", "step.other": "b", "step.title": "t"},
+            {"a.b.one": "a", "a.b.other": "b", "a.b.c.d": "deep"},
+            {"lone_other": "x", "only.one": "y"},
+            {"place_ordinal_one": "a", "place_ordinal_two": "b", "place_ordinal_other": "c"},
+            {"x.zero": "0", "x.one": "1", "x.two": "2", "x.few": "f", "x.many": "m", "x.other": "o"},
+            {"k_one": "a", "k_other": "b", "k.one": "c", "k.other": "d"},
+        ]
+        for flat in corpus:
+            mine = {s: set(f) for s, f in chk._plural_sets(flat).items()}
+            theirs = {s: set(f) for s, f in BK._json_plural_sets(flat).items()}
+            self.assertEqual(mine, theirs, flat)
+
 if __name__ == "__main__":
     unittest.main()
