@@ -110,6 +110,55 @@ Left as it is, on purpose:
 - A model answer that is no longer one plural keeps the source forms (Android's rule since D3),
   and the run's QA names it in every language (server 9826f884).
 
+## Step 2: `.po` plural slots (21.11)
+
+### Reproduced on 0e3eb54 (CLI) + 8a6b41cd (server)
+
+Same harness, `po` and a new `po-multi` case (POT-style empty msgstr, two `msgctxt` twins, a
+singular without the number, a `%s` count), and a new slot check: every plural entry has as many
+`msgstr` as the header's `nplurals`, each slot its own form, the singular in the `one` slot,
+Japanese's single slot = the plural form. The stub gives every category its own word.
+`docs/p047/e2e-po-before-0e3eb54-8a6b41cd.txt`: `check` GREEN on all 16 runs, slot check RED on
+all 24:
+
+- pl/ru: `msgstr[2]` = `msgstr[1]` (the `few` word stands for `many`);
+- ar: `msgstr[0]` (zero) holds the singular, `msgstr[1]` (one) and 2..5 the English plural form;
+- ja: the one slot holds the singular, not the `other` form.
+
+`--only-new` on `.po`: the CLI warns "JSON/ARB only" and translates the whole file; the result is
+byte-identical to the full run (so the same wrong slots). The project memory is not used for
+`.po` (the CLI builds its lookup only from JSON/ARB), so nothing is reused there either.
+
+Cause: `_parse_po` gives a plural entry two flat keys (`msgid`, `msgid\x01`), the model
+translates them as two unrelated strings, and `_serialize_po` writes `s0` into slot 0 and `s1`
+into every slot from 1 on — whatever category the target's Plural-Forms numbers them as.
+
+### Plan (server `backend/translator.py`; the CLI needs no code change)
+
+1. `_fold_plurals(flat, "po", passthrough)`: for every plural entry of `__po__.entries` fold its
+   source forms into one ICU string under `<msgid key>` + `_FOLD_MARK`. Source forms: slot 0 and
+   1 from `flat`, slots 2.. from `src_strs` (a translated ru/pl source); their categories from
+   `_po_slot_cats` (the existing `_PO_SLOT_CATS` table) by the source's Language, `en` for a POT;
+   `other` = the last slot when the language has none (pl `one/few/many`). Not folded, as before:
+   a form that already holds an ICU block, unbalanced braces, an unknown 3+-slot language.
+2. `_unfold_plurals` for `po`: target slots = `_po_slot_cats(lang, nplurals of _plural_rule_for(lang))`;
+   slot i = the answer's arm for that category, else its `other` arm. Slot 0 -> the msgid key,
+   slot 1 -> the `\x01` key, slot i>=2 -> a new key `<\x01 key>\x01<i>` (`_po_slot_key`). ja/zh/ko:
+   one slot = `other`. `#` -> the entry's own count placeholder (`%d`, `%s`, `{n}`), as for JSON.
+   An answer that is no longer one plural keeps the source forms (old output).
+3. `_serialize_po`: slot i>=2 reads `_po_slot_key` first, then the same-language source slot,
+   then the old copy of slot 1. Header logic unchanged (already the target's Plural-Forms).
+4. The run's bookkeeping: warnings/scores of the folded key move to the entry's exact keys (not
+   a prefix match: `File` is a prefix of `Files`); `_plural_gaps` names an entry whose answer
+   broke by its msgid; `_fold_reuse` reuses a remembered entry only when every target slot is
+   remembered (de: slots 0/1; pl needs slot 2 too).
+5. Test `backend/tests/test_po_plurals_get_every_form.py`: real `translate_file` + ZIP, stub model
+   answers every category with its own word; expected order read from `_PO_SLOT_CATS`, categories
+   from `_CLDR_REQUIRED`; pl, ru, uk, cs, ar each slot its own form; ja/zh/ko one slot = `other`;
+   Plural-Forms of the target; msgctxt twins; `#`; broken answer; reuse rule. Seen red first.
+6. e2e (this harness) py + npm, all cases; CLI full suites py + npm; server pytest 4 groups,
+   failing ids vs 94114a89.
+
 ## vs the leaders (missing plural forms when machine-translating)
 
 From the vendors' documentation (21.11, web; nothing run, no accounts):
