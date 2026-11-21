@@ -1,0 +1,38 @@
+# kaeris-cli fee2152 + new tests/test_only_new_charges_once.py (no fix)
+E           AssertionError: 2 != 1 : sent and charged again:
+E           → pl: sending 2 key(s) of plural sets whole, so every form pl needs is written
+E           → pl: 2 key(s) to translate (2 edited, 0 new)
+E           ✓ Translation QA: no placeholder loss, no overflow risks
+E           ✓ pl: merged 2 key(s) → C:\Users\Inzagi\AppData\Local\Temp\tmpip4t8idb\pl.json
+E       AssertionError: 3 != 2 : [{'cart': {'items_one': '{{count}} item', 'items_other': '{{count}} items'}}, {'cart': {'items_one': '{{count}} item', 'items_other': '{{count}} items'}}, {'cart': {'items_one': '{{count}} item', 'items_other': '{{count}} items in your cart'}}]
+E       AssertionError: 'not sent again until its source changes' not found in '→ pl: sending 2 key(s) of plural sets whole, so every form pl needs is written\n→ pl: 2 key(s) to translate (2 edited, 0 new)\n✓ Translation QA: no placeholder loss, no overflow risks\n✓ pl: merged 2 key(s) → C:\\Users\\Inzagi\\AppData\\Local\\Temp\\tmplxd63fpl\\pl.json\n'
+E       AttributeError: module 'kaeris.check' has no attribute 'plural_set_foldable'. Did you mean: 'plural_set_faults'?
+E       AssertionError: Items in the first set but not the second:
+E       'g_other'
+E       'g_one'
+E       'post_other'
+E       'smile_other'
+E       'post_one'
+E       'smile_one'
+E       AssertionError: Tuples differ: ({'cart.items_one': '{{count}} item'}, {}) != ({}, {})
+E       
+E       First differing element 0:
+E       {'cart.items_one': '{{count}} item'}
+E       {}
+E       
+E       - ({'cart.items_one': '{{count}} item'}, {})
+E       + ({}, {})
+E       AssertionError: {'cart.items_one': '{{count}} item'} != {}
+E       - {'cart.items_one': '{{count}} item'}
+E       + {}
+E       AttributeError: module 'kaeris.check' has no attribute 'plural_incomplete_marks'
+FAILED tests/test_only_new_charges_once.py::OnlyNewPaysOnce::test_a_set_the_server_did_not_complete_is_not_sent_again
+FAILED tests/test_only_new_charges_once.py::OnlyNewPaysOnce::test_after_a_source_edit_the_set_is_tried_again
+FAILED tests/test_only_new_charges_once.py::OnlyNewPaysOnce::test_the_run_says_the_forms_were_not_added
+FAILED tests/test_only_new_charges_once.py::Foldable::test_foldable_mirrors_the_server_conditions
+FAILED tests/test_only_new_charges_once.py::Foldable::test_sets_the_server_does_not_fold_are_not_completed
+FAILED tests/test_only_new_charges_once.py::EditedFormGoesAloneWhereWholeBuysNothing::test_german_edit_sends_the_edited_key_only
+FAILED tests/test_only_new_charges_once.py::EditedFormGoesAloneWhereWholeBuysNothing::test_without_a_server_that_adds_forms_the_edit_goes_alone
+FAILED tests/test_only_new_charges_once.py::Marks::test_a_set_still_missing_forms_after_a_send_is_marked
+PASSED tests/test_only_new_charges_once.py::EditedFormGoesAloneWhereWholeBuysNothing::test_polish_edit_on_a_server_that_adds_forms_sends_the_set
+8 failed, 1 passed in 0.23s
