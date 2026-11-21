@@ -13,6 +13,7 @@ import sys
 import time
 import urllib.request
 
+sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 HERE = os.path.dirname(os.path.abspath(__file__))
 TAG, CLI, SRV = sys.argv[1], sys.argv[2], sys.argv[3]
 WHICH = sys.argv[4] if len(sys.argv) > 4 else "both"
@@ -95,7 +96,8 @@ def plural_lines(text):
 def main():
     out_lines = []
     say = lambda s="": (out_lines.append(s), print(s, flush=True))
-    work = os.path.join(HERE, "runs", TAG)
+    # P047_RUNS / P047_OUT: where the run folders and <tag>.txt go (default: next to this script)
+    work = os.path.join(os.environ.get("P047_RUNS") or os.path.join(HERE, "runs"), TAG)
     shutil.rmtree(work, ignore_errors=True)
     os.makedirs(work)
     srv_env = dict(os.environ, PYTHONUTF8="1", OPENROUTER_API_KEY="ci-not-a-real-key",
@@ -114,6 +116,9 @@ def main():
         cli_env = dict(os.environ, PYTHONUTF8="1", CI="1",
                        KAERIS_API_URL=f"http://127.0.0.1:{API_PORT}", PYTHONPATH=CLI)
         cli_env.pop("KAERIS_API_KEY", None)
+        say("# kaeris run from: " + subprocess.run(
+            [sys.executable, "-c", "import kaeris; print(kaeris.__file__, kaeris.__version__)"],
+            env=cli_env, capture_output=True, text=True).stdout.strip())
         tools = {"py": [sys.executable, "-m", "kaeris"],
                  "npm": ["node", os.path.join(CLI, "npm", "bin", "kaeris.js")]}
         summary = []
@@ -168,7 +173,8 @@ def main():
             except Exception:
                 p.kill()
         say(f"# stopped pids {api.pid} {stub.pid}: api rc={api.poll()} stub rc={stub.poll()}")
-        with open(os.path.join(HERE, f"{TAG}.txt"), "w", encoding="utf-8") as f:
+        with open(os.path.join(os.environ.get("P047_OUT") or HERE, f"{TAG}.txt"), "w",
+                  encoding="utf-8") as f:
             f.write("\n".join(out_lines) + "\n")
 
 

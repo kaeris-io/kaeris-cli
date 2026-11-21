@@ -5,21 +5,30 @@ An ICU plural string: the answer carries the plural categories a competent model
 the target language (pl/ru: one/few/many/other, ar/cy: all six, ja: one/other - the stray
 `one` is what real models do and the server drops). This is what the real model did in the
 round-3 acceptance run (pl ICU -> one/few/many/other). Any other call (repairs, judges): {}.
+
+STUB_MODE (critic 21.11), how an ICU plural is answered: normal (above); plain (the `other` text,
+no plural at all); noother (a plural without `other`); short (one/other only, whatever the
+language needs). STUB_LOG=<file>: every cargo sent to the model, one JSON line each.
 """
+import os
 import json
 import re
 import sys
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 NAMES = {"Polish": "pl", "Russian": "ru", "Arabic": "ar", "Japanese": "ja", "Welsh": "cy",
-         "German": "de", "French": "fr", "Ukrainian": "uk"}
+         "German": "de", "French": "fr", "Ukrainian": "uk", "Chinese": "zh", "Korean": "ko",
+         "Vietnamese": "vi", "Thai": "th", "Indonesian": "id", "Malay": "ms", "Hebrew": "he"}
+MODE = os.environ.get("STUB_MODE", "normal")
+LOG = os.environ.get("STUB_LOG")
 CATS = {"pl": ["one", "few", "many", "other"], "ru": ["one", "few", "many", "other"],
         "uk": ["one", "few", "many", "other"],
         "ar": ["zero", "one", "two", "few", "many", "other"],
         "cy": ["zero", "one", "two", "few", "many", "other"],
-        "ja": ["one", "other"]}
+        "ja": ["one", "other"], "zh": ["other"], "ko": ["other"]}
 SCRIPT = {"ru": "абвгдежзийклмнопрстуфхцчшщыэюя", "uk": "абвгдежзийклмнопрстуфхцчшщюяєії",
-          "ar": "ابتثجحخدذرزسشصضطظعغفقكلمنهوي", "ja": "アイウエオカキクケコサシスセソタチツテト"}
+          "ar": "ابتثجحخدذرزسشصضطظعغفقكلمنهوي", "ja": "アイウエオカキクケコサシスセソタチツテト",
+          "zh": "的一是不了人我在有他这中大来上国个到说们为子和你地出道也时年", "ko": "가나다라마바사아자차카타파하거너더러머버서어저처커터퍼허고노"}
 PH = re.compile(r"(\{\{[^{}]*\}\}|%\{[^{}]*\}|\{[^{}]*\}|%\d+\$[sd@]|%l{0,2}[sdu@]|<[^<>]+>|#)")
 HEAD = re.compile(r"^\{\s*(\w+)\s*,\s*plural\s*,")
 
@@ -65,8 +74,15 @@ def translate(text, lang):
     if not a:
         return plain(text, lang)
     var, src = a
+    if MODE == "plain":
+        return plain(src.get("other", ""), lang)
     out = []
-    for cat in CATS.get(lang, ["one", "other"]):
+    cats = CATS.get(lang, ["one", "other"])
+    if MODE == "short":
+        cats = ["one", "other"]
+    elif MODE == "noother":
+        cats = [c for c in cats if c != "other"] or ["one"]
+    for cat in cats:
         base = src.get(cat) or src.get("one" if cat == "one" else "other")
         out.append(f"{cat} {{{plain(base, lang)}{'' if cat in ('one', 'other') else ' ' + cat[:2]}}}")
     for label, body in src.items():
@@ -92,6 +108,9 @@ class H(BaseHTTPRequestHandler):
             lang = NAMES[m.group(1)]
             s, e = user.find("{"), user.rfind("}")
             cargo = json.loads(user[s:e + 1])
+            if LOG:
+                with open(LOG, "a", encoding="utf-8") as f:
+                    f.write(json.dumps({"lang": lang, "cargo": cargo}, ensure_ascii=False) + "\n")
             reply = {k: {"t": translate(str(v), lang), "c": 96} for k, v in cargo.items()}
         data = json.dumps({"choices": [{"message": {"content": json.dumps(reply, ensure_ascii=False)},
                                         "finish_reason": "stop"}],

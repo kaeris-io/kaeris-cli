@@ -263,9 +263,12 @@ def read_po(text, role="source", lang=""):
     return out
 
 
-# gettext's `msgfmt -c` lets msgstr[i] leave the number out when the file's Plural-Forms formula
-# picks slot i for exactly ONE n: Arabic's zero/one/two are 0, 1 and 2, so "ملفان" (two files) is
-# a correct "%d files". A slot that covers many numbers (Polish few: 2-4, 22-24…) must keep it.
+# `check` lets msgstr[i] leave the number out when the file's Plural-Forms formula picks slot i
+# for exactly ONE n in 0..1000: Arabic's zero/one/two are 0, 1 and 2, so "ملفان" (two files) is a
+# correct "%d files". A slot that covers many numbers (Polish few: 2-4, 22-24…) must keep it. Only
+# for a sound formula that is the language's own (po_loose_slots). Stricter than gettext's
+# `msgfmt -c`, which lets a slot picked for fewer than 5 values of n go, and does not compare the
+# formula with the language (Czech few 2-4 passes msgfmt, not check).
 # The formula is evaluated as written (C syntax: ?: || && == != < > <= >= + - * / % ! and n).
 _PF_RE = re.compile(r"(?<![a-z])plural\s*=\s*([^;\n]+)")
 _PF_TOKEN_RE = re.compile(r"\s*([0-9]+|n|&&|\|\||[=!<>]=|[-+*/%<>!?:()])")

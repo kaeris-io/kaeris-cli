@@ -2,9 +2,14 @@
 `kaeris check` failed our own output: msgstr[1] is read against msgid_plural, and Arabic's
 msgstr[1] is the `one` slot — "رسالة واحدة" ("one message") is correct without the number.
 
-gettext's `msgfmt -c` allows exactly this: a slot the Plural-Forms formula picks for ONE n only
-may leave the number out (Arabic zero/one/two = 0/1/2, Polish one = 1). A slot that covers many
-numbers must keep it. The formula is the target file's own, evaluated — no table.
+`check` lets a slot the file's Plural-Forms formula picks for exactly ONE n in 0..1000 leave the
+number out (Arabic zero/one/two = 0/1/2, Hebrew two = 2). A slot that covers many numbers must
+keep it. Critic 21.11 (B2): only when the formula is sound (every slot it gives exists) and gives
+the same slot for every n as the formula of the file's Language in the server's table
+(formats.PLURAL_RULES); `plural=n`, Hebrew's formula in a Russian file and the like stay strict.
+gettext's `msgfmt -c` is looser (a slot picked for fewer than 5 values of n passes, and it does
+not compare the formula with the language): docs/p047/harness/b2_msgfmt.py sets the two side by
+side.
 """
 import os
 import subprocess

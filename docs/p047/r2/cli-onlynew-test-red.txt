@@ -1,509 +1,6 @@
-$ (cd C:/Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121) python -m pytest tests/test_translate_completes_plural_sets.py -q -p no:cacheprovider -rf
-FFFFF.FF...F..                                                           [100%]
+$ (cd C:/Users/Inzagi/AppData/Local/Temp/claude/a43205edf0b1eb40/1d41411c-380d-43ba-80ea-359c271f4a08/scratchpad/p047r2/cli-e721b68) python -m pytest tests/test_translate_completes_plural_sets.py -q -p no:cacheprovider -rf
+....FFFFFFFF..                                                           [100%]
 ================================== FAILURES ===================================
-________________ OnlyNew.test_a_complete_target_is_up_to_date _________________
-
-self = <test_translate_completes_plural_sets.OnlyNew testMethod=test_a_complete_target_is_up_to_date>
-
-    def test_a_complete_target_is_up_to_date(self):
-        inc.dump_json(SRC, self.en)
-        inc.dump_json({"cart": {f"items_{c}": t for c, t in PL_FORMS.items()}, "title": "S"},
-                      self.pl)
->       self.assertEqual(self._run("--assume-current"), 0)
-                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-tests\test_translate_completes_plural_sets.py:121: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
-tests\test_translate_completes_plural_sets.py:99: in _run
-    return cli.cmd_translate(args)
-           ^^^^^^^^^^^^^^^^^^^^^^^
-kaeris\cli.py:1247: in cmd_translate
-    else _translate_one(client, path, langs, args))
-         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-kaeris\cli.py:1843: in _translate_one
-    return _translate_incremental(client, path, args.out, langs, args)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
-
-client = <test_translate_completes_plural_sets.PolishServer object at 0x000002454A924AD0>
-path = 'C:\\Users\\Inzagi\\AppData\\Local\\Temp\\tmpssdtojz8\\en.json'
-out_dir = None, langs = ['pl']
-args = Namespace(api_url='https://kaeris.dev', key=None, openrouter_key=None, config=None, command='translate', files=['C:\\U...=False, json=False, func=<function cmd_translate at 0x000002454A9352D0>, term_glossary=None, models={}, verify_back={})
-
-    def _translate_incremental(client, path, out_dir, langs, args):
-        is_arb = path.lower().endswith(".arb")
-        source_obj = inc.load_json(path)
-        source_flat = inc.flatten(source_obj)
-        memory, tm_path = _tm_open(args, path)
-        sig = _tm_signature(args, client) if memory is not None else ""
-        # One job per language here, so one receipt per language. --receipt used to write nothing
-        # at all on this path: a documented flag that silently does nothing is worse than one that
-        # does not exist.
-        receipts = []
-        if is_arb:
-            # ARB metadata (@@locale, @key.placeholders...) is not translatable text —
-            # drop it from detection and (via todo) from the submitted subset so it's
-            # never shipped to the model or corrupted. It survives on merge untouched.
-            source_flat = {k: v for k, v in source_flat.items() if not _arb_meta_key(k)}
-        flat_style = inc.is_flat(source_obj)
-        source_hashes = inc.hash_flat(source_flat)
-    
-        lock_path = args.lock or inc.default_lock_path(path)
-        lock_raw = inc.load_lock(lock_path)
-        # The lock is a SINGLE per-source record meaning "this source hash is already
-        # propagated to ALL target languages". Snapshot it once so every language
-        # detects against the same baseline — never against a lock a previous
-        # language mutated mid-loop (that bug silently skipped later languages).
-        detect_lock = inc.lock_keys(lock_raw)          # глобальный снимок (для совместимости)
-        lang_locks = inc.lock_langs(lock_raw)           # состояние по каждому языку
-        broken_by_lang: dict[str, set] = {}
-        # Reproducibility: if the tone/ICU/glossary/context/model changed since the lock was written, an
-        # unchanged source string would still hash-match and be kept — leaving a locale that mixes
-        # old and new settings. Detect that and re-translate every key so the output stays consistent.
-        cur_settings = inc.settings_signature(_tone(args), args.icu, _glossary(args),
-                                              _model_signature(args, client), _app_context(args))
-        locked_settings = inc.lock_settings(lock_raw)
-        settings_changed = inc.settings_changed(locked_settings, cur_settings)
-        if settings_changed:
-            changed_model = (locked_settings or {}).get("model", "") != cur_settings["model"] \
-                and (locked_settings or {}).get("model", "")
-            why = ("the model changed" if changed_model
-                   else "tone/ICU/glossary/context changed")
-            info(f"Translation settings changed since the lock — {why}. Re-translating every key "
-                 "so the whole locale stays consistent")
-        # The glossary is not a setting of the whole locale: a changed term re-translates only the
-        # strings that use it and do not already say it the new way (glossary.stale_keys). The lock
-        # remembers, per language, what each term asked for when it was last applied.
-        entries = _term_entries(args)
-        locked_terms = lock_raw.get("glossary") if isinstance(lock_raw.get("glossary"), dict) else {}
-        new_terms = {l: dict(v) for l, v in locked_terms.items() if isinstance(v, dict)}
-        # Source keys NOT fully propagated to every language after this run — a key
-        # is "broken" if any language it was due in failed to merge. Broken keys are
-        # left stale-locked so the NEXT run retries the language(s) that failed.
-        broken = set()
-        any_work = False
-        unverified_by_lang: dict[str, set] = {}
-    
-        # Every language is its own job, and they do not depend on each other: send them side by
-        # side (up to --jobs), then merge and report in language order, exactly as before.
-        work = []
-        pool = ThreadPoolExecutor(max_workers=_jobs(args))
-        for lang in langs:
-            target_path = _out_path(path, lang, out_dir, args.source_lang,
-                                    getattr(args, "lang_case", "keep"), for_write=True)
-            os.makedirs(os.path.dirname(target_path) or ".", exist_ok=True)
-            existing = inc.load_json(target_path) if os.path.isfile(target_path) else {}
-            existing_flat = inc.flatten(existing) if existing else {}
-            # Detect against THIS language's baseline: a run that touched only German must not
-            # mark an edited string as done for French (see incremental.lock_keys).
-            lang_baseline = inc.lock_keys(lock_raw, lang)
-            # Keys already in the target that no lock has ever vouched for. Not translated, not
-            # locked, and named below — see incremental.unverified_keys.
-            if not settings_changed:
-                unverified_by_lang[lang] = inc.unverified_keys(source_flat, existing_flat, lang_baseline)
-            todo = (dict(source_flat) if settings_changed
-                    else inc.changed_or_missing_keys(source_flat, existing_flat, lang_baseline))
-            term_fps = {}
-            if entries or locked_terms.get(lang):
-                term_fps = {e.term.casefold(): e.fingerprint(lang) for e in entries
-                            if e.renderings(lang)}
-                changed_terms = gl.changed_terms(locked_terms.get(lang), term_fps)
-                stale = {k for k in gl.stale_keys(source_flat, existing_flat, lang, entries,
-                                                  changed_terms) if k not in todo}
-                if stale and not settings_changed:
-                    info(f"{lang}: {len(stale)} key(s) use a glossary term that changed and do not "
-                         f"say it the new way yet — re-translating them")
-                    todo.update({k: source_flat[k] for k in stale})
-            new_terms[lang] = term_fps
-            # A plural set goes whole: when one of its forms is due, and when the target lacks a
-            # form this language needs (what `check` asks for) — the server adds those forms only to
-            # a set it gets entire (0.2.47).
-            plural = chk.plural_set_work(source_flat, existing_flat, todo, lang)
-            if plural:
-                info(f"{lang}: {len(plural)} more key(s) of plural sets sent with them, so every "
-                     f"form {lang} needs is written")
->               todo.update(plural)
-E               ValueError: dictionary update sequence element #0 has length 0; 2 is required
-
-kaeris\cli.py:2185: ValueError
----------------------------- Captured stderr call -----------------------------
-→ pl: 2 more key(s) of plural sets sent with them, so every form pl needs is written
-______________ OnlyNew.test_a_set_beside_an_edit_is_sent_with_it ______________
-
-self = <test_translate_completes_plural_sets.OnlyNew testMethod=test_a_set_beside_an_edit_is_sent_with_it>
-
-    def test_a_set_beside_an_edit_is_sent_with_it(self):
-        inc.dump_json(SRC, self.en)
->       self.assertEqual(self._run(), 0)
-                         ^^^^^^^^^^^
-
-tests\test_translate_completes_plural_sets.py:164: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
-tests\test_translate_completes_plural_sets.py:99: in _run
-    return cli.cmd_translate(args)
-           ^^^^^^^^^^^^^^^^^^^^^^^
-kaeris\cli.py:1247: in cmd_translate
-    else _translate_one(client, path, langs, args))
-         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-kaeris\cli.py:1843: in _translate_one
-    return _translate_incremental(client, path, args.out, langs, args)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
-
-client = <test_translate_completes_plural_sets.PolishServer object at 0x000002454A954F50>
-path = 'C:\\Users\\Inzagi\\AppData\\Local\\Temp\\tmpzkp4_u4u\\en.json'
-out_dir = None, langs = ['pl']
-args = Namespace(api_url='https://kaeris.dev', key=None, openrouter_key=None, config=None, command='translate', files=['C:\\U...=False, json=False, func=<function cmd_translate at 0x000002454A9352D0>, term_glossary=None, models={}, verify_back={})
-
-    def _translate_incremental(client, path, out_dir, langs, args):
-        is_arb = path.lower().endswith(".arb")
-        source_obj = inc.load_json(path)
-        source_flat = inc.flatten(source_obj)
-        memory, tm_path = _tm_open(args, path)
-        sig = _tm_signature(args, client) if memory is not None else ""
-        # One job per language here, so one receipt per language. --receipt used to write nothing
-        # at all on this path: a documented flag that silently does nothing is worse than one that
-        # does not exist.
-        receipts = []
-        if is_arb:
-            # ARB metadata (@@locale, @key.placeholders...) is not translatable text —
-            # drop it from detection and (via todo) from the submitted subset so it's
-            # never shipped to the model or corrupted. It survives on merge untouched.
-            source_flat = {k: v for k, v in source_flat.items() if not _arb_meta_key(k)}
-        flat_style = inc.is_flat(source_obj)
-        source_hashes = inc.hash_flat(source_flat)
-    
-        lock_path = args.lock or inc.default_lock_path(path)
-        lock_raw = inc.load_lock(lock_path)
-        # The lock is a SINGLE per-source record meaning "this source hash is already
-        # propagated to ALL target languages". Snapshot it once so every language
-        # detects against the same baseline — never against a lock a previous
-        # language mutated mid-loop (that bug silently skipped later languages).
-        detect_lock = inc.lock_keys(lock_raw)          # глобальный снимок (для совместимости)
-        lang_locks = inc.lock_langs(lock_raw)           # состояние по каждому языку
-        broken_by_lang: dict[str, set] = {}
-        # Reproducibility: if the tone/ICU/glossary/context/model changed since the lock was written, an
-        # unchanged source string would still hash-match and be kept — leaving a locale that mixes
-        # old and new settings. Detect that and re-translate every key so the output stays consistent.
-        cur_settings = inc.settings_signature(_tone(args), args.icu, _glossary(args),
-                                              _model_signature(args, client), _app_context(args))
-        locked_settings = inc.lock_settings(lock_raw)
-        settings_changed = inc.settings_changed(locked_settings, cur_settings)
-        if settings_changed:
-            changed_model = (locked_settings or {}).get("model", "") != cur_settings["model"] \
-                and (locked_settings or {}).get("model", "")
-            why = ("the model changed" if changed_model
-                   else "tone/ICU/glossary/context changed")
-            info(f"Translation settings changed since the lock — {why}. Re-translating every key "
-                 "so the whole locale stays consistent")
-        # The glossary is not a setting of the whole locale: a changed term re-translates only the
-        # strings that use it and do not already say it the new way (glossary.stale_keys). The lock
-        # remembers, per language, what each term asked for when it was last applied.
-        entries = _term_entries(args)
-        locked_terms = lock_raw.get("glossary") if isinstance(lock_raw.get("glossary"), dict) else {}
-        new_terms = {l: dict(v) for l, v in locked_terms.items() if isinstance(v, dict)}
-        # Source keys NOT fully propagated to every language after this run — a key
-        # is "broken" if any language it was due in failed to merge. Broken keys are
-        # left stale-locked so the NEXT run retries the language(s) that failed.
-        broken = set()
-        any_work = False
-        unverified_by_lang: dict[str, set] = {}
-    
-        # Every language is its own job, and they do not depend on each other: send them side by
-        # side (up to --jobs), then merge and report in language order, exactly as before.
-        work = []
-        pool = ThreadPoolExecutor(max_workers=_jobs(args))
-        for lang in langs:
-            target_path = _out_path(path, lang, out_dir, args.source_lang,
-                                    getattr(args, "lang_case", "keep"), for_write=True)
-            os.makedirs(os.path.dirname(target_path) or ".", exist_ok=True)
-            existing = inc.load_json(target_path) if os.path.isfile(target_path) else {}
-            existing_flat = inc.flatten(existing) if existing else {}
-            # Detect against THIS language's baseline: a run that touched only German must not
-            # mark an edited string as done for French (see incremental.lock_keys).
-            lang_baseline = inc.lock_keys(lock_raw, lang)
-            # Keys already in the target that no lock has ever vouched for. Not translated, not
-            # locked, and named below — see incremental.unverified_keys.
-            if not settings_changed:
-                unverified_by_lang[lang] = inc.unverified_keys(source_flat, existing_flat, lang_baseline)
-            todo = (dict(source_flat) if settings_changed
-                    else inc.changed_or_missing_keys(source_flat, existing_flat, lang_baseline))
-            term_fps = {}
-            if entries or locked_terms.get(lang):
-                term_fps = {e.term.casefold(): e.fingerprint(lang) for e in entries
-                            if e.renderings(lang)}
-                changed_terms = gl.changed_terms(locked_terms.get(lang), term_fps)
-                stale = {k for k in gl.stale_keys(source_flat, existing_flat, lang, entries,
-                                                  changed_terms) if k not in todo}
-                if stale and not settings_changed:
-                    info(f"{lang}: {len(stale)} key(s) use a glossary term that changed and do not "
-                         f"say it the new way yet — re-translating them")
-                    todo.update({k: source_flat[k] for k in stale})
-            new_terms[lang] = term_fps
-            # A plural set goes whole: when one of its forms is due, and when the target lacks a
-            # form this language needs (what `check` asks for) — the server adds those forms only to
-            # a set it gets entire (0.2.47).
-            plural = chk.plural_set_work(source_flat, existing_flat, todo, lang)
-            if plural:
-                info(f"{lang}: {len(plural)} more key(s) of plural sets sent with them, so every "
-                     f"form {lang} needs is written")
->               todo.update(plural)
-E               ValueError: dictionary update sequence element #0 has length 0; 2 is required
-
-kaeris\cli.py:2185: ValueError
----------------------------- Captured stderr call -----------------------------
-→ pl: 2 more key(s) of plural sets sent with them, so every form pl needs is written
-___________ OnlyNew.test_a_target_missing_polish_forms_is_completed ___________
-
-self = <test_translate_completes_plural_sets.OnlyNew testMethod=test_a_target_missing_polish_forms_is_completed>
-
-    def test_a_target_missing_polish_forms_is_completed(self):
-        inc.dump_json(SRC, self.en)
-        inc.dump_json(PL_OLD, self.pl)
->       self.assertEqual(self._run("--assume-current"), 0)
-                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-tests\test_translate_completes_plural_sets.py:108: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
-tests\test_translate_completes_plural_sets.py:99: in _run
-    return cli.cmd_translate(args)
-           ^^^^^^^^^^^^^^^^^^^^^^^
-kaeris\cli.py:1247: in cmd_translate
-    else _translate_one(client, path, langs, args))
-         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-kaeris\cli.py:1843: in _translate_one
-    return _translate_incremental(client, path, args.out, langs, args)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
-
-client = <test_translate_completes_plural_sets.PolishServer object at 0x000002454A955A90>
-path = 'C:\\Users\\Inzagi\\AppData\\Local\\Temp\\tmpngi_lia7\\en.json'
-out_dir = None, langs = ['pl']
-args = Namespace(api_url='https://kaeris.dev', key=None, openrouter_key=None, config=None, command='translate', files=['C:\\U...=False, json=False, func=<function cmd_translate at 0x000002454A9352D0>, term_glossary=None, models={}, verify_back={})
-
-    def _translate_incremental(client, path, out_dir, langs, args):
-        is_arb = path.lower().endswith(".arb")
-        source_obj = inc.load_json(path)
-        source_flat = inc.flatten(source_obj)
-        memory, tm_path = _tm_open(args, path)
-        sig = _tm_signature(args, client) if memory is not None else ""
-        # One job per language here, so one receipt per language. --receipt used to write nothing
-        # at all on this path: a documented flag that silently does nothing is worse than one that
-        # does not exist.
-        receipts = []
-        if is_arb:
-            # ARB metadata (@@locale, @key.placeholders...) is not translatable text —
-            # drop it from detection and (via todo) from the submitted subset so it's
-            # never shipped to the model or corrupted. It survives on merge untouched.
-            source_flat = {k: v for k, v in source_flat.items() if not _arb_meta_key(k)}
-        flat_style = inc.is_flat(source_obj)
-        source_hashes = inc.hash_flat(source_flat)
-    
-        lock_path = args.lock or inc.default_lock_path(path)
-        lock_raw = inc.load_lock(lock_path)
-        # The lock is a SINGLE per-source record meaning "this source hash is already
-        # propagated to ALL target languages". Snapshot it once so every language
-        # detects against the same baseline — never against a lock a previous
-        # language mutated mid-loop (that bug silently skipped later languages).
-        detect_lock = inc.lock_keys(lock_raw)          # глобальный снимок (для совместимости)
-        lang_locks = inc.lock_langs(lock_raw)           # состояние по каждому языку
-        broken_by_lang: dict[str, set] = {}
-        # Reproducibility: if the tone/ICU/glossary/context/model changed since the lock was written, an
-        # unchanged source string would still hash-match and be kept — leaving a locale that mixes
-        # old and new settings. Detect that and re-translate every key so the output stays consistent.
-        cur_settings = inc.settings_signature(_tone(args), args.icu, _glossary(args),
-                                              _model_signature(args, client), _app_context(args))
-        locked_settings = inc.lock_settings(lock_raw)
-        settings_changed = inc.settings_changed(locked_settings, cur_settings)
-        if settings_changed:
-            changed_model = (locked_settings or {}).get("model", "") != cur_settings["model"] \
-                and (locked_settings or {}).get("model", "")
-            why = ("the model changed" if changed_model
-                   else "tone/ICU/glossary/context changed")
-            info(f"Translation settings changed since the lock — {why}. Re-translating every key "
-                 "so the whole locale stays consistent")
-        # The glossary is not a setting of the whole locale: a changed term re-translates only the
-        # strings that use it and do not already say it the new way (glossary.stale_keys). The lock
-        # remembers, per language, what each term asked for when it was last applied.
-        entries = _term_entries(args)
-        locked_terms = lock_raw.get("glossary") if isinstance(lock_raw.get("glossary"), dict) else {}
-        new_terms = {l: dict(v) for l, v in locked_terms.items() if isinstance(v, dict)}
-        # Source keys NOT fully propagated to every language after this run — a key
-        # is "broken" if any language it was due in failed to merge. Broken keys are
-        # left stale-locked so the NEXT run retries the language(s) that failed.
-        broken = set()
-        any_work = False
-        unverified_by_lang: dict[str, set] = {}
-    
-        # Every language is its own job, and they do not depend on each other: send them side by
-        # side (up to --jobs), then merge and report in language order, exactly as before.
-        work = []
-        pool = ThreadPoolExecutor(max_workers=_jobs(args))
-        for lang in langs:
-            target_path = _out_path(path, lang, out_dir, args.source_lang,
-                                    getattr(args, "lang_case", "keep"), for_write=True)
-            os.makedirs(os.path.dirname(target_path) or ".", exist_ok=True)
-            existing = inc.load_json(target_path) if os.path.isfile(target_path) else {}
-            existing_flat = inc.flatten(existing) if existing else {}
-            # Detect against THIS language's baseline: a run that touched only German must not
-            # mark an edited string as done for French (see incremental.lock_keys).
-            lang_baseline = inc.lock_keys(lock_raw, lang)
-            # Keys already in the target that no lock has ever vouched for. Not translated, not
-            # locked, and named below — see incremental.unverified_keys.
-            if not settings_changed:
-                unverified_by_lang[lang] = inc.unverified_keys(source_flat, existing_flat, lang_baseline)
-            todo = (dict(source_flat) if settings_changed
-                    else inc.changed_or_missing_keys(source_flat, existing_flat, lang_baseline))
-            term_fps = {}
-            if entries or locked_terms.get(lang):
-                term_fps = {e.term.casefold(): e.fingerprint(lang) for e in entries
-                            if e.renderings(lang)}
-                changed_terms = gl.changed_terms(locked_terms.get(lang), term_fps)
-                stale = {k for k in gl.stale_keys(source_flat, existing_flat, lang, entries,
-                                                  changed_terms) if k not in todo}
-                if stale and not settings_changed:
-                    info(f"{lang}: {len(stale)} key(s) use a glossary term that changed and do not "
-                         f"say it the new way yet — re-translating them")
-                    todo.update({k: source_flat[k] for k in stale})
-            new_terms[lang] = term_fps
-            # A plural set goes whole: when one of its forms is due, and when the target lacks a
-            # form this language needs (what `check` asks for) — the server adds those forms only to
-            # a set it gets entire (0.2.47).
-            plural = chk.plural_set_work(source_flat, existing_flat, todo, lang)
-            if plural:
-                info(f"{lang}: {len(plural)} more key(s) of plural sets sent with them, so every "
-                     f"form {lang} needs is written")
->               todo.update(plural)
-E               ValueError: dictionary update sequence element #0 has length 0; 2 is required
-
-kaeris\cli.py:2185: ValueError
----------------------------- Captured stderr call -----------------------------
-→ pl: 2 more key(s) of plural sets sent with them, so every form pl needs is written
-____________ OnlyNew.test_an_edit_to_one_form_sends_the_whole_set _____________
-
-self = <test_translate_completes_plural_sets.OnlyNew testMethod=test_an_edit_to_one_form_sends_the_whole_set>
-
-    def test_an_edit_to_one_form_sends_the_whole_set(self):
-        inc.dump_json(SRC, self.en)
->       self.assertEqual(self._run(), 0)                      # first run: everything
-                         ^^^^^^^^^^^
-
-tests\test_translate_completes_plural_sets.py:126: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
-tests\test_translate_completes_plural_sets.py:99: in _run
-    return cli.cmd_translate(args)
-           ^^^^^^^^^^^^^^^^^^^^^^^
-kaeris\cli.py:1247: in cmd_translate
-    else _translate_one(client, path, langs, args))
-         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-kaeris\cli.py:1843: in _translate_one
-    return _translate_incremental(client, path, args.out, langs, args)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
-
-client = <test_translate_completes_plural_sets.PolishServer object at 0x000002454A946060>
-path = 'C:\\Users\\Inzagi\\AppData\\Local\\Temp\\tmpmr_hd4vl\\en.json'
-out_dir = None, langs = ['pl']
-args = Namespace(api_url='https://kaeris.dev', key=None, openrouter_key=None, config=None, command='translate', files=['C:\\U...=False, json=False, func=<function cmd_translate at 0x000002454A9352D0>, term_glossary=None, models={}, verify_back={})
-
-    def _translate_incremental(client, path, out_dir, langs, args):
-        is_arb = path.lower().endswith(".arb")
-        source_obj = inc.load_json(path)
-        source_flat = inc.flatten(source_obj)
-        memory, tm_path = _tm_open(args, path)
-        sig = _tm_signature(args, client) if memory is not None else ""
-        # One job per language here, so one receipt per language. --receipt used to write nothing
-        # at all on this path: a documented flag that silently does nothing is worse than one that
-        # does not exist.
-        receipts = []
-        if is_arb:
-            # ARB metadata (@@locale, @key.placeholders...) is not translatable text —
-            # drop it from detection and (via todo) from the submitted subset so it's
-            # never shipped to the model or corrupted. It survives on merge untouched.
-            source_flat = {k: v for k, v in source_flat.items() if not _arb_meta_key(k)}
-        flat_style = inc.is_flat(source_obj)
-        source_hashes = inc.hash_flat(source_flat)
-    
-        lock_path = args.lock or inc.default_lock_path(path)
-        lock_raw = inc.load_lock(lock_path)
-        # The lock is a SINGLE per-source record meaning "this source hash is already
-        # propagated to ALL target languages". Snapshot it once so every language
-        # detects against the same baseline — never against a lock a previous
-        # language mutated mid-loop (that bug silently skipped later languages).
-        detect_lock = inc.lock_keys(lock_raw)          # глобальный снимок (для совместимости)
-        lang_locks = inc.lock_langs(lock_raw)           # состояние по каждому языку
-        broken_by_lang: dict[str, set] = {}
-        # Reproducibility: if the tone/ICU/glossary/context/model changed since the lock was written, an
-        # unchanged source string would still hash-match and be kept — leaving a locale that mixes
-        # old and new settings. Detect that and re-translate every key so the output stays consistent.
-        cur_settings = inc.settings_signature(_tone(args), args.icu, _glossary(args),
-                                              _model_signature(args, client), _app_context(args))
-        locked_settings = inc.lock_settings(lock_raw)
-        settings_changed = inc.settings_changed(locked_settings, cur_settings)
-        if settings_changed:
-            changed_model = (locked_settings or {}).get("model", "") != cur_settings["model"] \
-                and (locked_settings or {}).get("model", "")
-            why = ("the model changed" if changed_model
-                   else "tone/ICU/glossary/context changed")
-            info(f"Translation settings changed since the lock — {why}. Re-translating every key "
-                 "so the whole locale stays consistent")
-        # The glossary is not a setting of the whole locale: a changed term re-translates only the
-        # strings that use it and do not already say it the new way (glossary.stale_keys). The lock
-        # remembers, per language, what each term asked for when it was last applied.
-        entries = _term_entries(args)
-        locked_terms = lock_raw.get("glossary") if isinstance(lock_raw.get("glossary"), dict) else {}
-        new_terms = {l: dict(v) for l, v in locked_terms.items() if isinstance(v, dict)}
-        # Source keys NOT fully propagated to every language after this run — a key
-        # is "broken" if any language it was due in failed to merge. Broken keys are
-        # left stale-locked so the NEXT run retries the language(s) that failed.
-        broken = set()
-        any_work = False
-        unverified_by_lang: dict[str, set] = {}
-    
-        # Every language is its own job, and they do not depend on each other: send them side by
-        # side (up to --jobs), then merge and report in language order, exactly as before.
-        work = []
-        pool = ThreadPoolExecutor(max_workers=_jobs(args))
-        for lang in langs:
-            target_path = _out_path(path, lang, out_dir, args.source_lang,
-                                    getattr(args, "lang_case", "keep"), for_write=True)
-            os.makedirs(os.path.dirname(target_path) or ".", exist_ok=True)
-            existing = inc.load_json(target_path) if os.path.isfile(target_path) else {}
-            existing_flat = inc.flatten(existing) if existing else {}
-            # Detect against THIS language's baseline: a run that touched only German must not
-            # mark an edited string as done for French (see incremental.lock_keys).
-            lang_baseline = inc.lock_keys(lock_raw, lang)
-            # Keys already in the target that no lock has ever vouched for. Not translated, not
-            # locked, and named below — see incremental.unverified_keys.
-            if not settings_changed:
-                unverified_by_lang[lang] = inc.unverified_keys(source_flat, existing_flat, lang_baseline)
-            todo = (dict(source_flat) if settings_changed
-                    else inc.changed_or_missing_keys(source_flat, existing_flat, lang_baseline))
-            term_fps = {}
-            if entries or locked_terms.get(lang):
-                term_fps = {e.term.casefold(): e.fingerprint(lang) for e in entries
-                            if e.renderings(lang)}
-                changed_terms = gl.changed_terms(locked_terms.get(lang), term_fps)
-                stale = {k for k in gl.stale_keys(source_flat, existing_flat, lang, entries,
-                                                  changed_terms) if k not in todo}
-                if stale and not settings_changed:
-                    info(f"{lang}: {len(stale)} key(s) use a glossary term that changed and do not "
-                         f"say it the new way yet — re-translating them")
-                    todo.update({k: source_flat[k] for k in stale})
-            new_terms[lang] = term_fps
-            # A plural set goes whole: when one of its forms is due, and when the target lacks a
-            # form this language needs (what `check` asks for) — the server adds those forms only to
-            # a set it gets entire (0.2.47).
-            plural = chk.plural_set_work(source_flat, existing_flat, todo, lang)
-            if plural:
-                info(f"{lang}: {len(plural)} more key(s) of plural sets sent with them, so every "
-                     f"form {lang} needs is written")
->               todo.update(plural)
-E               ValueError: dictionary update sequence element #0 has length 0; 2 is required
-
-kaeris\cli.py:2185: ValueError
----------------------------- Captured stderr call -----------------------------
-→ pl: 2 more key(s) of plural sets sent with them, so every form pl needs is written
 ________ OnlyNew.test_completing_a_set_alone_says_so_without_with_them ________
 
 self = <test_translate_completes_plural_sets.OnlyNew testMethod=test_completing_a_set_alone_says_so_without_with_them>
@@ -513,123 +10,24 @@ self = <test_translate_completes_plural_sets.OnlyNew testMethod=test_completing_
         else was sent — "with them" pointed at nothing."""
         inc.dump_json(SRC, self.en)
         inc.dump_json(PL_OLD, self.pl)
->       code, out = self._out("--assume-current")
-                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        code, out = self._out("--assume-current")
+        self.assertEqual(code, 0, out)
+>       self.assertNotIn("with them", out)
+E       AssertionError: 'with them' unexpectedly found in '→ pl: 2 more key(s) of plural sets sent with them, so every form pl needs is written\n→ pl: 2 key(s) to translate (2 edited, 0 new)\n✓ Translation QA: no placeholder loss, no overflow risks\n✓ pl: merged 2 key(s) → C:\\Users\\Inzagi\\AppData\\Local\\Temp\\tmpc5gtzloe\\pl.json\n'
 
-tests\test_translate_completes_plural_sets.py:157: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
-tests\test_translate_completes_plural_sets.py:149: in _out
-    code = cli.cmd_translate(args)
-           ^^^^^^^^^^^^^^^^^^^^^^^
-kaeris\cli.py:1247: in cmd_translate
-    else _translate_one(client, path, langs, args))
-         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-kaeris\cli.py:1843: in _translate_one
-    return _translate_incremental(client, path, args.out, langs, args)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\test_translate_completes_plural_sets.py:159: AssertionError
+_____________ OnlyNew.test_ordinals_and_japanese_owe_nothing_more _____________
 
-client = <test_translate_completes_plural_sets.PolishServer object at 0x000002454A946650>
-path = 'C:\\Users\\Inzagi\\AppData\\Local\\Temp\\tmpj2_hr5ej\\en.json'
-out_dir = None, langs = ['pl']
-args = Namespace(api_url='https://kaeris.dev', key=None, openrouter_key=None, config=None, command='translate', files=['C:\\U...=False, json=False, func=<function cmd_translate at 0x000002454A9352D0>, term_glossary=None, models={}, verify_back={})
+self = <test_translate_completes_plural_sets.OnlyNew testMethod=test_ordinals_and_japanese_owe_nothing_more>
 
-    def _translate_incremental(client, path, out_dir, langs, args):
-        is_arb = path.lower().endswith(".arb")
-        source_obj = inc.load_json(path)
-        source_flat = inc.flatten(source_obj)
-        memory, tm_path = _tm_open(args, path)
-        sig = _tm_signature(args, client) if memory is not None else ""
-        # One job per language here, so one receipt per language. --receipt used to write nothing
-        # at all on this path: a documented flag that silently does nothing is worse than one that
-        # does not exist.
-        receipts = []
-        if is_arb:
-            # ARB metadata (@@locale, @key.placeholders...) is not translatable text —
-            # drop it from detection and (via todo) from the submitted subset so it's
-            # never shipped to the model or corrupted. It survives on merge untouched.
-            source_flat = {k: v for k, v in source_flat.items() if not _arb_meta_key(k)}
-        flat_style = inc.is_flat(source_obj)
-        source_hashes = inc.hash_flat(source_flat)
-    
-        lock_path = args.lock or inc.default_lock_path(path)
-        lock_raw = inc.load_lock(lock_path)
-        # The lock is a SINGLE per-source record meaning "this source hash is already
-        # propagated to ALL target languages". Snapshot it once so every language
-        # detects against the same baseline — never against a lock a previous
-        # language mutated mid-loop (that bug silently skipped later languages).
-        detect_lock = inc.lock_keys(lock_raw)          # глобальный снимок (для совместимости)
-        lang_locks = inc.lock_langs(lock_raw)           # состояние по каждому языку
-        broken_by_lang: dict[str, set] = {}
-        # Reproducibility: if the tone/ICU/glossary/context/model changed since the lock was written, an
-        # unchanged source string would still hash-match and be kept — leaving a locale that mixes
-        # old and new settings. Detect that and re-translate every key so the output stays consistent.
-        cur_settings = inc.settings_signature(_tone(args), args.icu, _glossary(args),
-                                              _model_signature(args, client), _app_context(args))
-        locked_settings = inc.lock_settings(lock_raw)
-        settings_changed = inc.settings_changed(locked_settings, cur_settings)
-        if settings_changed:
-            changed_model = (locked_settings or {}).get("model", "") != cur_settings["model"] \
-                and (locked_settings or {}).get("model", "")
-            why = ("the model changed" if changed_model
-                   else "tone/ICU/glossary/context changed")
-            info(f"Translation settings changed since the lock — {why}. Re-translating every key "
-                 "so the whole locale stays consistent")
-        # The glossary is not a setting of the whole locale: a changed term re-translates only the
-        # strings that use it and do not already say it the new way (glossary.stale_keys). The lock
-        # remembers, per language, what each term asked for when it was last applied.
-        entries = _term_entries(args)
-        locked_terms = lock_raw.get("glossary") if isinstance(lock_raw.get("glossary"), dict) else {}
-        new_terms = {l: dict(v) for l, v in locked_terms.items() if isinstance(v, dict)}
-        # Source keys NOT fully propagated to every language after this run — a key
-        # is "broken" if any language it was due in failed to merge. Broken keys are
-        # left stale-locked so the NEXT run retries the language(s) that failed.
-        broken = set()
-        any_work = False
-        unverified_by_lang: dict[str, set] = {}
-    
-        # Every language is its own job, and they do not depend on each other: send them side by
-        # side (up to --jobs), then merge and report in language order, exactly as before.
-        work = []
-        pool = ThreadPoolExecutor(max_workers=_jobs(args))
-        for lang in langs:
-            target_path = _out_path(path, lang, out_dir, args.source_lang,
-                                    getattr(args, "lang_case", "keep"), for_write=True)
-            os.makedirs(os.path.dirname(target_path) or ".", exist_ok=True)
-            existing = inc.load_json(target_path) if os.path.isfile(target_path) else {}
-            existing_flat = inc.flatten(existing) if existing else {}
-            # Detect against THIS language's baseline: a run that touched only German must not
-            # mark an edited string as done for French (see incremental.lock_keys).
-            lang_baseline = inc.lock_keys(lock_raw, lang)
-            # Keys already in the target that no lock has ever vouched for. Not translated, not
-            # locked, and named below — see incremental.unverified_keys.
-            if not settings_changed:
-                unverified_by_lang[lang] = inc.unverified_keys(source_flat, existing_flat, lang_baseline)
-            todo = (dict(source_flat) if settings_changed
-                    else inc.changed_or_missing_keys(source_flat, existing_flat, lang_baseline))
-            term_fps = {}
-            if entries or locked_terms.get(lang):
-                term_fps = {e.term.casefold(): e.fingerprint(lang) for e in entries
-                            if e.renderings(lang)}
-                changed_terms = gl.changed_terms(locked_terms.get(lang), term_fps)
-                stale = {k for k in gl.stale_keys(source_flat, existing_flat, lang, entries,
-                                                  changed_terms) if k not in todo}
-                if stale and not settings_changed:
-                    info(f"{lang}: {len(stale)} key(s) use a glossary term that changed and do not "
-                         f"say it the new way yet — re-translating them")
-                    todo.update({k: source_flat[k] for k in stale})
-            new_terms[lang] = term_fps
-            # A plural set goes whole: when one of its forms is due, and when the target lacks a
-            # form this language needs (what `check` asks for) — the server adds those forms only to
-            # a set it gets entire (0.2.47).
-            plural = chk.plural_set_work(source_flat, existing_flat, todo, lang)
-            if plural:
-                info(f"{lang}: {len(plural)} more key(s) of plural sets sent with them, so every "
-                     f"form {lang} needs is written")
->               todo.update(plural)
-E               ValueError: dictionary update sequence element #0 has length 0; 2 is required
+    def test_ordinals_and_japanese_owe_nothing_more(self):
+        """An ordinal set owes `_ordinal_other` only; Japanese has one form."""
+        src = {"place_ordinal_one": "{{count}}st", "place_ordinal_other": "{{count}}th"}
+        target = {"place_ordinal_one": "{{count}}.", "place_ordinal_other": "{{count}}."}
+>       self.assertEqual(chk.plural_set_work(src, target, {}, "pl"), ({}, {}))
+E       AssertionError: {} != ({}, {})
 
-kaeris\cli.py:2185: ValueError
+tests\test_translate_completes_plural_sets.py:138: AssertionError
 ___________ OldServer.test_a_new_key_goes_alone_and_lands_in_place ____________
 
 self = <test_translate_completes_plural_sets.OldServer testMethod=test_a_new_key_goes_alone_and_lands_in_place>
@@ -637,125 +35,30 @@ self = <test_translate_completes_plural_sets.OldServer testMethod=test_a_new_key
     def test_a_new_key_goes_alone_and_lands_in_place(self):
         inc.dump_json(SRC, self.en)
         inc.dump_json(PL_OLD, self.pl)
->       self.assertEqual(self._run("--assume-current"), 0)
-                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.assertEqual(self._run("--assume-current"), 0)
+        src = json.loads(json.dumps(SRC))
+        src["cart"]["saved_one"] = "{{count}} saved"
+        src["cart"]["saved_other"] = "{{count}} saved"
+        inc.dump_json(src, self.en)
+        self.assertEqual(self._run(), 0)
+        self.assertEqual(self._run(), 0)
+>       self.assertEqual(len(PolishServer.calls), 1, PolishServer.calls)
+E       AssertionError: 3 != 1 : [{'cart': {'items_one': '{{count}} item', 'items_other': '{{count}} items'}}, {'cart': {'items_one': '{{count}} item', 'items_other': '{{count}} items', 'saved_one': '{{count}} saved', 'saved_other': '{{count}} saved'}}, {'cart': {'items_one': '{{count}} item', 'items_other': '{{count}} items', 'saved_one': '{{count}} saved', 'saved_other': '{{count}} saved'}}]
 
-tests\test_translate_completes_plural_sets.py:204: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
-tests\test_translate_completes_plural_sets.py:191: in _run
-    return cli.cmd_translate(args)
-           ^^^^^^^^^^^^^^^^^^^^^^^
-kaeris\cli.py:1247: in cmd_translate
-    else _translate_one(client, path, langs, args))
-         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-kaeris\cli.py:1843: in _translate_one
-    return _translate_incremental(client, path, args.out, langs, args)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
-
-client = <test_translate_completes_plural_sets.ProdServer object at 0x000002454A6ACEC0>
-path = 'C:\\Users\\Inzagi\\AppData\\Local\\Temp\\tmpyadjv_bu\\en.json'
-out_dir = None, langs = ['pl']
-args = Namespace(api_url='https://kaeris.dev', key=None, openrouter_key=None, config=None, command='translate', files=['C:\\U...=False, json=False, func=<function cmd_translate at 0x000002454A9352D0>, term_glossary=None, models={}, verify_back={})
-
-    def _translate_incremental(client, path, out_dir, langs, args):
-        is_arb = path.lower().endswith(".arb")
-        source_obj = inc.load_json(path)
-        source_flat = inc.flatten(source_obj)
-        memory, tm_path = _tm_open(args, path)
-        sig = _tm_signature(args, client) if memory is not None else ""
-        # One job per language here, so one receipt per language. --receipt used to write nothing
-        # at all on this path: a documented flag that silently does nothing is worse than one that
-        # does not exist.
-        receipts = []
-        if is_arb:
-            # ARB metadata (@@locale, @key.placeholders...) is not translatable text —
-            # drop it from detection and (via todo) from the submitted subset so it's
-            # never shipped to the model or corrupted. It survives on merge untouched.
-            source_flat = {k: v for k, v in source_flat.items() if not _arb_meta_key(k)}
-        flat_style = inc.is_flat(source_obj)
-        source_hashes = inc.hash_flat(source_flat)
-    
-        lock_path = args.lock or inc.default_lock_path(path)
-        lock_raw = inc.load_lock(lock_path)
-        # The lock is a SINGLE per-source record meaning "this source hash is already
-        # propagated to ALL target languages". Snapshot it once so every language
-        # detects against the same baseline — never against a lock a previous
-        # language mutated mid-loop (that bug silently skipped later languages).
-        detect_lock = inc.lock_keys(lock_raw)          # глобальный снимок (для совместимости)
-        lang_locks = inc.lock_langs(lock_raw)           # состояние по каждому языку
-        broken_by_lang: dict[str, set] = {}
-        # Reproducibility: if the tone/ICU/glossary/context/model changed since the lock was written, an
-        # unchanged source string would still hash-match and be kept — leaving a locale that mixes
-        # old and new settings. Detect that and re-translate every key so the output stays consistent.
-        cur_settings = inc.settings_signature(_tone(args), args.icu, _glossary(args),
-                                              _model_signature(args, client), _app_context(args))
-        locked_settings = inc.lock_settings(lock_raw)
-        settings_changed = inc.settings_changed(locked_settings, cur_settings)
-        if settings_changed:
-            changed_model = (locked_settings or {}).get("model", "") != cur_settings["model"] \
-                and (locked_settings or {}).get("model", "")
-            why = ("the model changed" if changed_model
-                   else "tone/ICU/glossary/context changed")
-            info(f"Translation settings changed since the lock — {why}. Re-translating every key "
-                 "so the whole locale stays consistent")
-        # The glossary is not a setting of the whole locale: a changed term re-translates only the
-        # strings that use it and do not already say it the new way (glossary.stale_keys). The lock
-        # remembers, per language, what each term asked for when it was last applied.
-        entries = _term_entries(args)
-        locked_terms = lock_raw.get("glossary") if isinstance(lock_raw.get("glossary"), dict) else {}
-        new_terms = {l: dict(v) for l, v in locked_terms.items() if isinstance(v, dict)}
-        # Source keys NOT fully propagated to every language after this run — a key
-        # is "broken" if any language it was due in failed to merge. Broken keys are
-        # left stale-locked so the NEXT run retries the language(s) that failed.
-        broken = set()
-        any_work = False
-        unverified_by_lang: dict[str, set] = {}
-    
-        # Every language is its own job, and they do not depend on each other: send them side by
-        # side (up to --jobs), then merge and report in language order, exactly as before.
-        work = []
-        pool = ThreadPoolExecutor(max_workers=_jobs(args))
-        for lang in langs:
-            target_path = _out_path(path, lang, out_dir, args.source_lang,
-                                    getattr(args, "lang_case", "keep"), for_write=True)
-            os.makedirs(os.path.dirname(target_path) or ".", exist_ok=True)
-            existing = inc.load_json(target_path) if os.path.isfile(target_path) else {}
-            existing_flat = inc.flatten(existing) if existing else {}
-            # Detect against THIS language's baseline: a run that touched only German must not
-            # mark an edited string as done for French (see incremental.lock_keys).
-            lang_baseline = inc.lock_keys(lock_raw, lang)
-            # Keys already in the target that no lock has ever vouched for. Not translated, not
-            # locked, and named below — see incremental.unverified_keys.
-            if not settings_changed:
-                unverified_by_lang[lang] = inc.unverified_keys(source_flat, existing_flat, lang_baseline)
-            todo = (dict(source_flat) if settings_changed
-                    else inc.changed_or_missing_keys(source_flat, existing_flat, lang_baseline))
-            term_fps = {}
-            if entries or locked_terms.get(lang):
-                term_fps = {e.term.casefold(): e.fingerprint(lang) for e in entries
-                            if e.renderings(lang)}
-                changed_terms = gl.changed_terms(locked_terms.get(lang), term_fps)
-                stale = {k for k in gl.stale_keys(source_flat, existing_flat, lang, entries,
-                                                  changed_terms) if k not in todo}
-                if stale and not settings_changed:
-                    info(f"{lang}: {len(stale)} key(s) use a glossary term that changed and do not "
-                         f"say it the new way yet — re-translating them")
-                    todo.update({k: source_flat[k] for k in stale})
-            new_terms[lang] = term_fps
-            # A plural set goes whole: when one of its forms is due, and when the target lacks a
-            # form this language needs (what `check` asks for) — the server adds those forms only to
-            # a set it gets entire (0.2.47).
-            plural = chk.plural_set_work(source_flat, existing_flat, todo, lang)
-            if plural:
-                info(f"{lang}: {len(plural)} more key(s) of plural sets sent with them, so every "
-                     f"form {lang} needs is written")
->               todo.update(plural)
-E               ValueError: dictionary update sequence element #0 has length 0; 2 is required
-
-kaeris\cli.py:2185: ValueError
+tests\test_translate_completes_plural_sets.py:211: AssertionError
 ---------------------------- Captured stderr call -----------------------------
 → pl: 2 more key(s) of plural sets sent with them, so every form pl needs is written
+→ pl: 2 key(s) to translate (2 edited, 0 new)
+✓ Translation QA: no placeholder loss, no overflow risks
+✓ pl: merged 2 key(s) → C:\Users\Inzagi\AppData\Local\Temp\tmp71th4k3m\pl.json
+→ pl: 2 more key(s) of plural sets sent with them, so every form pl needs is written
+→ pl: 4 key(s) to translate (2 edited, 2 new)
+✓ Translation QA: no placeholder loss, no overflow risks
+✓ pl: merged 4 key(s) → C:\Users\Inzagi\AppData\Local\Temp\tmp71th4k3m\pl.json
+→ pl: 4 more key(s) of plural sets sent with them, so every form pl needs is written
+→ pl: 4 key(s) to translate (4 edited, 0 new)
+✓ Translation QA: no placeholder loss, no overflow risks
+✓ pl: merged 4 key(s) → C:\Users\Inzagi\AppData\Local\Temp\tmp71th4k3m\pl.json
 _ OldServer.test_missing_forms_alone_are_not_work_for_a_server_that_does_not_add_them _
 
 self = <test_translate_completes_plural_sets.OldServer testMethod=test_missing_forms_alone_are_not_work_for_a_server_that_does_not_add_them>
@@ -764,125 +67,75 @@ self = <test_translate_completes_plural_sets.OldServer testMethod=test_missing_f
         inc.dump_json(SRC, self.en)
         inc.dump_json(PL_OLD, self.pl)
         for flags in (("--assume-current",), (), ()):
->           self.assertEqual(self._run(*flags), 0)
-                             ^^^^^^^^^^^^^^^^^
+            self.assertEqual(self._run(*flags), 0)
+>       self.assertEqual(PolishServer.calls, [], "nothing new: nothing sent, nothing charged")
+E       AssertionError: Lists differ: [{'cart': {'items_one': '{{count}} item', [184 chars]s'}}] != []
+E       
+E       First list contains 3 additional elements.
+E       First extra element 0:
+E       {'cart': {'items_one': '{{count}} item', 'items_other': '{{count}} items'}}
+E       
+E       + []
+E       - [{'cart': {'items_one': '{{count}} item', 'items_other': '{{count}} items'}},
+E       -  {'cart': {'items_one': '{{count}} item', 'items_other': '{{count}} items'}},
+E       -  {'cart': {'items_one': '{{count}} item', 'items_other': '{{count}} items'}}] : nothing new: nothing sent, nothing charged
 
-tests\test_translate_completes_plural_sets.py:197: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
-tests\test_translate_completes_plural_sets.py:191: in _run
-    return cli.cmd_translate(args)
-           ^^^^^^^^^^^^^^^^^^^^^^^
-kaeris\cli.py:1247: in cmd_translate
-    else _translate_one(client, path, langs, args))
-         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-kaeris\cli.py:1843: in _translate_one
-    return _translate_incremental(client, path, args.out, langs, args)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
-
-client = <test_translate_completes_plural_sets.ProdServer object at 0x000002454A8DEC10>
-path = 'C:\\Users\\Inzagi\\AppData\\Local\\Temp\\tmpnl4yjy4d\\en.json'
-out_dir = None, langs = ['pl']
-args = Namespace(api_url='https://kaeris.dev', key=None, openrouter_key=None, config=None, command='translate', files=['C:\\U...=False, json=False, func=<function cmd_translate at 0x000002454A9352D0>, term_glossary=None, models={}, verify_back={})
-
-    def _translate_incremental(client, path, out_dir, langs, args):
-        is_arb = path.lower().endswith(".arb")
-        source_obj = inc.load_json(path)
-        source_flat = inc.flatten(source_obj)
-        memory, tm_path = _tm_open(args, path)
-        sig = _tm_signature(args, client) if memory is not None else ""
-        # One job per language here, so one receipt per language. --receipt used to write nothing
-        # at all on this path: a documented flag that silently does nothing is worse than one that
-        # does not exist.
-        receipts = []
-        if is_arb:
-            # ARB metadata (@@locale, @key.placeholders...) is not translatable text —
-            # drop it from detection and (via todo) from the submitted subset so it's
-            # never shipped to the model or corrupted. It survives on merge untouched.
-            source_flat = {k: v for k, v in source_flat.items() if not _arb_meta_key(k)}
-        flat_style = inc.is_flat(source_obj)
-        source_hashes = inc.hash_flat(source_flat)
-    
-        lock_path = args.lock or inc.default_lock_path(path)
-        lock_raw = inc.load_lock(lock_path)
-        # The lock is a SINGLE per-source record meaning "this source hash is already
-        # propagated to ALL target languages". Snapshot it once so every language
-        # detects against the same baseline — never against a lock a previous
-        # language mutated mid-loop (that bug silently skipped later languages).
-        detect_lock = inc.lock_keys(lock_raw)          # глобальный снимок (для совместимости)
-        lang_locks = inc.lock_langs(lock_raw)           # состояние по каждому языку
-        broken_by_lang: dict[str, set] = {}
-        # Reproducibility: if the tone/ICU/glossary/context/model changed since the lock was written, an
-        # unchanged source string would still hash-match and be kept — leaving a locale that mixes
-        # old and new settings. Detect that and re-translate every key so the output stays consistent.
-        cur_settings = inc.settings_signature(_tone(args), args.icu, _glossary(args),
-                                              _model_signature(args, client), _app_context(args))
-        locked_settings = inc.lock_settings(lock_raw)
-        settings_changed = inc.settings_changed(locked_settings, cur_settings)
-        if settings_changed:
-            changed_model = (locked_settings or {}).get("model", "") != cur_settings["model"] \
-                and (locked_settings or {}).get("model", "")
-            why = ("the model changed" if changed_model
-                   else "tone/ICU/glossary/context changed")
-            info(f"Translation settings changed since the lock — {why}. Re-translating every key "
-                 "so the whole locale stays consistent")
-        # The glossary is not a setting of the whole locale: a changed term re-translates only the
-        # strings that use it and do not already say it the new way (glossary.stale_keys). The lock
-        # remembers, per language, what each term asked for when it was last applied.
-        entries = _term_entries(args)
-        locked_terms = lock_raw.get("glossary") if isinstance(lock_raw.get("glossary"), dict) else {}
-        new_terms = {l: dict(v) for l, v in locked_terms.items() if isinstance(v, dict)}
-        # Source keys NOT fully propagated to every language after this run — a key
-        # is "broken" if any language it was due in failed to merge. Broken keys are
-        # left stale-locked so the NEXT run retries the language(s) that failed.
-        broken = set()
-        any_work = False
-        unverified_by_lang: dict[str, set] = {}
-    
-        # Every language is its own job, and they do not depend on each other: send them side by
-        # side (up to --jobs), then merge and report in language order, exactly as before.
-        work = []
-        pool = ThreadPoolExecutor(max_workers=_jobs(args))
-        for lang in langs:
-            target_path = _out_path(path, lang, out_dir, args.source_lang,
-                                    getattr(args, "lang_case", "keep"), for_write=True)
-            os.makedirs(os.path.dirname(target_path) or ".", exist_ok=True)
-            existing = inc.load_json(target_path) if os.path.isfile(target_path) else {}
-            existing_flat = inc.flatten(existing) if existing else {}
-            # Detect against THIS language's baseline: a run that touched only German must not
-            # mark an edited string as done for French (see incremental.lock_keys).
-            lang_baseline = inc.lock_keys(lock_raw, lang)
-            # Keys already in the target that no lock has ever vouched for. Not translated, not
-            # locked, and named below — see incremental.unverified_keys.
-            if not settings_changed:
-                unverified_by_lang[lang] = inc.unverified_keys(source_flat, existing_flat, lang_baseline)
-            todo = (dict(source_flat) if settings_changed
-                    else inc.changed_or_missing_keys(source_flat, existing_flat, lang_baseline))
-            term_fps = {}
-            if entries or locked_terms.get(lang):
-                term_fps = {e.term.casefold(): e.fingerprint(lang) for e in entries
-                            if e.renderings(lang)}
-                changed_terms = gl.changed_terms(locked_terms.get(lang), term_fps)
-                stale = {k for k in gl.stale_keys(source_flat, existing_flat, lang, entries,
-                                                  changed_terms) if k not in todo}
-                if stale and not settings_changed:
-                    info(f"{lang}: {len(stale)} key(s) use a glossary term that changed and do not "
-                         f"say it the new way yet — re-translating them")
-                    todo.update({k: source_flat[k] for k in stale})
-            new_terms[lang] = term_fps
-            # A plural set goes whole: when one of its forms is due, and when the target lacks a
-            # form this language needs (what `check` asks for) — the server adds those forms only to
-            # a set it gets entire (0.2.47).
-            plural = chk.plural_set_work(source_flat, existing_flat, todo, lang)
-            if plural:
-                info(f"{lang}: {len(plural)} more key(s) of plural sets sent with them, so every "
-                     f"form {lang} needs is written")
->               todo.update(plural)
-E               ValueError: dictionary update sequence element #0 has length 0; 2 is required
-
-kaeris\cli.py:2185: ValueError
+tests\test_translate_completes_plural_sets.py:198: AssertionError
 ---------------------------- Captured stderr call -----------------------------
 → pl: 2 more key(s) of plural sets sent with them, so every form pl needs is written
+→ pl: 2 key(s) to translate (2 edited, 0 new)
+✓ Translation QA: no placeholder loss, no overflow risks
+✓ pl: merged 2 key(s) → C:\Users\Inzagi\AppData\Local\Temp\tmpcp81f1bz\pl.json
+→ pl: 2 more key(s) of plural sets sent with them, so every form pl needs is written
+→ pl: 2 key(s) to translate (2 edited, 0 new)
+✓ Translation QA: no placeholder loss, no overflow risks
+✓ pl: merged 2 key(s) → C:\Users\Inzagi\AppData\Local\Temp\tmpcp81f1bz\pl.json
+→ pl: 2 more key(s) of plural sets sent with them, so every form pl needs is written
+→ pl: 2 key(s) to translate (2 edited, 0 new)
+✓ Translation QA: no placeholder loss, no overflow risks
+✓ pl: merged 2 key(s) → C:\Users\Inzagi\AppData\Local\Temp\tmpcp81f1bz\pl.json
+__________ Claims.test_the_request_says_this_client_takes_new_forms ___________
+
+self = <test_translate_completes_plural_sets.Claims testMethod=test_the_request_says_this_client_takes_new_forms>
+
+    def test_the_request_says_this_client_takes_new_forms(self):
+        from kaeris.client import KaerisClient
+        body, _ = KaerisClient("http://127.0.0.1:9")._multipart("en.json", b"{}", ["pl"])
+>       self.assertIn(b'name="plurals"\r\n\r\ncldr', body)
+E       AssertionError: b'name="plurals"\r\n\r\ncldr' not found in b'------kaeris88a2c702c4814df3828504b03ed63828\r\nContent-Disposition: form-data; name="file"; filename="en.json"\r\nContent-Type: application/octet-stream\r\n\r\n{}\r\n------kaeris88a2c702c4814df3828504b03ed63828\r\nContent-Disposition: form-data; name="languages"\r\n\r\npl\r\n------kaeris88a2c702c4814df3828504b03ed63828--\r\n'
+
+tests\test_translate_completes_plural_sets.py:222: AssertionError
+_________ Claims.test_the_server_is_asked_once_whether_it_adds_forms __________
+
+self = <test_translate_completes_plural_sets.Claims testMethod=test_the_server_is_asked_once_whether_it_adds_forms>
+
+    def test_the_server_is_asked_once_whether_it_adds_forms(self):
+        from kaeris.client import KaerisClient
+        asked = []
+    
+        class C(KaerisClient):
+            def config(self):
+                asked.append(1)
+                return {"plural_forms": "cldr"}
+    
+        c = C("http://127.0.0.1:9")
+>       self.assertTrue(c.adds_plural_forms() and c.adds_plural_forms())
+                        ^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'C' object has no attribute 'adds_plural_forms'
+
+tests\test_translate_completes_plural_sets.py:234: AttributeError
+__ Memory.test_sets_a_language_needs_more_forms_of_are_not_remembered_lines ___
+
+self = <test_translate_completes_plural_sets.Memory testMethod=test_sets_a_language_needs_more_forms_of_are_not_remembered_lines>
+
+    def test_sets_a_language_needs_more_forms_of_are_not_remembered_lines(self):
+        flat = inc.flatten(SRC)
+>       self.assertEqual(chk.plural_keys_translated_again(flat, "pl"),
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                         {"cart.items_one", "cart.items_other"})
+E       AttributeError: module 'kaeris.check' has no attribute 'plural_keys_translated_again'
+
+tests\test_translate_completes_plural_sets.py:255: AttributeError
 ______ Memory.test_the_count_leaves_them_out_only_where_the_server_folds ______
 
 self = <test_translate_completes_plural_sets.Memory testMethod=test_the_count_leaves_them_out_only_where_the_server_folds>
@@ -897,14 +150,14 @@ E       AttributeError: module 'kaeris.cli' has no attribute '_without_retransla
 
 tests\test_translate_completes_plural_sets.py:264: AttributeError
 =========================== short test summary info ===========================
-FAILED tests/test_translate_completes_plural_sets.py::OnlyNew::test_a_complete_target_is_up_to_date
-FAILED tests/test_translate_completes_plural_sets.py::OnlyNew::test_a_set_beside_an_edit_is_sent_with_it
-FAILED tests/test_translate_completes_plural_sets.py::OnlyNew::test_a_target_missing_polish_forms_is_completed
-FAILED tests/test_translate_completes_plural_sets.py::OnlyNew::test_an_edit_to_one_form_sends_the_whole_set
 FAILED tests/test_translate_completes_plural_sets.py::OnlyNew::test_completing_a_set_alone_says_so_without_with_them
+FAILED tests/test_translate_completes_plural_sets.py::OnlyNew::test_ordinals_and_japanese_owe_nothing_more
 FAILED tests/test_translate_completes_plural_sets.py::OldServer::test_a_new_key_goes_alone_and_lands_in_place
 FAILED tests/test_translate_completes_plural_sets.py::OldServer::test_missing_forms_alone_are_not_work_for_a_server_that_does_not_add_them
+FAILED tests/test_translate_completes_plural_sets.py::Claims::test_the_request_says_this_client_takes_new_forms
+FAILED tests/test_translate_completes_plural_sets.py::Claims::test_the_server_is_asked_once_whether_it_adds_forms
+FAILED tests/test_translate_completes_plural_sets.py::Memory::test_sets_a_language_needs_more_forms_of_are_not_remembered_lines
 FAILED tests/test_translate_completes_plural_sets.py::Memory::test_the_count_leaves_them_out_only_where_the_server_folds
-8 failed, 6 passed in 0.53s
+8 failed, 6 passed in 0.44s
 
 # exit 1
