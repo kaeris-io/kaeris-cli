@@ -1,0 +1,91 @@
+# baseline
+## CLI py
+$ C:\Users\Inzagi\AppData\Local\Python\pythoncore-3.14-64\python.exe -m pytest -q -p no:cacheprovider tests/test_plural_tables_snapshot.py  -> exit 0
+  | ...                                                                      [100%]
+  | 3 passed in 0.05s
+## npm
+$ node --test test/plural-tables-snapshot.test.js  -> exit 0
+  | ℹ cancelled 0
+  | ℹ skipped 0
+  | ℹ todo 0
+  | ℹ duration_ms 75.7675
+## server
+$ C:\Users\Inzagi\projects\kaeris\i18n_tool\.venv\Scripts\python.exe -m pytest -q -p no:cacheprovider tests/test_plural_tables_snapshot.py  -> exit 0
+  |   C:\Users\Inzagi\projects\kaeris\i18n_tool\.venv\Lib\site-packages\slowapi\extension.py:717: DeprecationWarning: 'asyncio.iscoroutinefunction' is deprecated and slated for removal in Python 3.16; use inspect.iscoroutinefunction() instead
+  |     if asyncio.iscoroutinefunction(func):
+  | -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+  | 2 passed, 27 warnings in 0.75s
+
+# DRIFT: CLI py formats.PLURAL_RULES lv nplurals 3 -> 2
+## CLI py
+$ C:\Users\Inzagi\AppData\Local\Python\pythoncore-3.14-64\python.exe -m pytest -q -p no:cacheprovider tests/test_plural_tables_snapshot.py  -> exit 1
+  | tests\test_plural_tables_snapshot.py:23: AssertionError
+  | =========================== short test summary info ===========================
+  | FAILED tests/test_plural_tables_snapshot.py::test_gettext_table_is_the_snapshot
+  | 1 failed, 2 passed in 0.07s
+## npm
+$ node --test test/plural-tables-snapshot.test.js  -> exit 0
+  | ℹ cancelled 0
+  | ℹ skipped 0
+  | ℹ todo 0
+  | ℹ duration_ms 78.5927
+## server
+$ C:\Users\Inzagi\projects\kaeris\i18n_tool\.venv\Scripts\python.exe -m pytest -q -p no:cacheprovider tests/test_plural_tables_snapshot.py  -> exit 0
+  |   C:\Users\Inzagi\projects\kaeris\i18n_tool\.venv\Lib\site-packages\slowapi\extension.py:717: DeprecationWarning: 'asyncio.iscoroutinefunction' is deprecated and slated for removal in Python 3.16; use inspect.iscoroutinefunction() instead
+  |     if asyncio.iscoroutinefunction(func):
+  | -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+  | 2 passed, 27 warnings in 0.74s
+
+# DRIFT: npm formats.js PLURAL_RULES ro nplurals 3 -> 2
+## CLI py
+$ C:\Users\Inzagi\AppData\Local\Python\pythoncore-3.14-64\python.exe -m pytest -q -p no:cacheprovider tests/test_plural_tables_snapshot.py  -> exit 0
+  | ...                                                                      [100%]
+  | 3 passed in 0.04s
+## npm
+$ node --test test/plural-tables-snapshot.test.js  -> exit 1
+  |     expected: { ar: [ 6, '(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5)' ], bn: [ 2, '(n > 1)' ], cs: [ 3, '(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2' ], fa: [ 2, '(n > 1)' ], fr: [ 2, '(n > 1)' ], he: [ 3, '(n==1 ? 0 : n==2 ? 1 : 2)' ], hi: [ 2, '(n > 1)' ], hr: [ 3, '(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)' ], id: [ 1, '0' ], ja: [ 1, '0' ], ko: [ 1, '0' ], lt: [ 3, '(n%10==1 && n%100!=11 ? 0 : n%10>=2 && (n%100<10 || n%100>=20) ? 1 : 2)' ], lv: [ 3, '(n%10==0 || (n%100>=11 && n%100<=19) ? 0 : n%10==1 && n%100!=11 ? 1 : 2)' ], ms: [ 1, '0' ], pl: [ 3, '(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)' ], pt: [ 2, '(n > 1)' ], 'pt-pt': [ 2, '(n != 1)' ], ro: [ 3, '(n==1 ? 0 : (n==0 || (n%100>0 && n%100<20)) ? 1 : 2)' ], ru: [ 3, '(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)' ], sk: [ 3, '(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2' ], sl: [ 4, '(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3)' ], sr: [ 3, '(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)' ], th: [ 1, '0' ], tl: [ 2, '(n != 1 && n != 2 && n != 3 && (n%10 == 4 || n%10 == 6 || n%10 == 9))' ], uk: [ 3, '(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)' ], vi: [ 1, '0' ], zh: [ 1, '0' ] },
+  |     operator: 'deepStrictEqual',
+  |     diff: 'simple'
+  |   }
+## server
+$ C:\Users\Inzagi\projects\kaeris\i18n_tool\.venv\Scripts\python.exe -m pytest -q -p no:cacheprovider tests/test_plural_tables_snapshot.py  -> exit 0
+  |   C:\Users\Inzagi\projects\kaeris\i18n_tool\.venv\Lib\site-packages\slowapi\extension.py:717: DeprecationWarning: 'asyncio.iscoroutinefunction' is deprecated and slated for removal in Python 3.16; use inspect.iscoroutinefunction() instead
+  |     if asyncio.iscoroutinefunction(func):
+  | -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+  | 2 passed, 27 warnings in 0.73s
+
+# DRIFT: server _CLDR_REQUIRED lt gains many
+## CLI py
+$ C:\Users\Inzagi\AppData\Local\Python\pythoncore-3.14-64\python.exe -m pytest -q -p no:cacheprovider tests/test_plural_tables_snapshot.py  -> exit 0
+  | ...                                                                      [100%]
+  | 3 passed in 0.05s
+## npm
+$ node --test test/plural-tables-snapshot.test.js  -> exit 0
+  | ℹ cancelled 0
+  | ℹ skipped 0
+  | ℹ todo 0
+  | ℹ duration_ms 75.4466
+## server
+$ C:\Users\Inzagi\projects\kaeris\i18n_tool\.venv\Scripts\python.exe -m pytest -q -p no:cacheprovider tests/test_plural_tables_snapshot.py  -> exit 1
+  | -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+  | =========================== short test summary info ===========================
+  | FAILED tests/test_plural_tables_snapshot.py::test_the_pinned_tables_are_this_servers
+  | 1 failed, 1 passed, 27 warnings in 0.80s
+
+# restored; baseline again
+## CLI py
+$ C:\Users\Inzagi\AppData\Local\Python\pythoncore-3.14-64\python.exe -m pytest -q -p no:cacheprovider tests/test_plural_tables_snapshot.py  -> exit 0
+  | ...                                                                      [100%]
+  | 3 passed in 0.05s
+## npm
+$ node --test test/plural-tables-snapshot.test.js  -> exit 0
+  | ℹ cancelled 0
+  | ℹ skipped 0
+  | ℹ todo 0
+  | ℹ duration_ms 74.3646
+## server
+$ C:\Users\Inzagi\projects\kaeris\i18n_tool\.venv\Scripts\python.exe -m pytest -q -p no:cacheprovider tests/test_plural_tables_snapshot.py  -> exit 0
+  |   C:\Users\Inzagi\projects\kaeris\i18n_tool\.venv\Lib\site-packages\slowapi\extension.py:717: DeprecationWarning: 'asyncio.iscoroutinefunction' is deprecated and slated for removal in Python 3.16; use inspect.iscoroutinefunction() instead
+  |     if asyncio.iscoroutinefunction(func):
+  | -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+  | 2 passed, 27 warnings in 0.70s

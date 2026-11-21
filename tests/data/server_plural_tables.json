@@ -1,0 +1,390 @@
+{
+ "about": "backend/translator.py plural tables (_PLURAL_RULES, _PLURAL_DEFAULT, _CLDR_REQUIRED, _NO_SINGULAR, _HAS_ONE); written by kaeris-cli tests/data/refresh_server_plural_tables.py",
+ "PLURAL_RULES": {
+  "ar": [
+   6,
+   "(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5)"
+  ],
+  "bn": [
+   2,
+   "(n > 1)"
+  ],
+  "cs": [
+   3,
+   "(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2"
+  ],
+  "fa": [
+   2,
+   "(n > 1)"
+  ],
+  "fr": [
+   2,
+   "(n > 1)"
+  ],
+  "he": [
+   3,
+   "(n==1 ? 0 : n==2 ? 1 : 2)"
+  ],
+  "hi": [
+   2,
+   "(n > 1)"
+  ],
+  "hr": [
+   3,
+   "(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)"
+  ],
+  "id": [
+   1,
+   "0"
+  ],
+  "ja": [
+   1,
+   "0"
+  ],
+  "ko": [
+   1,
+   "0"
+  ],
+  "lt": [
+   3,
+   "(n%10==1 && n%100!=11 ? 0 : n%10>=2 && (n%100<10 || n%100>=20) ? 1 : 2)"
+  ],
+  "lv": [
+   3,
+   "(n%10==0 || (n%100>=11 && n%100<=19) ? 0 : n%10==1 && n%100!=11 ? 1 : 2)"
+  ],
+  "ms": [
+   1,
+   "0"
+  ],
+  "pl": [
+   3,
+   "(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)"
+  ],
+  "pt": [
+   2,
+   "(n > 1)"
+  ],
+  "pt-pt": [
+   2,
+   "(n != 1)"
+  ],
+  "ro": [
+   3,
+   "(n==1 ? 0 : (n==0 || (n%100>0 && n%100<20)) ? 1 : 2)"
+  ],
+  "ru": [
+   3,
+   "(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)"
+  ],
+  "sk": [
+   3,
+   "(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2"
+  ],
+  "sl": [
+   4,
+   "(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3)"
+  ],
+  "sr": [
+   3,
+   "(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)"
+  ],
+  "th": [
+   1,
+   "0"
+  ],
+  "tl": [
+   2,
+   "(n != 1 && n != 2 && n != 3 && (n%10 == 4 || n%10 == 6 || n%10 == 9))"
+  ],
+  "uk": [
+   3,
+   "(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)"
+  ],
+  "vi": [
+   1,
+   "0"
+  ],
+  "zh": [
+   1,
+   "0"
+  ]
+ },
+ "PLURAL_DEFAULT": [
+  2,
+  "(n != 1)"
+ ],
+ "CLDR_REQUIRED": {
+  "ar": [
+   "few",
+   "many",
+   "one",
+   "two",
+   "zero"
+  ],
+  "cs": [
+   "few",
+   "one"
+  ],
+  "cy": [
+   "few",
+   "many",
+   "one",
+   "two",
+   "zero"
+  ],
+  "he": [
+   "one",
+   "two"
+  ],
+  "hr": [
+   "few",
+   "one"
+  ],
+  "lt": [
+   "few",
+   "one"
+  ],
+  "lv": [
+   "one",
+   "zero"
+  ],
+  "pl": [
+   "few",
+   "many",
+   "one"
+  ],
+  "ro": [
+   "few",
+   "one"
+  ],
+  "ru": [
+   "few",
+   "many",
+   "one"
+  ],
+  "sk": [
+   "few",
+   "one"
+  ],
+  "sl": [
+   "few",
+   "one",
+   "two"
+  ],
+  "sr": [
+   "few",
+   "one"
+  ],
+  "uk": [
+   "few",
+   "many",
+   "one"
+  ]
+ },
+ "NO_SINGULAR": [
+  "id",
+  "ig",
+  "ja",
+  "jv",
+  "km",
+  "ko",
+  "lo",
+  "ms",
+  "my",
+  "su",
+  "th",
+  "vi",
+  "yo",
+  "yue",
+  "zh"
+ ],
+ "HAS_ONE": [
+  "af",
+  "ak",
+  "am",
+  "an",
+  "ar",
+  "as",
+  "asa",
+  "ast",
+  "az",
+  "bal",
+  "be",
+  "bem",
+  "bez",
+  "bg",
+  "bho",
+  "blo",
+  "bn",
+  "br",
+  "brx",
+  "bs",
+  "ca",
+  "ce",
+  "ceb",
+  "cgg",
+  "chr",
+  "ckb",
+  "cs",
+  "csw",
+  "cv",
+  "cy",
+  "da",
+  "de",
+  "doi",
+  "dsb",
+  "dv",
+  "ee",
+  "el",
+  "en",
+  "eo",
+  "es",
+  "et",
+  "eu",
+  "fa",
+  "ff",
+  "fi",
+  "fil",
+  "fo",
+  "fr",
+  "fur",
+  "fy",
+  "ga",
+  "gd",
+  "gl",
+  "gsw",
+  "gu",
+  "gv",
+  "ha",
+  "haw",
+  "he",
+  "hi",
+  "hr",
+  "hsb",
+  "ht",
+  "hu",
+  "hy",
+  "ia",
+  "ie",
+  "io",
+  "is",
+  "it",
+  "iu",
+  "iw",
+  "jgo",
+  "ji",
+  "jmc",
+  "ka",
+  "kab",
+  "kaj",
+  "kcg",
+  "kk",
+  "kkj",
+  "kl",
+  "kn",
+  "kok",
+  "ks",
+  "ksb",
+  "ksh",
+  "ku",
+  "kw",
+  "ky",
+  "lag",
+  "lb",
+  "lg",
+  "lij",
+  "lld",
+  "ln",
+  "lt",
+  "lv",
+  "mas",
+  "mg",
+  "mgo",
+  "mk",
+  "ml",
+  "mn",
+  "mo",
+  "mr",
+  "mt",
+  "naq",
+  "nb",
+  "nd",
+  "ne",
+  "nl",
+  "nn",
+  "nnh",
+  "no",
+  "nr",
+  "nso",
+  "ny",
+  "nyn",
+  "om",
+  "or",
+  "os",
+  "pa",
+  "pap",
+  "pcm",
+  "pl",
+  "prg",
+  "ps",
+  "pt",
+  "rm",
+  "ro",
+  "rof",
+  "ru",
+  "rwk",
+  "saq",
+  "sat",
+  "sc",
+  "scn",
+  "sd",
+  "sdh",
+  "se",
+  "seh",
+  "sh",
+  "shi",
+  "si",
+  "sk",
+  "sl",
+  "sma",
+  "smj",
+  "smn",
+  "sms",
+  "sn",
+  "so",
+  "sq",
+  "sr",
+  "ss",
+  "ssy",
+  "st",
+  "sv",
+  "sw",
+  "syr",
+  "ta",
+  "te",
+  "teo",
+  "ti",
+  "tig",
+  "tk",
+  "tl",
+  "tn",
+  "tr",
+  "ts",
+  "tzm",
+  "ug",
+  "uk",
+  "ur",
+  "uz",
+  "ve",
+  "vec",
+  "vo",
+  "vun",
+  "wa",
+  "wae",
+  "xh",
+  "xog",
+  "yi",
+  "zu"
+ ]
+}

@@ -191,5 +191,18 @@ class TestDetectorParity(unittest.TestCase):
         self.assertEqual(fm.PLURAL_RULES, dict(BK._PLURAL_RULES))
         self.assertEqual(BK._PLURAL_DEFAULT, (2, "(n != 1)"))
 
+    def test_plural_table_snapshot_is_the_servers(self):
+        """tests/data/server_plural_tables.json is what the kaeris-cli CI holds the py and npm
+        tables to (tests/test_plural_tables_snapshot.py, npm/test/plural-tables-snapshot.test.js).
+        Here, with the backend importable (the server's CI, the release machine), it must be the
+        server's tables exactly. Refresh: tests/data/refresh_server_plural_tables.py."""
+        import json
+        here = os.path.dirname(os.path.abspath(__file__))
+        sys.path.insert(0, os.path.join(here, "data"))
+        from refresh_server_plural_tables import tables
+        with open(os.path.join(here, "data", "server_plural_tables.json"), encoding="utf-8") as f:
+            snap = json.load(f)
+        self.assertEqual(snap, json.loads(json.dumps(tables(BK))))
+
 if __name__ == "__main__":
     unittest.main()
