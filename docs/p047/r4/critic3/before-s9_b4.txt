@@ -1,0 +1,36 @@
+# pids 19020 7152 25760
+# server new up, plural_forms='cldr'
+# server prod up, plural_forms=None
+## stub mode = drop:many
+$ [py new -> new] kaeris translate en.po --langs pl  -> exit 0
+  | pl.po
+  | 
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | → Translating en.po → pl
+  | → 100%  pl
+  | ✓ Wrote 1 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\903282ca-0cef-4a65-881b-d4ad1fba7558\scratchpad\critic3\runs\s9-py
+  | ✓ Translation QA: no placeholder loss, no overflow risks
+  | → Run: openai/gpt-6-luna · Free · 1/1 languages · 2 strings · 0.0s
+  |      15 charged
+--- pl.po msgstr: ['msgstr[0] "%d elify"', 'msgstr[1] "%d selify"', 'msgstr[2] "%d selify"']
+$ [py new -> new] kaeris check --source en.po --langs pl  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ pl: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris translate en.po --langs pl  -> exit 0
+  | pl.po
+  | 
+  | [stderr] → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | → Translating en.po → pl
+  | → 100%  pl
+  | → 100%  pl
+  | ✓ Wrote 1 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\903282ca-0cef-4a65-881b-d4ad1fba7558\scratchpad\critic3\runs\s9-npm
+  | ✓ Translation QA: no placeholder loss, no overflow risks
+  | → Run: openai/gpt-6-luna · Free · 1/1 languages · 2 strings · 0s
+  |      15 charged
+--- pl.po msgstr: ['msgstr[0] "%d elify"', 'msgstr[1] "%d selify"', 'msgstr[2] "%d selify"']
+$ [npm new -> new] kaeris check --source en.po --langs pl  -> exit 0
+  | [stderr] ✓ pl: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+# stopped pids 19020 7152 25760: rc [1, 1, 1]

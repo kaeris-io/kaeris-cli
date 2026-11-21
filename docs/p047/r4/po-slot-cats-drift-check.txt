@@ -1,0 +1,12 @@
+# drift: server _PO_SLOT_CATS ro reordered to one/other/few (the critic's case), nothing else
+ backend/translator.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+$ server: pytest backend/tests/test_plural_tables_snapshot.py (KAERIS_CLI = cli tree)
+FAILED ..\..\..\..\i18n_tool\.claude\worktrees\plural-translate-1121\backend\tests\test_plural_tables_snapshot.py::test_the_pinned_tables_are_this_servers
+1 failed, 1 passed, 27 warnings in 0.96s
+$ cli nested beside the server: pytest tests/test_detector_parity.py -k snapshot
+FAILED ..\..\..\..\i18n_tool\.claude\worktrees\plural-translate-1121\cli\tests\test_detector_parity.py::TestDetectorParity::test_plural_table_snapshot_is_the_servers
+1 failed, 4 deselected in 0.33s
+# restored:
+2 passed, 27 warnings in 0.80s
+1 passed, 4 deselected in 0.33s

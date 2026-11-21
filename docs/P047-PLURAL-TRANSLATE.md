@@ -55,8 +55,10 @@ Server, branch `plural-translate-1121` of i18n_tool (from `night/redesign-2026-1
    no form `check` would call stale. ~~A language with one form (ja) gets the `other` text in every
    source key~~ (round 2, B1: that invented `{{count}}` under `msg_one` "One message from
    {{name}}"; a one-form language now gets the set's keys translated one by one, not folded).
-   `#` from the model becomes the set's own count placeholder (`{{count}}`,
-   `%{count}`, `{count}`).
+   ~~`#` from the model becomes the set's own count placeholder (`{{count}}`,
+   `%{count}`, `{count}`).~~ Not so until round 4 (critic round 3, B5): the placeholder every form
+   shares was taken, `{{name}}` in "One message from {{name}}" / "{{count}} messages from
+   {{name}}", and with two shared placeholders `#` stayed in the file. The rule now: see Round 4.
 3. Project memory: a folded set whose members are all reused AND whose source already has every
    form the target needs is reused as one ICU string (German keeps its free reuse); otherwise the
    set is translated again (Polish: the memory has no `_few`).
@@ -148,7 +150,8 @@ into every slot from 1 on — whatever category the target's Plural-Forms number
 2. `_unfold_plurals` for `po`: target slots = `_po_slot_cats(lang, nplurals of _plural_rule_for(lang))`;
    slot i = the answer's arm for that category, else its `other` arm. Slot 0 -> the msgid key,
    slot 1 -> the `\x01` key, slot i>=2 -> a new key `<\x01 key>\x01<i>` (`_po_slot_key`). ja/zh/ko:
-   one slot = `other`. `#` -> the entry's own count placeholder (`%d`, `%s`, `{n}`), as for JSON.
+   one slot = `other`. `#` -> the entry's own count placeholder (`%d`, `%s`, `{n}`), as for JSON
+   (round 4: which placeholder that is, and what happens when it cannot be told, see Round 4).
    An answer that is no longer one plural keeps the source forms (old output).
 3. `_serialize_po`: slot i>=2 reads `_po_slot_key` first, then the same-language source slot,
    then the old copy of slot 1. Header logic unchanged (already the target's Plural-Forms).
@@ -389,7 +392,8 @@ Server (`translator.py`):
 - `.po`: a slot category the answer lacks → the entry goes as before 0.2.47 (msgid and
   msgid_plural one by one, msgstr[2..] repeat msgstr[1]) and `_plural_gaps` names it
   ("… without every form pl needs; msgstr[2..] (many) repeat msgstr[1], as before 0.2.47").
-  Round 2 put the `other` text in slot 2 without a word.
+  Round 2 put the `other` text in slot 2 without a word. **Round 3 critic (B4): the server named
+  it, but neither CLI printed `_qa[lang].plurals`; fixed in round 4.**
 - Found on the way: an answer that spells the number `#` was measured before `#` became
   `{{count}}`, so QA said "{{count}}" was missing from forms that all have it (round 2 too).
   `_plural_qa_words(laid_out=…)` drops that.
@@ -491,6 +495,164 @@ On CLI dbc53cd + server 65e4b44c (backend as of ccf0a8a8), raw output in `docs/p
 
 Not verified: a real model on `=0` (does it keep the arm; the repair asks for it again) — needs
 a paid probe; the server CI (not running); MCP end to end with the real SDK.
+
+## Round 4: critic round 3 (NOT ACCEPTED, B4 + B5) and what changed
+
+Verdict: `ops-logs/critic-p047-1121/round3/VERDICT.md`. B3 confirmed closed there for
+JSON/YAML/nested. Every fix below was first seen failing on the round-3 heads (cli e782690,
+server 59be40da, kaeris-mcp 5d64b1d): CLI `docs/p047/r4/cli-py-r4-test-red-e782690.txt` (py, 11
+failed), `cli-npm-r4-test-red-e782690.txt` (npm, 3 failed: the two B4 tests and the shared
+Plural-Forms corpus); server i18n_tool `docs/p047/r4/server-r4-test-red-59be40da.txt` (19
+failed, 3 passed) and `server-r4-one-slot-echo-red-f755ed69.txt` (2 failed, found by the rerun
+below); MCP i18n_tool `docs/p047/r4/mcp-r4-test-red-5d64b1d.txt` (2 failed). Tests: server
+`backend/tests/test_plurals_critic_round4.py`, CLI `tests/test_translate_says_plural_findings.py`
++ `npm/test/translate.test.js` (B4) + 10 cases in `npm/test/po-degenerate.json` (read by both
+ports), MCP `tests/test_plural_forms_are_not_extra.py`.
+
+### B4: the plural finding reaches the user
+
+Was: the server put "the plural came back without every form pl needs; msgstr[2..] repeat
+msgstr[1]" into `_qa[lang]["plurals"]`, but py `_show_qa` and npm `showQa` read only `overflow`
+from `_qa`, so the run said "✓ Translation QA: no placeholder loss" over a Polish `.po` whose
+msgstr[2] repeated msgstr[1] (critic `s9_b4.py`).
+
+Now both ports print every `_qa[lang].plurals` line under "N plural(s) not written in every form
+of their own:" and do not print the all-clear line beside it. The server's words say what was
+written, per entry (`translator._po_old_way` reason + `_po_before_words` layout):
+
+    [pl] '%d file': the answer had no many form; written as before 0.2.47: msgstr[0] (one) holds
+         the singular, msgstr[2] (many) repeats msgstr[1] (few)
+
+The same section carries a JSON set missing forms ("'cart': plural is missing the few/many
+form(s) pl requires", `check` red on it too) and a form whose second try failed (below). Critic
+`s9_b4.py` rerun (`r4/critic3/after-s9_b4.txt`): py and npm print the line, pl.po as before.
+
+**Exit codes, decided:** a plural finding does not change the exit code of `translate` (0) or
+`check` (0 for the repeated `.po` slot; 1 for missing JSON forms, as 0.2.46 on production).
+Reasons: the entry is byte-for-byte what 0.2.46 wrote, and 0.2.46 users run `check` in CI on
+such files today — a red Action over a file 0.2.46 accepted would be a regression of its own;
+no QA finding of `translate` changes its exit code (a lost placeholder does not either: exit 3
+is "a language fell back to source"); `check` reads the file and cannot see that slot 2 says the
+`few` word (it would need a marker in the file). The run names it; the notes say it. The rule of
+round 3 stays: one form's text never *silently* stands in for another.
+
+### B5: `#` from the model is the count, or the set goes form by form
+
+Was (`_count_token`, cc4b3c09): the placeholder every form shares, so "One message from
+{{name}}" / "{{count}} messages from {{name}}" made `#` into `{{name}}` (de, pl, Rails
+`%{name}`), and "{{count}} item in {{folder}}" (two shared) left `#` in the file; `check` red on
+the file translate had just written (critic `s6_hash.py`, `s7_hash2.py`).
+
+Now (`translator._count_token`): 1) JSON/YAML/ARB: the `other` form's placeholder named `count`
+(i18next and Rails call the number that); `.po`: its one integer conversion (`%d`, `%1$d`,
+`%lld`); 2) else the `other` form's only placeholder; 3) else the one `other` has and the
+singular has not; 4) else none. With none and a `#` in the answer, the JSON set goes form by form
+and the `.po` entry as before 0.2.47 (named) — never `#` or another placeholder in the file. A
+form whose source has no number ("One message from {{name}}") answered with `#` would get a
+placeholder its source lacks (`check`: invented): that form is translated on its own. Rerun
+(`r4/critic3/after-s6_hash.txt`, `after-s7_hash2.txt`): de/pl JSON and Rails YAML have `{{count}}`
+/ `%{count}`, `{{name}}` once, no `#`; `check` exit 0 on every file.
+
+### Before release, items 1–5
+
+1. **lv `.po`, a singular without the number** (critic: lv `msgstr[1]`, one: 1, 21, 31…, got "One
+   message", `check` red where 0.2.46 was green). A slot past msgstr[0] that the Plural-Forms
+   formula picks for more than one n (`_po_single_slots`, the server's own formulas through
+   `gettext.c2py`) never gets a form without the count; such an answer sends the entry as before
+   0.2.47 and the run says why ("msgstr[1] (one: 1, 21, 31…) stands for more than one number and
+   needs %d, which the answer's one form leaves out; written as before 0.2.47: msgstr[0] (zero)
+   holds the singular, msgstr[2] (other) repeats msgstr[1] (one)"). Arabic msgstr[1] (n = 1 only)
+   keeps the singular without the number. Critic `s2_po_mem.py` rerun
+   (`r4/critic3/after-s2.txt`): `check` py and npm exit 0 on all 96 .po checks (8 languages × 6
+   stub modes × 2 ports); before: lv exit 1 in mode normal. A model that writes the number in
+   the `one` form (`# ziņa`) gets the slots laid out (test).
+2. **A failed second try dropped the language.** `_forms_one_by_one` ran the small redo part
+   through `_translate_lang`, whose quality guard marked the whole language failed when its two
+   echoed `_zero` keys came back untranslated: "Wrote 0 file(s)", exit 3, "260 charged" (critic
+   `s8_fallback.py`). Now the part's verdict never touches `job.failed_langs` (nor clears a main
+   pass that had failed, test); the part's failure is named ("'cart': the zero form(s) could not be
+   translated on their own; the source text may stand there") and the file is delivered:
+   `r4/critic3/after-s8_fallback.txt` exit 0, "Wrote 2 file(s)", de.json byte-identical to 0.2.46
+   on production, `cart_zero` named twice ("may be untranslated" and the plural line). The refund
+   in `main.py` for languages not delivered is not needed for this case any more (the languages
+   are delivered and charged as 0.2.46 charges them, 260 = 260); it is unchanged, and its unit
+   tests `TestPartialFailureRefund` (2) pass on the branch — the same file's `TestReuseIsNotBilled`
+   fails with HTTP 500 on this machine on 94114a89 and the branch alike; the refund was not run end
+   to end.
+3. **Notes and doc** — corrected, see the notes: "The source text is never written in its place"
+   (false when the second try fails: then the source text stays, as 0.2.46, and the run says so);
+   "the run's QA names it" (true now, B4); "`#` becomes the set's own count placeholder" (true now
+   with the B5 rule, and form by form when it cannot be told). Struck through above where this
+   doc said them.
+4. **kaeris-mcp floor**: `kaeris>=0.2.47` in `pyproject.toml` and the Dockerfile (kaeris-mcp and
+   i18n_tool `mcp/`, identical) and in the bundle installer (`mcp/bundle/server/main.py`). Why
+   0.2.47 and not 0.2.45: 0.2.45 is the first with the plural-set reading (`_plural_set_faults`,
+   private), so `kaeris_status` would be right from there, but only 0.2.47 has the public
+   `plural_set_faults` and the client that asks for every form and merges it beside its siblings —
+   the files `kaeris_status` then reads. kaeris-mcp is released after kaeris 0.2.47 is on PyPI
+   (release checklist step 5), so the floor is installable when it ships. Test
+   `TheFloorIsAKaerisThatReadsPluralForms` holds every install line to it.
+   `test_public_repo_matches` green against the kaeris-mcp worktree (`KAERIS_MCP_PUBLIC_CLONE`).
+5. **False "missing %d" and slot names**: the run's QA on a folded entry is measured on the answer
+   before `#` became `%d`; `_plural_qa_words` now drops "missing <count>" when every form that
+   needs the number has it (`_laid_out`: a `.po` slot needs it where `check` does — past
+   msgstr[0], not a single-number slot; a singular "One message" needs none), and a `.po`
+   warning is filed under the msgid, never `<msgid_plural>\x01<i>` ("One message2"). Rerun
+   `after-s6_hash.txt` / `after-s2.txt` mode hash: no "missing %d", no slot key.
+
+Found by the reruns, fixed the same way (test first):
+- **An answer that is the source fold itself** (the model left the plural out, stub `missfold`):
+  de and lv got the English forms laid out as the answer ("may be untranslated"), and lv was told
+  it lacked `zero` though `_zero` was there. Now an echo goes form by form, as 0.2.46 sent it
+  (`_echoed`); "plural is missing the zero form(s)" is dropped when the set has the key.
+- **ja/zh `.po` echo**: the echo lost its dead `one` arm on the way (`_drop_dead_plural_arms`) and
+  was laid out as English "%d messages"; now it is recognised, goes form by form, and the one slot
+  holds msgid_plural's translation (`after-s2.txt` mode missfold: `%d スオテテアキオテ`).
+
+### Small things
+
+- **py ≠ npm on exotic Plural-Forms**: both ports read the formula, `nplurals` and `Language:`
+  with ASCII spaces and digits only (Python `\s`/`\d` are Unicode, JavaScript's `\s` another set).
+  A BOM, NBSP, NEL, 0x1c/0x1f, an ideographic space or Arabic-Indic digits → strict (gettext reads
+  spaces and tabs only). Critic `pf_cmp.py` rerun (`r4/critic3/after-pf_cmp.txt`): 40/40 py == npm
+  (before 35/40).
+- **`_PO_SLOT_CATS` in the snapshot**: `PO_SLOT_CATS` is in `tests/data/server_plural_tables.json`
+  and the server's `backend/tests/data/plural_tables.json` (same file, `cmp` equal). Drift check
+  (`r4/po-slot-cats-drift-check.txt`): ro reordered to one/other/few → the server's
+  `test_the_pinned_tables_are_this_servers` and the CLI's `test_plural_table_snapshot_is_the_servers`
+  both FAILED; restored, both pass.
+- **"lv missing zero" on an empty answer**: gone with the echo rule (`after-s1.txt` mode missfold:
+  no `[lv]` line).
+- **`kaeris_list_missing_keys` lost plural faults**: it returns `plural_faults` (severity + the
+  CLI's message) and `plural_fault_count`; the errors equal `kaeris check`'s faults (test).
+- Not done: the server's half of the snapshot guard still runs only where the server's tests run
+  (its CI is off for billing) — the release checklist runs it by hand. `--no-tm` in npm: not this
+  package.
+
+### Result (round 4)
+
+On CLI 6862c55 (+ docs) and server 920eb308 (+ docs), raw output in `docs/p047/r4/`:
+- critic's harness (`runner3.py`, stub, $0), `r4/critic3/after-*.txt`: s9 (B4) and s6/s7 (B5)
+  green as above; s8 delivered; s2 96/96 `check` exit 0; s1 (JSON/YAML × 6 languages × 7 modes)
+  `_zero` never another form's text (`after-s1-an1.txt`: 84 zero-own, 12 = the mode where the
+  model never translates zero: source text, named), `check` red only where forms are missing
+  (drop:few, missfold for pl/ru/ar/he — as 0.2.46 on production); s4 `_qa` printed by the CLI;
+  s5 16/16 files IDENTICAL to 0.2.46 + production in both cross pairs, `.po` 60 = 60 charged.
+- e2e `e2e-matrix.txt` 134/134 GREEN; `compat.txt` 54/54 GREEN (cand = the round-3 heads e782690
+  and 59be40da).
+- CLI py `cli-py-full.txt` 919 passed, 38 skipped; npm `cli-npm-full.txt` 356/356; parity beside
+  the server `cli-parity-with-server.txt` 89 passed, 0 skipped.
+- Server: plural tests (round 2/3/4, `.po`/JSON forms, snapshot with `KAERIS_CLI`) 214 passed
+  (i18n_tool `docs/p047/r4/server-plural-tests-green.txt`, before the ja echo test); full pytest 4
+  groups, 94114a89 (`KAERIS_CLI` = d5535f0) vs the branch: 942 vs 943 failing ids, the one new was
+  this round's two raw files written with CRLF (made LF, test green): 0 new
+  (`docs/p047/r4/full-pytest-compare-94114a89-vs-branch.txt`; both sides fail more than in round 3,
+  777, the same ids on both — this machine's browser/env tests).
+- MCP: i18n_tool `mcp/tests` 98 passed, 8 skipped (no MCP SDK); kaeris-mcp 44 passed, 4 skipped.
+
+Not verified: a real model (how often it writes `#`, keeps `=0`, drops a form) — needs a paid
+probe; the refund path for a language that really fails (unchanged, only its unit tests ran);
+MCP end to end with the real SDK; the server CI (off).
 
 ## vs the leaders (missing plural forms when machine-translating)
 

@@ -1,0 +1,46 @@
+$ (cwd /c/Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121) PYTHONUTF8=1 python -m pytest -q -rs -p no:cacheprovider   at 6862c55 + working tree
+.......................................................... [  6%]
+........................................................................ [ 13%]
+........................................................... [ 19%]
+........................s........................................................................................... [ 31%]
+......sssss........................ss................................... [ 39%]
+..................ss..........................................sss [ 46%]
+ssssssssssssssssssssssss................................................ [ 53%]
+........................................................................ [ 61%]
+.........................................................s.............. [ 68%]
+........................................................................ [ 76%]
+........................................................................ [ 83%]
+........................................................................ [ 91%]
+........................................................................ [ 98%]
+...........                                                              [100%]
+=========================== short test summary info ===========================
+SKIPPED [1] tests\test_check_xcstrings.py:174: backend/translator.py not importable — parity runs in the backend CI
+SKIPPED [1] tests\test_detector_parity.py:146: backend/translator.py not importable — parity skipped
+SKIPPED [1] tests\test_detector_parity.py:194: backend/translator.py not importable — parity skipped
+SKIPPED [1] tests\test_detector_parity.py:168: backend/translator.py not importable — parity skipped
+SKIPPED [1] tests\test_detector_parity.py:186: backend/translator.py not importable — parity skipped
+SKIPPED [1] tests\test_detector_parity.py:110: backend/translator.py not importable — parity skipped
+SKIPPED [1] tests\test_dist_matches_the_tree.py:37: nothing built — dist/ is empty
+SKIPPED [1] tests\test_dist_matches_the_tree.py:48: nothing built — dist/ is empty
+SKIPPED [1] tests\test_encoding_parity.py:62: бэкенд не импортируется (опубликованный пакет / чужая машина)
+SKIPPED [1] tests\test_encoding_parity.py:69: бэкенд не импортируется (опубликованный пакет / чужая машина)
+SKIPPED [1] tests\test_formats_match_the_server.py:246: KAERIS_BACKEND is not set (dev-only parity)
+SKIPPED [1] tests\test_formats_match_the_server.py:251: KAERIS_BACKEND is not set (dev-only parity)
+SKIPPED [1] tests\test_formats_match_the_server.py:257: KAERIS_BACKEND is not set (dev-only parity)
+SKIPPED [1] tests\test_formats_match_the_server.py:264: KAERIS_BACKEND is not set (dev-only parity)
+SKIPPED [1] tests\test_formats_match_the_server.py:271: KAERIS_BACKEND is not set (dev-only parity)
+SKIPPED [1] tests\test_formats_match_the_server.py:281: KAERIS_BACKEND is not set (dev-only parity)
+SKIPPED [1] tests\test_formats_match_the_server.py:286: KAERIS_BACKEND is not set (dev-only parity)
+SKIPPED [1] tests\test_formats_match_the_server.py:291: KAERIS_BACKEND is not set (dev-only parity)
+SKIPPED [1] tests\test_formats_match_the_server.py:296: KAERIS_BACKEND is not set (dev-only parity)
+SKIPPED [1] tests\test_formats_match_the_server.py:302: KAERIS_BACKEND is not set (dev-only parity)
+SKIPPED [1] tests\test_formats_match_the_server.py:310: KAERIS_BACKEND is not set (dev-only parity)
+SKIPPED [1] tests\test_formats_match_the_server.py:318: KAERIS_BACKEND is not set (dev-only parity)
+SKIPPED [1] tests\test_formats_match_the_server.py:326: KAERIS_BACKEND is not set (dev-only parity)
+SKIPPED [1] tests\test_formats_match_the_server.py:335: KAERIS_BACKEND is not set (dev-only parity)
+SKIPPED [1] tests\test_formats_match_the_server.py:340: KAERIS_BACKEND is not set (dev-only parity)
+SKIPPED [1] tests\test_formats_match_the_server.py:346: KAERIS_BACKEND is not set (dev-only parity)
+SKIPPED [1] tests\test_formats_match_the_server.py:352: KAERIS_BACKEND is not set (dev-only parity)
+SKIPPED [10] tests\test_formats_match_the_server.py:380: KAERIS_BACKEND is not set (dev-only parity)
+SKIPPED [1] tests\test_plans_are_the_sites.py:28: the site repository is not here (set KAERIS_SITE_REPO)
+919 passed, 38 skipped, 62 subtests passed in 95.74s (0:01:35)

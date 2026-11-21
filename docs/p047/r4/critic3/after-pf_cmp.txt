@@ -1,0 +1,42 @@
+40 cases
+same  py=[0, 1, 2]          npm=[0, 1, 2]          ar plain
+same  py=[]                 npm=[]                 ar formula with NBSP
+same  py=[]                 npm=[]                 ar formula with BOM/ZWNBSP
+same  py=[]                 npm=[]                 ar formula with NEL
+same  py=[]                 npm=[]                 ar formula with US 0x1f
+same  py=[]                 npm=[]                 ar formula with IDEOGRAPHIC SP
+same  py=[]                 npm=[]                 ar formula with FS 0x1c
+same  py=[]                 npm=[]                 nplurals arabic-indic digit
+same  py=[0, 1, 2]          npm=[0, 1, 2]          Language with NEL before
+same  py=[0, 1, 2]          npm=[0, 1, 2]          len 1000
+same  py=[]                 npm=[]                 len 1001
+same  py=[0, 1, 2]          npm=[0, 1, 2]          ar wrapped in 40 parens
+same  py=[0, 1, 2]          npm=[0, 1, 2]          ar wrapped in 42 parens
+same  py=[0, 1, 2]          npm=[0, 1, 2]          ar wrapped in 43 parens
+same  py=[]                 npm=[]                 ar wrapped in 44 parens
+same  py=[]                 npm=[]                 ar wrapped in 45 parens
+same  py=[]                 npm=[]                 ar wrapped in 50 parens
+same  py=[0, 1, 2]          npm=[0, 1, 2]          48 unary ! then ar
+same  py=[0, 1, 2]          npm=[0, 1, 2]          49 unary ! then ar
+same  py=[]                 npm=[]                 50 unary ! then ar
+same  py=[]                 npm=[]                 51 unary ! then ar
+same  py=[0, 1, 2]          npm=[0, 1, 2]          MAX_SAFE literal
+same  py=[]                 npm=[]                 MAX_SAFE+1 literal
+same  py=[]                 npm=[]                 product overflow
+same  py=[]                 npm=[]                 negative %
+same  py=[]                 npm=[]                 negative / dead branch
+same  py=[0, 1, 2]          npm=[0, 1, 2]          subtraction negative ok
+same  py=[]                 npm=[]                 leading zeros 17 digits
+same  py=[0, 1]             npm=[0, 1]             Language he --langs he
+same  py=[]                 npm=[]                 Language he --langs iw
+same  py=[]                 npm=[]                 Language iw --langs he
+same  py=[0, 1]             npm=[0, 1]             Language he_IL --langs he
+same  py=[0, 1, 2]          npm=[0, 1, 2]          Language ar_EG --langs ar
+same  py=[0, 1, 2]          npm=[0, 1, 2]          Language ar --langs ar-EG
+same  py=[0, 1, 2]          npm=[0, 1, 2]          Language AR --langs ar
+same  py=[]                 npm=[]                 Language arb --langs ar
+same  py=[0, 1, 2]          npm=[0, 1, 2]          Language ar-Latn-x --langs ar
+same  py=[]                 npm=[]                 Language he --langs ru
+same  py=[0, 1, 2]          npm=[0, 1, 2]          no Language, --langs ar
+same  py=[0, 1, 2]          npm=[0, 1, 2]          two Language lines
+# 40/40 py == npm

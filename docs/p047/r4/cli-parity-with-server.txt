@@ -1,0 +1,5 @@
+$ (cli 6862c55 nested as <i18n_tool plural-translate-1121 4ed9257c>/cli, KAERIS_BACKEND=../backend) venv-python pytest_with_cli.py cli -q -rs tests/test_detector_parity.py tests/test_formats_match_the_server.py tests/test_po_single_number_slots.py tests/test_translate_completes_plural_sets.py tests/test_plural_tables_snapshot.py
+using C:\Users/Inzagi/projects/kaeris/i18n_tool/.claude/worktrees/plural-translate-1121/cli\kaeris\__init__.py 0.2.47
+........................................................................ [ 80%]
+.................                                                        [100%]
+89 passed in 6.28s
