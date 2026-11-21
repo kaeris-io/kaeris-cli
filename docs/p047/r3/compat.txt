@@ -1,9 +1,9 @@
-# pids 14160 20944 21704 2128 19612 26340 16136 14920 20152 2520 20420 1904
-# cli new: C:/Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121 @ 43dcd9f docs(p047): round 2 results on cli d9b0689 + server 636c089a - e2e matri
+# pids 24512 24764 6552 21048 3300 23644 25396 26576 4964 1908 22804 24228
+# cli new: C:/Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121 @ dbc53cd docs(p047): round 3 - B3 rule and fix, plural table snapshot parity, MCP
 # cli cand: C:/Users/Inzagi/AppData/Local/Temp/claude/a43205edf0b1eb40/1d41411c-380d-43ba-80ea-359c271f4a08/scratchpad/r3/cli-43dcd9f @ 43dcd9f docs(p047): round 2 results on cli d9b0689 + server 636c089a - e2e matri
 # cli 046: C:/Users/Inzagi/projects/kaeris/cli/.claude/worktrees/pretag-0246 @ d5535f0 Merge branch 'release-0.2.45-pluralwarn' into release-0.2.46-pluralwarn:
 # cli 045: C:/Users/Inzagi/projects/kaeris/cli/.claude/worktrees/pretag-1119 @ 4ff7020 test: no babel-dependent test (CI allows no skip): the CLDR table is che
-# server new: C:/Users/Inzagi/projects/kaeris/i18n_tool/.claude/worktrees/plural-translate-1121 @ 71228d7d fix(p047): B3 - the text of one form never silently stands in for anoth
+# server new: C:/Users/Inzagi/projects/kaeris/i18n_tool/.claude/worktrees/plural-translate-1121 @ 65e4b44c fix(mcp): kaeris_status and kaeris_list_missing_keys read plural sets b
 # server cand: C:/Users/Inzagi/AppData/Local/Temp/claude/a43205edf0b1eb40/1d41411c-380d-43ba-80ea-359c271f4a08/scratchpad/r3/srv-c9118a03 @ c9118a03 docs(p047): full pytest 4 groups, 94114a89 (cli d5535f0) vs 636c089a (c
 # server prod: C:/Users/Inzagi/AppData/Local/Temp/claude/a43205edf0b1eb40/1d41411c-380d-43ba-80ea-359c271f4a08/scratchpad/r3/srv-94114a89 @ 94114a89 docs(paytail2-r4): round 4 summary and full pytest compare - 105 = 105,
 # kaeris new runs from: using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
@@ -24,7 +24,7 @@ $ [py cand -> cand] kaeris translate en.json --langs ja,zh,ko --no-only-new --no
   | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
   | → Translating en.json → ja, zh, ko
   | → 100%  ko
-  | ✓ Wrote 3 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat\b1-before
+  | ✓ Wrote 3 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat3\b1-before
   | ✓ Translation QA: no placeholder loss, no overflow risks
   | → Run: openai/gpt-6-luna · Free · 3/3 languages · 7 strings · 0.0s
   |      342 charged
@@ -121,7 +121,7 @@ $ [py new -> new] kaeris translate en.json --langs ja,zh,ko --no-only-new --no-t
   | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
   | → Translating en.json → ja, zh, ko
   | → 100%  ko
-  | ✓ Wrote 3 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat\b1-after
+  | ✓ Wrote 3 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat3\b1-after
   | ✓ Translation QA: no placeholder loss, no overflow risks
   | → Run: openai/gpt-6-luna · Free · 3/3 languages · 7 strings · 0.0s
   |      342 charged
@@ -217,7 +217,7 @@ $ [npm new -> new] kaeris translate en.json --langs ja,zh,ko --no-only-new  -> e
   | [stderr] → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
   | → Translating en.json → ja, zh, ko
   | → 100%  ko
-  | ✓ Wrote 3 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat\b1-after-npm
+  | ✓ Wrote 3 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat3\b1-after-npm
   | ✓ Translation QA: no placeholder loss, no overflow risks
   | → Run: openai/gpt-6-luna · Free · 3/3 languages · 7 strings · 0s
   |      342 charged
@@ -314,7 +314,7 @@ $ [py 046 -> prod] kaeris translate en.json --langs ja,zh,ko --no-only-new --no-
   | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
   | → Translating en.json → ja, zh, ko
   | → 100%  ko
-  | ✓ Wrote 3 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat\b1-prod
+  | ✓ Wrote 3 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat3\b1-prod
   | ✓ Translation QA: no placeholder loss, no overflow risks
   | → Run: openai/gpt-6-luna · Free · 3/3 languages · 7 strings · 0.0s
   |      342 charged
@@ -497,7 +497,7 @@ $ [py 046 -> new] kaeris translate en.json --langs pl,de --no-only-new  -> exit 
   | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
   | → Translating en.json → pl, de
   | → 100%  de
-  | ✓ Wrote 2 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat\onlynew-046-on-new
+  | ✓ Wrote 2 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat3\onlynew-046-on-new
   | ✓ Translation QA: no placeholder loss, no overflow risks
   | → Project memory: +10 · 5 strings, 10 translations in kaeris-tm.json
   | → Run: openai/gpt-6-luna · Free · 2/2 languages · 5 strings · 0.0s
@@ -507,14 +507,14 @@ $ [py 046 -> new] kaeris translate en.json --langs pl,de --only-new  -> exit 0
   | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
   | → pl: 3 new key(s) to translate
   | → de: 3 new key(s) to translate
+  | → 100%  de  de
   | → 100%  pl  pl
   | → Run: openai/gpt-6-luna · Free · 1/1 languages · 3 strings · 0.0s
   |      49 charged
   | ✓ Translation QA: no placeholder loss, no overflow risks
   | → Project memory: +1 · 6 strings, 11 translations in kaeris-tm.json
   | ✓ pl: merged 3 key(s) → pl.json
-  | → 100%  de  de
-  | → Run: openai/gpt-6-luna · Free · 1/1 languages · 3 strings · 0.1s
+  | → Run: openai/gpt-6-luna · Free · 1/1 languages · 3 strings · 0.0s
   |      49 charged
   | ✓ Translation QA: no placeholder loss, no overflow risks
   | → Project memory: +1 · 6 strings, 12 translations in kaeris-tm.json
@@ -574,8 +574,9 @@ $ [py 046 -> prod] kaeris translate en.json --langs pl,de --no-only-new  -> exit
   | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/pretag-0246\kaeris\__init__.py 0.2.46
   | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
   | → Translating en.json → pl, de
+  | →  50%  de
   | → 100%  de
-  | ✓ Wrote 2 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat\onlynew-046-on-prod
+  | ✓ Wrote 2 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat3\onlynew-046-on-prod
   | ✓ Translation QA: no placeholder loss, no overflow risks
   | → Project memory: +10 · 5 strings, 10 translations in kaeris-tm.json
   | → Run: openai/gpt-6-luna · Free · 2/2 languages · 5 strings · 0.0s
@@ -587,12 +588,12 @@ $ [py 046 -> prod] kaeris translate en.json --langs pl,de --only-new  -> exit 0
   | → de: 3 new key(s) to translate
   | → 100%  pl  pl
   | → 100%  de  de
-  | → Run: openai/gpt-6-luna · Free · 1/1 languages · 3 strings · 0.1s
+  | → Run: openai/gpt-6-luna · Free · 1/1 languages · 3 strings · 0.0s
   |      49 charged
   | ✓ Translation QA: no placeholder loss, no overflow risks
   | → Project memory: +1 · 6 strings, 11 translations in kaeris-tm.json
   | ✓ pl: merged 3 key(s) → pl.json
-  | → Run: openai/gpt-6-luna · Free · 1/1 languages · 3 strings · 0.1s
+  | → Run: openai/gpt-6-luna · Free · 1/1 languages · 3 strings · 0.0s
   |      49 charged
   | ✓ Translation QA: no placeholder loss, no overflow risks
   | → Project memory: +1 · 6 strings, 12 translations in kaeris-tm.json
@@ -655,7 +656,7 @@ $ [py 046 -> new] kaeris translate en.json --langs pl,ar,ja --no-only-new --no-t
   | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
   | → Translating en.json → pl, ar, ja
   | → 100%  ja
-  | ✓ Wrote 3 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat\old-full-i18next-new
+  | ✓ Wrote 3 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat3\old-full-i18next-new
   | ✓ Translation QA: no placeholder loss, no overflow risks
   | → Run: openai/gpt-6-luna · Free · 3/3 languages · 2 strings · 0.0s
   |      87 charged
@@ -668,7 +669,7 @@ $ [py 046 -> prod] kaeris translate en.json --langs pl,ar,ja --no-only-new --no-
   | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
   | → Translating en.json → pl, ar, ja
   | → 100%  ja
-  | ✓ Wrote 3 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat\old-full-i18next-prod
+  | ✓ Wrote 3 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat3\old-full-i18next-prod
   | ✓ Translation QA: no placeholder loss, no overflow risks
   | → Run: openai/gpt-6-luna · Free · 3/3 languages · 2 strings · 0.0s
   |      87 charged
@@ -682,7 +683,7 @@ $ [py 046 -> new] kaeris translate en.po --langs pl,ar,ja --no-only-new --no-tm 
   | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
   | → Translating en.po → pl, ar, ja
   | → 100%  ja
-  | ✓ Wrote 3 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat\old-full-po-new
+  | ✓ Wrote 3 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat3\old-full-po-new
   | ✓ Translation QA: no placeholder loss, no overflow risks
   | → Run: openai/gpt-6-luna · Free · 3/3 languages · 3 strings · 0.0s
   |      72 charged
@@ -694,8 +695,9 @@ $ [py 046 -> prod] kaeris translate en.po --langs pl,ar,ja --no-only-new --no-tm
   | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/pretag-0246\kaeris\__init__.py 0.2.46
   | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
   | → Translating en.po → pl, ar, ja
+  | →  33%  ja
   | → 100%  ja
-  | ✓ Wrote 3 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat\old-full-po-prod
+  | ✓ Wrote 3 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat3\old-full-po-prod
   | ✓ Translation QA: no placeholder loss, no overflow risks
   | → Run: openai/gpt-6-luna · Free · 3/3 languages · 3 strings · 0.0s
   |      72 charged
@@ -712,7 +714,7 @@ $ [py new -> prod] kaeris translate en.json --langs pl,de --no-only-new  -> exit
   | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
   | → Translating en.json → pl, de
   | → 100%  de
-  | ✓ Wrote 2 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat\onlynew-new-on-prod
+  | ✓ Wrote 2 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat3\onlynew-new-on-prod
   | ✓ Translation QA: no placeholder loss, no overflow risks
   | → Project memory: +10 · 5 strings, 10 translations in kaeris-tm.json
   | → Run: openai/gpt-6-luna · Free · 2/2 languages · 5 strings · 0.0s
@@ -722,13 +724,13 @@ $ [py new -> prod] kaeris translate en.json --langs pl,de --only-new  -> exit 0
   | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
   | → pl: 3 new key(s) to translate
   | → de: 3 new key(s) to translate
-  | → 100%  de  de
   | → 100%  pl  pl
   | → Run: openai/gpt-6-luna · Free · 1/1 languages · 3 strings · 0.1s
   |      49 charged
   | ✓ Translation QA: no placeholder loss, no overflow risks
   | → Project memory: +1 · 6 strings, 11 translations in kaeris-tm.json
   | ✓ pl: merged 3 key(s) → pl.json
+  | → 100%  de  de
   | → Run: openai/gpt-6-luna · Free · 1/1 languages · 3 strings · 0.0s
   |      49 charged
   | ✓ Translation QA: no placeholder loss, no overflow risks
@@ -792,7 +794,7 @@ $ [py 046 -> prod] kaeris translate en.json --langs pl,de --no-only-new  -> exit
   | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
   | → Translating en.json → pl, de
   | → 100%  de
-  | ✓ Wrote 2 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat\onlynew-046-on-prod-2
+  | ✓ Wrote 2 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat3\onlynew-046-on-prod-2
   | ✓ Translation QA: no placeholder loss, no overflow risks
   | → Project memory: +10 · 5 strings, 10 translations in kaeris-tm.json
   | → Run: openai/gpt-6-luna · Free · 2/2 languages · 5 strings · 0.0s
@@ -802,7 +804,6 @@ $ [py 046 -> prod] kaeris translate en.json --langs pl,de --only-new  -> exit 0
   | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
   | → pl: 3 new key(s) to translate
   | → de: 3 new key(s) to translate
-  | →   0%  pl  pl
   | → 100%  de  de
   | → 100%  pl  pl
   | → Run: openai/gpt-6-luna · Free · 1/1 languages · 3 strings · 0.0s
@@ -810,7 +811,7 @@ $ [py 046 -> prod] kaeris translate en.json --langs pl,de --only-new  -> exit 0
   | ✓ Translation QA: no placeholder loss, no overflow risks
   | → Project memory: +1 · 6 strings, 11 translations in kaeris-tm.json
   | ✓ pl: merged 3 key(s) → pl.json
-  | → Run: openai/gpt-6-luna · Free · 1/1 languages · 3 strings · 0.1s
+  | → Run: openai/gpt-6-luna · Free · 1/1 languages · 3 strings · 0.0s
   |      49 charged
   | ✓ Translation QA: no placeholder loss, no overflow risks
   | → Project memory: +1 · 6 strings, 12 translations in kaeris-tm.json
@@ -887,7 +888,7 @@ $ [py new -> new] kaeris translate en.json --langs pl,de --no-only-new  -> exit 
   | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
   | → Translating en.json → pl, de
   | → 100%  de
-  | ✓ Wrote 2 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat\onlynew-new-on-new
+  | ✓ Wrote 2 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat3\onlynew-new-on-new
   | ✓ Translation QA: no placeholder loss, no overflow risks
   | → Project memory: +10 · 5 strings, 10 translations in kaeris-tm.json
   | → Run: openai/gpt-6-luna · Free · 2/2 languages · 5 strings · 0.0s
@@ -897,14 +898,13 @@ $ [py new -> new] kaeris translate en.json --langs pl,de --only-new  -> exit 0
   | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
   | → pl: 3 new key(s) to translate
   | → de: 3 new key(s) to translate
-  | →   0%  pl  
   | → 100%  pl  pl
-  | → 100%  de  de
   | → Run: openai/gpt-6-luna · Free · 1/1 languages · 3 strings · 0.0s
   |      49 charged
   | ✓ Translation QA: no placeholder loss, no overflow risks
   | → Project memory: +1 · 6 strings, 11 translations in kaeris-tm.json
   | ✓ pl: merged 3 key(s) → pl.json
+  | → 100%  de  de
   | → Run: openai/gpt-6-luna · Free · 1/1 languages · 3 strings · 0.0s
   |      49 charged
   | ✓ Translation QA: no placeholder loss, no overflow risks
@@ -989,9 +989,8 @@ $ [py cand -> cand] kaeris translate en.json --langs de,pl,ja --no-only-new  -> 
   | [stderr] using C:\Users/Inzagi/AppData/Local/Temp/claude/a43205edf0b1eb40/1d41411c-380d-43ba-80ea-359c271f4a08/scratchpad/r3/cli-43dcd9f\kaeris\__init__.py 0.2.47
   | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
   | → Translating en.json → de, pl, ja
-  | →   0%  ja
   | → 100%  ja
-  | ✓ Wrote 3 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat\memory-before
+  | ✓ Wrote 3 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat3\memory-before
   | ✓ Translation QA: no placeholder loss, no overflow risks
   | → Project memory: +12 · 4 strings, 12 translations in kaeris-tm.json
   | → Run: openai/gpt-6-luna · Free · 3/3 languages · 4 strings · 0.0s
@@ -1005,9 +1004,8 @@ $ [py cand -> cand] kaeris translate en.json --langs de,pl,ja --no-only-new  -> 
   | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
   | → Project memory: 10 string/language pair(s) reused, not re-translated
   | → Translating en.json → de, pl, ja
-  | →   0%  ja
   | → 100%  ja
-  | ✓ Wrote 3 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat\memory-before
+  | ✓ Wrote 3 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat3\memory-before
   | ✓ Translation QA: no placeholder loss, no overflow risks
   | → Run: openai/gpt-6-luna · Free · 3/3 languages · 4 strings · 0.0s
   |      29 charged · 117 reused free
@@ -1023,7 +1021,7 @@ $ [py new -> new] kaeris translate en.json --langs de,pl,ja --no-only-new  -> ex
   | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
   | → Translating en.json → de, pl, ja
   | → 100%  ja
-  | ✓ Wrote 3 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat\memory-after
+  | ✓ Wrote 3 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat3\memory-after
   | ✓ Translation QA: no placeholder loss, no overflow risks
   | → Project memory: +12 · 4 strings, 12 translations in kaeris-tm.json
   | → Run: openai/gpt-6-luna · Free · 3/3 languages · 4 strings · 0.0s
@@ -1038,7 +1036,7 @@ $ [py new -> new] kaeris translate en.json --langs de,pl,ja --no-only-new  -> ex
   | → Project memory: 10 string/language pair(s) reused, not re-translated
   | → Translating en.json → de, pl, ja
   | → 100%  ja
-  | ✓ Wrote 3 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat\memory-after
+  | ✓ Wrote 3 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat3\memory-after
   | ✓ Translation QA: no placeholder loss, no overflow risks
   | → Run: openai/gpt-6-luna · Free · 3/3 languages · 4 strings · 0.0s
   |      29 charged · 117 reused free
@@ -1049,7 +1047,7 @@ $ [npm new -> new] kaeris translate en.json --langs pl --no-only-new  -> exit 0
   | [stderr] → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
   | → Translating en.json → pl
   | → 100%  pl
-  | ✓ Wrote 1 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat\npm-new-on-new
+  | ✓ Wrote 1 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat3\npm-new-on-new
   | ✓ Translation QA: no placeholder loss, no overflow risks
   | → Run: openai/gpt-6-luna · Free · 1/1 languages · 2 strings · 0s
   |      29 charged
@@ -1070,7 +1068,7 @@ $ [py new -> new-plain] kaeris translate en.json --langs pl,ar,ja --no-only-new 
   | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
   | → Translating en.json → pl, ar, ja
   | → 100%  ar
-  | ✓ Wrote 3 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat\broken-plain-json
+  | ✓ Wrote 3 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat3\broken-plain-json
   | ✓ Translation QA: no placeholder loss, no overflow risks
   | → Run: openai/gpt-6-luna · Free · 3/3 languages · 7 strings · 0.0s
   |      342 charged
@@ -1132,7 +1130,7 @@ $ [py new -> new-plain] kaeris translate en.po --langs pl,ar,ja --no-only-new --
   | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
   | → Translating en.po → pl, ar, ja
   | → 100%  ja
-  | ✓ Wrote 3 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat\broken-plain-po
+  | ✓ Wrote 3 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat3\broken-plain-po
   | ✓ Translation QA: no placeholder loss, no overflow risks
   | → Run: openai/gpt-6-luna · Free · 3/3 languages · 4 strings · 0.0s
   |      189 charged
@@ -1184,9 +1182,9 @@ $ [py new -> new-noother] kaeris translate en.json --langs pl,ar,ja --no-only-ne
   | → Translating en.json → pl, ar, ja
   | → 100%  ja
   | → 100%  ar
-  | ✓ Wrote 3 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat\broken-noother-json
+  | ✓ Wrote 3 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat3\broken-noother-json
   | ✓ Translation QA: no placeholder loss, no overflow risks
-  | → Run: openai/gpt-6-luna · Free · 3/3 languages · 7 strings · 0.0s
+  | → Run: openai/gpt-6-luna · Free · 3/3 languages · 7 strings · 0.1s
   |      342 charged
 $ [py new -> new-noother] kaeris check --source en.json --langs pl  -> exit 1
   | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
@@ -1245,9 +1243,9 @@ $ [py new -> new-noother] kaeris translate en.po --langs pl,ar,ja --no-only-new 
   | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
   | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
   | → Translating en.po → pl, ar, ja
-  | →   0%  ja
   | → 100%  ja
-  | ✓ Wrote 3 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat\broken-noother-po
+  | → 100%  ja
+  | ✓ Wrote 3 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat3\broken-noother-po
   | ✓ Translation QA: no placeholder loss, no overflow risks
   | → Run: openai/gpt-6-luna · Free · 3/3 languages · 4 strings · 0.0s
   |      189 charged
@@ -1299,7 +1297,7 @@ $ [py new -> new-short] kaeris translate en.json --langs pl,ar,ja --no-only-new 
   | → Translating en.json → pl, ar, ja
   | → 100%  ja
   | → 100%  ar
-  | ✓ Wrote 3 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat\broken-short-json
+  | ✓ Wrote 3 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat3\broken-short-json
   | ✓ Translation QA: no placeholder loss, no overflow risks
   | → Run: openai/gpt-6-luna · Free · 3/3 languages · 7 strings · 0.1s
   |      342 charged
@@ -1360,8 +1358,9 @@ $ [py new -> new-short] kaeris translate en.po --langs pl,ar,ja --no-only-new --
   | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
   | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
   | → Translating en.po → pl, ar, ja
+  | → 100%  ja
   | → 100%  ar
-  | ✓ Wrote 3 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat\broken-short-po
+  | ✓ Wrote 3 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat3\broken-short-po
   | ✓ Translation QA: no placeholder loss, no overflow risks
   | → Run: openai/gpt-6-luna · Free · 3/3 languages · 4 strings · 0.0s
   |      189 charged
@@ -1414,7 +1413,7 @@ $ [py 046 -> prod] kaeris translate en.json --langs de,pl,ru --no-only-new --no-
   | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
   | → Translating en.json → de, pl, ru
   | → 100%  ru
-  | ✓ Wrote 3 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat\b3-prod
+  | ✓ Wrote 3 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat3\b3-prod
   | ✓ Translation QA: no placeholder loss, no overflow risks
   | → Run: openai/gpt-6-luna · Free · 3/3 languages · 6 strings · 0.0s
   |      387 charged
@@ -1429,11 +1428,11 @@ $ [py new -> new] kaeris translate en.json --langs de,pl,ru --no-only-new --no-t
   | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
   | → Translating en.json → de, pl, ru
   | → 100%  ru
-  | ✓ Wrote 3 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat\b3-normal
+  | ✓ Wrote 3 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat3\b3-normal
   | ✓ Translation QA: no placeholder loss, no overflow risks
   | → Run: openai/gpt-6-luna · Free · 3/3 languages · 6 strings · 0.0s
   |      387 charged
---- folded strings sent: [["de", "{count, plural, =0 {Your cart is empty ({{count}})} one {{{count}} item in your cart} other {{{count}} items in your cart}}"], ["de", "{count, plural, =0 {{{count}} files} one {{{count}} file} other {{{count}} files}}"], ["ru", "{count, plural, =0 {Your cart is empty ({{count}})} one {{{count}} item in your cart} other {{{count}} items in your cart}}"]]
+--- folded strings sent: [["ru", "{count, plural, =0 {Your cart is empty ({{count}})} one {{{count}} item in your cart} other {{{count}} items in your cart}}"], ["ru", "{count, plural, =0 {{{count}} files} one {{{count}} file} other {{{count}} files}}"], ["pl", "{count, plural, =0 {Your cart is empty ({{count}})} one {{{count}} item in your cart} other {{{count}} items in your cart}}"]]
   => [GREEN] B3 normal: the zero form travels as =0 {…}, never as the CLDR category zero {…} (6 folded strings)
   => [GREEN] B3 normal: keys sent on their own: none ([])
 --- normal/de.json
@@ -1511,11 +1510,11 @@ $ [py new -> new-drop-zero] kaeris translate en.json --langs de,pl,ru --no-only-
   | → Translating en.json → de, pl, ru
   | → 100%  ru
   | → 100%  ru
-  | ✓ Wrote 3 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat\b3-drop-zero
+  | ✓ Wrote 3 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat3\b3-drop-zero
   | ✓ Translation QA: no placeholder loss, no overflow risks
   | → Run: openai/gpt-6-luna · Free · 3/3 languages · 6 strings · 0.1s
   |      387 charged
---- folded strings sent: [["pl", "{count, plural, =0 {Your cart is empty ({{count}})} one {{{count}} item in your cart} other {{{count}} items in your cart}}"], ["pl", "{count, plural, =0 {{{count}} files} one {{{count}} file} other {{{count}} files}}"], ["de", "{count, plural, =0 {Your cart is empty ({{count}})} one {{{count}} item in your cart} other {{{count}} items in your cart}}"]]
+--- folded strings sent: [["de", "{count, plural, =0 {Your cart is empty ({{count}})} one {{{count}} item in your cart} other {{{count}} items in your cart}}"], ["de", "{count, plural, =0 {{{count}} files} one {{{count}} file} other {{{count}} files}}"], ["ru", "{count, plural, =0 {Your cart is empty ({{count}})} one {{{count}} item in your cart} other {{{count}} items in your cart}}"]]
   => [GREEN] B3 drop-zero: the zero form travels as =0 {…}, never as the CLDR category zero {…} (6 folded strings)
   => [GREEN] B3 drop-zero: keys sent on their own: each language's two _zero keys ([('de', 'cart_zero'), ('de', 'left_zero'), ('pl', 'cart_zero'), ('pl', 'left_zero'), ('ru', 'cart_zero'), ('ru', 'left_zero')])
 --- drop-zero/de.json
@@ -1581,7 +1580,7 @@ $ [npm new -> new-drop-zero] kaeris check --source en.json --langs ru  -> exit 0
   | ✓ all locales complete & placeholder-safe
   => [GREEN] B3 drop-zero: ru: check py/npm exit 0, every form there ({'py': 0, 'npm': 0})
   => [GREEN] B3 drop-zero: de.json == 0.2.46 on the production server (de translated _zero right)
-# stopped pids 14160 20944 21704 2128 19612 26340 16136 14920 20152 2520 20420 1904: rc [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+# stopped pids 24512 24764 6552 21048 3300 23644 25396 26576 4964 1908 22804 24228: rc [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 
 # SUMMARY
   [info] B1: before (cli e721b68 + server 88ee3052): check exits — new/py/ja=0 new/py/zh=0 new/py/ko=0 new/npm/ja=0 new/npm/zh=0 new/npm/ko=0 046/py/ja=0 046/py/zh=0 046/py/ko=0 045/py/ja=0 045/py/zh=0 045/py/ko=0

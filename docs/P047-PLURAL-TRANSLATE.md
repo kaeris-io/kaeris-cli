@@ -474,6 +474,24 @@ against that clone). Test `mcp/tests/test_plural_forms_are_not_extra.py`: red on
    in `docs/api.html` (task above): a site user whose CI still runs `check` 0.2.46 would see an
    Arabic `.po` fail.
 
+### Result (round 3)
+
+On CLI dbc53cd + server 65e4b44c (backend as of ccf0a8a8), raw output in `docs/p047/r3/`:
+- e2e `e2e-matrix.txt` 134/134 GREEN; `compat.txt` 54/54 GREEN (round 2's 36 + 18 B3 rows).
+  The first final compat run was 53/54 (`compat-final-try1-stub-log-race.txt`): the stub's cargo
+  log lost pl's line when two languages wrote at once; pl.json itself was right. The stub log now
+  writes under a lock; rerun 54/54.
+- CLI py `cli-py-full.txt` 904 passed, 38 skipped (all on the CI allow-list); npm
+  `cli-npm-full.txt` 354/354; parity beside the server `cli-parity-with-server.txt` 78 passed,
+  0 skipped. kaeris-cli CI success on dbc53cd.
+- Server pytest, 4 groups (`--splits 4 --group N`, Windows, same `.venv`), 94114a89 with `cli/` =
+  d5535f0 vs the branch with `cli/` = this branch: 777 failing ids each, 0 new, 0 gone
+  (i18n_tool `docs/p047/r3/full-pytest-compare-94114a89-vs-branch.txt`).
+- MCP: i18n_tool `mcp/tests` 96 passed (8 skipped: no MCP SDK here), kaeris-mcp clone 42 passed.
+
+Not verified: a real model on `=0` (does it keep the arm; the repair asks for it again) — needs
+a paid probe; the server CI (not running); MCP end to end with the real SDK.
+
 ## vs the leaders (missing plural forms when machine-translating)
 
 From the vendors' documentation (21.11, web; nothing run, no accounts):

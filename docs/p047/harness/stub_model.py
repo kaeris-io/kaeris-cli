@@ -15,6 +15,7 @@ import os
 import json
 import re
 import sys
+import threading
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 NAMES = {"Polish": "pl", "Russian": "ru", "Arabic": "ar", "Japanese": "ja", "Welsh": "cy",
@@ -22,6 +23,7 @@ NAMES = {"Polish": "pl", "Russian": "ru", "Arabic": "ar", "Japanese": "ja", "Wel
          "Vietnamese": "vi", "Thai": "th", "Indonesian": "id", "Malay": "ms", "Hebrew": "he"}
 MODE = os.environ.get("STUB_MODE", "normal")
 LOG = os.environ.get("STUB_LOG")
+LOG_LOCK = threading.Lock()
 CATS = {"pl": ["one", "few", "many", "other"], "ru": ["one", "few", "many", "other"],
         "uk": ["one", "few", "many", "other"],
         "ar": ["zero", "one", "two", "few", "many", "other"],
@@ -110,7 +112,8 @@ class H(BaseHTTPRequestHandler):
             s, e = user.find("{"), user.rfind("}")
             cargo = json.loads(user[s:e + 1])
             if LOG:
-                with open(LOG, "a", encoding="utf-8") as f:
+                # one writer at a time: two languages answered at once lost a line (Windows append)
+                with LOG_LOCK, open(LOG, "a", encoding="utf-8") as f:
                     f.write(json.dumps({"lang": lang, "cargo": cargo}, ensure_ascii=False) + "\n")
             reply = {k: {"t": translate(str(v), lang), "c": 96} for k, v in cargo.items()}
         data = json.dumps({"choices": [{"message": {"content": json.dumps(reply, ensure_ascii=False)},

@@ -1,5 +1,5 @@
-# e2e-matrix: stub pid 9864, api pid 13992
-# cli C:/Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121 @ 43dcd9f docs(p047): round 2 results on cli d9b0689 + server 636c089a - e2e matrix 134/134,; server C:/Users/Inzagi/projects/kaeris/i18n_tool/.claude/worktrees/plural-translate-1121 @ 71228d7d fix(p047): B3 - the text of one form never silently stands in for another: i18nex
+# e2e-matrix: stub pid 5768, api pid 23892
+# cli C:/Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121 @ dbc53cd docs(p047): round 3 - B3 rule and fix, plural table snapshot parity, MCP extra key; server C:/Users/Inzagi/projects/kaeris/i18n_tool/.claude/worktrees/plural-translate-1121 @ 65e4b44c fix(mcp): kaeris_status and kaeris_list_missing_keys read plural sets by the targ
 # kaeris run from: using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
 $ kaeris translate en.json --langs cy -> exit 1
   | [stderr] ✗ Unknown language code: cy. Run 'kaeris languages' for the list (codes like de, ja, pt-PT, zh-Hant).
@@ -1040,4 +1040,4 @@ emails =
        *[other] { $count } sliamey
     }
 
-# stopped pids 13992 9864: api rc=1 stub rc=1
+# stopped pids 23892 5768: api rc=1 stub rc=1
