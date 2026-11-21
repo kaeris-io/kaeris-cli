@@ -10,6 +10,8 @@ import os
 import subprocess
 import sys
 
+import pytest
+
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from kaeris import formats as fm  # noqa: E402
@@ -63,37 +65,35 @@ def test_a_formula_that_does_not_parse_selects_nothing():
     assert fm.single_number_slots("Language: de\n") is None
 
 
-def test_arabic_zero_one_two_without_the_number_pass(tmp_path):
-    msg = ["لا رسائل", "رسالة واحدة", "رسالتان", "%d رسائل", "%d رسالة", "%d رسالة"]
-    fil = ["لا ملفات", "ملف واحد", "ملفان", "%d ملفات", "%d ملفًا", "%d ملف"]
-    code, out = run(tmp_path, "ar", target("ar", msg, fil, AR))
-    assert code == 0, out
+# name -> (lang, Plural-Forms, msgstr of "One message", msgstr of "%d file", check passes)
+# (npm/test/gen_baselines.py replays the same cases against the npm port)
+CASES = {
+    "ar-zero-one-two-without-number": ("ar", AR,
+        ["لا رسائل", "رسالة واحدة", "رسالتان", "%d رسائل", "%d رسالة", "%d رسالة"],
+        ["لا ملفات", "ملف واحد", "ملفان", "%d ملفات", "%d ملفًا", "%d ملف"], True),
+    "ar-many-without-number": ("ar", AR,
+        ["لا رسائل", "رسالة واحدة", "رسالتان", "%d رسائل", "رسالة", "%d رسالة"],
+        ["لا ملفات", "ملف واحد", "ملفان", "%d ملفات", "%d ملفًا", "%d ملف"], False),
+    # Polish msgstr[1] covers 2-4, 22-24…: the number must stay.
+    "pl-few-without-number": ("pl", PL, ["Jedna wiadomość", "wiadomości", "%d wiadomości"],
+                              ["Jeden plik", "%d pliki", "%d plików"], False),
+    "pl-one-without-number": ("pl", PL, ["Jedna wiadomość", "%d wiadomości", "%d wiadomości"],
+                              ["Jeden plik", "%d pliki", "%d plików"], True),
+    "he-two-without-number": ("he", HE, ["הודעה אחת", "שתי הודעות", "%d הודעות"],
+                              ["קובץ אחד", "שני קבצים", "%d קבצים"], True),
+}
 
 
-def test_arabic_many_without_the_number_still_fails(tmp_path):
-    msg = ["لا رسائل", "رسالة واحدة", "رسالتان", "%d رسائل", "رسالة", "%d رسالة"]
-    fil = ["لا ملفات", "ملف واحد", "ملفان", "%d ملفات", "%d ملفًا", "%d ملف"]
-    code, out = run(tmp_path, "ar", target("ar", msg, fil, AR))
-    assert code == 1 and "%d" in out, out
+def files(name):
+    lang, rule, msg, fil, _ok = CASES[name]
+    return {"en.po": SRC, f"{lang}.po": target(lang, msg, fil, rule)}
 
 
-def test_polish_few_without_the_number_still_fails(tmp_path):
-    """Polish msgstr[1] covers 2-4, 22-24…: the number must stay."""
-    msg = ["Jedna wiadomość", "wiadomości", "%d wiadomości"]
-    fil = ["Jeden plik", "%d pliki", "%d plików"]
-    code, out = run(tmp_path, "pl", target("pl", msg, fil, PL))
-    assert code == 1 and "%d" in out, out
-
-
-def test_polish_one_without_the_number_passes(tmp_path):
-    msg = ["Jedna wiadomość", "%d wiadomości", "%d wiadomości"]
-    fil = ["Jeden plik", "%d pliki", "%d plików"]
-    code, out = run(tmp_path, "pl", target("pl", msg, fil, PL))
-    assert code == 0, out
-
-
-def test_hebrew_two_without_the_number_passes(tmp_path):
-    msg = ["הודעה אחת", "שתי הודעות", "%d הודעות"]
-    fil = ["קובץ אחד", "שני קבצים", "%d קבצים"]
-    code, out = run(tmp_path, "he", target("he", msg, fil, HE))
-    assert code == 0, out
+@pytest.mark.parametrize("name", sorted(CASES))
+def test_check_reads_single_number_slots_loosely_and_the_rest_strictly(tmp_path, name):
+    lang, _rule, _msg, _fil, passes = CASES[name]
+    code, out = run(tmp_path, lang, files(name)[f"{lang}.po"])
+    if passes:
+        assert code == 0, out
+    else:
+        assert code == 1 and "%d" in out, out

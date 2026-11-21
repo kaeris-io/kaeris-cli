@@ -165,5 +165,20 @@ class TestDetectorParity(unittest.TestCase):
             theirs = {s: set(f) for s, f in BK._json_plural_sets(flat).items()}
             self.assertEqual(mine, theirs, flat)
 
+    def test_po_formulas_the_server_writes_are_read(self):
+        """`check` reads a .po slot one number selects without the number (formats.
+        single_number_slots, 0.2.47 step 2). Every Plural-Forms the server writes must parse,
+        give a slot below nplurals, and the loose slots must be the server's zero/one/two
+        categories (_PO_SLOT_CATS) — never few/many/other."""
+        from kaeris import formats as fm
+        for code, (n, expr) in BK._PLURAL_RULES.items():
+            header = f"Plural-Forms: nplurals={n}; plural={expr};\n"
+            loose = fm.single_number_slots(header)
+            self.assertIsNotNone(loose, (code, expr))
+            tokens = fm._pf_tokens(expr)
+            self.assertTrue(all(0 <= fm._pf_eval(tokens, k) < n for k in range(1001)), (code, expr))
+            cats = BK._po_slot_cats(code, n)
+            self.assertTrue({cats[i] for i in loose} <= {"zero", "one", "two"}, (code, loose, cats))
+
 if __name__ == "__main__":
     unittest.main()

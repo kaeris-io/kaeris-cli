@@ -1,0 +1,23 @@
+msgid ""
+msgstr ""
+"Language: ar\n"
+"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5);\n"
+
+msgid "One message"
+msgid_plural "%d messages"
+msgstr[0] "لا رسائل"
+msgstr[1] "رسالة واحدة"
+msgstr[2] "رسالتان"
+msgstr[3] "%d رسائل"
+msgstr[4] "رسالة"
+msgstr[5] "%d رسالة"
+
+msgid "%d file"
+msgid_plural "%d files"
+msgstr[0] "لا ملفات"
+msgstr[1] "ملف واحد"
+msgstr[2] "ملفان"
+msgstr[3] "%d ملفات"
+msgstr[4] "%d ملفًا"
+msgstr[5] "%d ملف"
+

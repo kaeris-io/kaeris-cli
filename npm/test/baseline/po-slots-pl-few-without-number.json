@@ -1,0 +1,37 @@
+{
+ "json": {
+  "code": 1,
+  "stdout": {
+   "ok": false,
+   "missing": {},
+   "extra": {},
+   "placeholder_issues": [
+    {
+     "lang": "pl",
+     "key": "One message⟦plural⟧",
+     "missing": [
+      "%d"
+     ],
+     "added": []
+    }
+   ],
+   "missing_files": [],
+   "faults": [
+    {
+     "lang": "pl",
+     "key": "One message⟦plural⟧",
+     "msg": "lost placeholder %d",
+     "severity": "error"
+    }
+   ],
+   "warnings": []
+  },
+  "stderr": ""
+ },
+ "human": {
+  "code": 1,
+  "stdout": "",
+  "stderr": "✗ pl: 1 placeholder mismatch(es):\n    One message (plural): missing ['%d'], added -\n✗ pl: 1 translation fault(s):\n    One message (plural): lost placeholder %d\n✗ 1 placeholder mismatch, 1 translation fault\n"
+ },
+ "sarif": null
+}

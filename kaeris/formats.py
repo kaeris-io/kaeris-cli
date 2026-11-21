@@ -201,6 +201,7 @@ def read_po(text, role="source", lang=""):
         seen[base] += 1
         return key(base, f"dup:{seen[base]}")
 
+    plural_keys = []
     for r in records:
         mid = r["id"]
         if mid == "" and header is None:
@@ -219,6 +220,7 @@ def read_po(text, role="source", lang=""):
         k0 = uniq(base)
         k1 = key(k0, "plural")
         out.count_optional.add(k0)
+        plural_keys.append(k0)
         if s0 or not target:
             out[k0] = s0 if s0 else mid
         if s1 or not target:
@@ -229,7 +231,112 @@ def read_po(text, role="source", lang=""):
                     out[key(k0, f"plural:{n}")] = r["strs"][n]
     if role == "target":
         _po_plural_notes(out, records, header, lang)
+        for i in single_number_slots(header) or ():
+            for k0 in plural_keys:
+                out.count_optional.add(k0 if i == 0 else key(k0, "plural") if i == 1
+                                       else key(k0, f"plural:{i}"))
     return out
+
+
+# gettext's `msgfmt -c` lets msgstr[i] leave the number out when the file's Plural-Forms formula
+# picks slot i for exactly ONE n: Arabic's zero/one/two are 0, 1 and 2, so "ملفان" (two files) is
+# a correct "%d files". A slot that covers many numbers (Polish few: 2-4, 22-24…) must keep it.
+# The formula is evaluated as written (C syntax: ?: || && == != < > <= >= + - * / % ! and n).
+_PF_RE = re.compile(r"(?<![a-z])plural\s*=\s*([^;\n]+)")
+_PF_TOKEN_RE = re.compile(r"\s*([0-9]+|n|&&|\|\||[=!<>]=|[-+*/%<>!?:()])")
+_PF_LEVELS = (("||",), ("&&",), ("==", "!="), ("<", ">", "<=", ">="), ("+", "-"), ("*", "/", "%"))
+_PF_OPS = {"||": lambda a, b: int(bool(a or b)), "&&": lambda a, b: int(bool(a and b)),
+           "==": lambda a, b: int(a == b), "!=": lambda a, b: int(a != b),
+           "<": lambda a, b: int(a < b), ">": lambda a, b: int(a > b),
+           "<=": lambda a, b: int(a <= b), ">=": lambda a, b: int(a >= b),
+           "+": lambda a, b: a + b, "-": lambda a, b: a - b, "*": lambda a, b: a * b,
+           "/": lambda a, b: a // b, "%": lambda a, b: a % b}
+
+
+def _pf_tokens(expr):
+    out, pos = [], 0
+    expr = expr.rstrip()
+    while pos < len(expr):
+        m = _PF_TOKEN_RE.match(expr, pos)
+        if not m:
+            return None
+        out.append(m.group(1))
+        pos = m.end()
+    return out
+
+
+def _pf_eval(tokens, n):
+    """The slot index the formula gives for `n`. ValueError on a malformed formula."""
+    pos = 0
+
+    def peek():
+        return tokens[pos] if pos < len(tokens) else None
+
+    def take(expected=None):
+        nonlocal pos
+        tok = peek()
+        if tok is None or (expected and tok != expected):
+            raise ValueError("bad Plural-Forms formula")
+        pos += 1
+        return tok
+
+    def ternary():
+        cond = binary(0)
+        if peek() != "?":
+            return cond
+        take("?")
+        yes = ternary()
+        take(":")
+        no = ternary()
+        return yes if cond else no
+
+    def binary(level):
+        if level == len(_PF_LEVELS):
+            return unary()
+        left = binary(level + 1)
+        while peek() in _PF_LEVELS[level]:
+            op, right = take(), binary(level + 1)
+            if op in ("/", "%") and right == 0:
+                raise ValueError("division by zero")
+            left = _PF_OPS[op](left, right)
+        return left
+
+    def unary():
+        tok = take()
+        if tok == "!":
+            return int(not unary())
+        if tok == "-":
+            return -unary()
+        if tok == "(":
+            v = ternary()
+            take(")")
+            return v
+        if tok == "n":
+            return n
+        if tok[0] in "0123456789":
+            return int(tok)
+        raise ValueError("bad Plural-Forms formula")
+
+    value = ternary()
+    if pos != len(tokens):
+        raise ValueError("bad Plural-Forms formula")
+    return value
+
+
+def single_number_slots(header, upto=1000):
+    """The msgstr indexes the header's formula gives for exactly one n in 0..upto; None when
+    there is no formula or it does not parse."""
+    m = _PF_RE.search(header or "")
+    tokens = _pf_tokens(m.group(1)) if m else None
+    if not tokens:
+        return None
+    hits = {}
+    try:
+        for n in range(upto + 1):
+            hits.setdefault(_pf_eval(tokens, n), set()).add(n)
+    except (ValueError, RecursionError):
+        return None
+    return {i for i, ns in hits.items() if len(ns) == 1}
 
 
 def _po_plural_notes(out, records, header, lang):

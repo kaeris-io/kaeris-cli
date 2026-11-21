@@ -93,9 +93,17 @@ function* pairs(sourceFlat, targetFlat, optional = new Set()) {
       yield [key, srcVal, tgtVal];
     }
   }
-  for (const [key, tgtVal] of targetFlat) {
+  for (const [key, tgtVal0] of targetFlat) {
     const twin = sourceTwin(key, sourceFlat);
-    if (twin !== null && twin !== key) yield [key, sourceFlat.get(twin), tgtVal];
+    if (twin !== null && twin !== key) {
+      let srcVal = sourceFlat.get(twin);
+      let tgtVal = tgtVal0;
+      if (optional.has(key) && typeof srcVal === "string" && typeof tgtVal === "string") {
+        srcVal = loneCountToHash(srcVal);
+        tgtVal = loneCountToHash(tgtVal);
+      }
+      yield [key, srcVal, tgtVal];
+    }
   }
 }
 
@@ -230,6 +238,8 @@ export function checkLocales(sourceObj, langs, loadTarget, glossary = null) {
     }
     const targetFlat = ftl.foldSingleForm(sourceFlat, flattenAll(targetObj));
     const pair = !targetObj.skipPairwise;
+    // A .po target adds the slots its own Plural-Forms gives a single number (formats.readPo).
+    const langOptional = new Set([...optional, ...(targetObj.countOptional ?? [])]);
     for (const note of targetObj.notes ?? []) {
       const rec = { lang, key: note.key ?? "", msg: note.msg };
       if (note.severity === "error") {
@@ -237,7 +247,7 @@ export function checkLocales(sourceObj, langs, loadTarget, glossary = null) {
         result.ok = false;
       } else result.warnings.push({ ...rec, severity: "warn" });
     }
-    const [missingAll, extra, issues] = diffLocale(sourceFlat, targetFlat, pair, optional);
+    const [missingAll, extra, issues] = diffLocale(sourceFlat, targetFlat, pair, langOptional);
     const [pluralFaults, missing, extraLeft] = pluralSetFaults(sourceFlat, targetFlat, missingAll, extra, lang);
     if (missing.length) {
       result.missing.set(lang, missing);
@@ -254,7 +264,7 @@ export function checkLocales(sourceObj, langs, loadTarget, glossary = null) {
     if (issues.length) result.ok = false;
     // Per-string detectors on shared keys (RED faults + YELLOW warnings).
     if (pair) {
-      for (const [key, srcVal, tgtVal] of pairs(sourceFlat, targetFlat, optional)) {
+      for (const [key, srcVal, tgtVal] of pairs(sourceFlat, targetFlat, langOptional)) {
         if (typeof srcVal !== "string" || typeof tgtVal !== "string") continue;
         if (strip(srcVal) && !strip(tgtVal)) {
           result.warnings.push({ lang, key, severity: "warn", msg: "empty translation — the source has text" });

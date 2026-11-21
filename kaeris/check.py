@@ -130,7 +130,10 @@ def _pairs(source_flat, target_flat, optional=()):
     for key, tgt_val in target_flat.items():
         twin = source_twin(key, source_flat)
         if twin is not None and twin != key:
-            yield key, source_flat[twin], tgt_val
+            src_val = source_flat[twin]
+            if key in optional and isinstance(src_val, str) and isinstance(tgt_val, str):
+                src_val, tgt_val = lone_count_to_hash(src_val), lone_count_to_hash(tgt_val)
+            yield key, src_val, tgt_val
 
 
 def diff_locale(source_flat, target_flat, pair=True, optional=()):
@@ -316,6 +319,8 @@ def check_locales(source_obj, langs, load_target, glossary=None, terms=None):
             continue
         target_flat = ftl.fold_single_form(source_flat, flatten_all(target_obj))
         pair = not getattr(target_obj, "skip_pairwise", False)
+        # A .po target adds the slots its own Plural-Forms gives a single number (formats.read_po).
+        lang_optional = set(optional) | set(getattr(target_obj, "count_optional", ()))
         for note in getattr(target_obj, "notes", []):
             rec = {"lang": lang, "key": note.get("key", ""), "msg": note["msg"]}
             if note.get("severity") == "error":
@@ -323,7 +328,7 @@ def check_locales(source_obj, langs, load_target, glossary=None, terms=None):
                 result["ok"] = False
             else:
                 result["warnings"].append({**rec, "severity": "warn"})
-        missing, extra, issues = diff_locale(source_flat, target_flat, pair, optional)
+        missing, extra, issues = diff_locale(source_flat, target_flat, pair, lang_optional)
         plural_faults, missing, extra = _plural_set_faults(source_flat, target_flat, missing,
                                                            extra, lang)
         if missing:
@@ -342,7 +347,7 @@ def check_locales(source_obj, langs, load_target, glossary=None, terms=None):
         if issues:
             result["ok"] = False
         # Per-string detectors on shared keys (RED faults + YELLOW warnings).
-        for key, src_val, tgt_val in (_pairs(source_flat, target_flat, optional) if pair else ()):
+        for key, src_val, tgt_val in (_pairs(source_flat, target_flat, lang_optional) if pair else ()):
             if not isinstance(src_val, str) or not isinstance(tgt_val, str):
                 continue
             if src_val.strip() and not tgt_val.strip():

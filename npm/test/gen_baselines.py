@@ -120,6 +120,12 @@ case("po-plural-singular-without-number", {"en.po": PO_SRC, "de.po": PO_DE.forma
      ["--source", "en.po", "--langs", "de"])
 case("po-plural-lost-count", {"en.po": PO_SRC, "de.po": PO_DE.format("Dateien")},
      ["--source", "en.po", "--langs", "de"])
+# .po slots one number selects (ar zero/one/two, pl/he one, he two) may leave the number out
+# (tests/test_po_single_number_slots.py)
+SINGLE = _load("po_single_number_slots", os.path.join(ROOT, "tests", "test_po_single_number_slots.py"))
+for _name in sorted(SINGLE.CASES):
+    _lang = SINGLE.CASES[_name][0]
+    case("po-slots-" + _name, SINGLE.files(_name), ["--source", "en.po", "--langs", _lang])
 case("ftl-plural-ru-incomplete", {"en.ftl": EVERY.FTL_PLURAL_EN,
      "ru.ftl": "emails = { $n ->\n    [one] { $n } письмо\n   *[other] { $n } письма\n  }\n"},
      ["--source", "en.ftl", "--langs", "ru"])

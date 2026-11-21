@@ -276,7 +276,7 @@ def po_only_new(tool, d, rel, env, say, summary, case):
     say(f"$ kaeris translate {rel} --langs {','.join(LANGS)} --only-new  -> exit {code}  "
         f"files identical to the full run: {same}  {verdict}")
     say("  | " + "\n  | ".join(l for l in txt.splitlines() if "only-new" in l or "memory" in l.lower()))
-    po_slots(d, tool, case + "+only-new", say, summary)
+    po_slots(d, "py", case + "+only-new", say, summary)
 
 
 def trim(tgt, src):

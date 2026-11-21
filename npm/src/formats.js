@@ -178,6 +178,7 @@ function readPo(text, role = "source", lang = "") {
     return key(base, `dup:${seen.get(base)}`);
   };
 
+  const pluralKeys = [];
   for (const r of records) {
     const mid = r.id;
     if (mid === "" && header === null) {
@@ -197,6 +198,7 @@ function readPo(text, role = "source", lang = "") {
     const k0 = uniq(base);
     const k1 = key(k0, "plural");
     out.countOptional.add(k0);
+    pluralKeys.push(k0);
     if (s0 || !target) out.set(k0, s0 ? s0 : mid);
     if (s1 || !target) out.set(k1, s1 ? s1 : r.idPlural);
     if (target) {
@@ -205,8 +207,114 @@ function readPo(text, role = "source", lang = "") {
       }
     }
   }
-  if (role === "target") poPluralNotes(out, records, header, lang);
+  if (role === "target") {
+    poPluralNotes(out, records, header, lang);
+    for (const i of singleNumberSlots(header) ?? []) {
+      for (const k0 of pluralKeys) {
+        out.countOptional.add(i === 0 ? k0 : i === 1 ? key(k0, "plural") : key(k0, `plural:${i}`));
+      }
+    }
+  }
   return out;
+}
+
+// gettext's `msgfmt -c` lets msgstr[i] leave the number out when the file's Plural-Forms formula
+// picks slot i for exactly ONE n: Arabic's zero/one/two are 0, 1 and 2, so "ملفان" (two files) is
+// a correct "%d files". A slot that covers many numbers (Polish few: 2-4, 22-24…) must keep it.
+// The formula is evaluated as written (C syntax: ?: || && == != < > <= >= + - * / % ! and n).
+const PF_RE = /(?<![a-z])plural\s*=\s*([^;\n]+)/;
+const PF_TOKEN_RE = /\s*([0-9]+|n|&&|\|\||[=!<>]=|[-+*/%<>!?:()])/y;
+const PF_LEVELS = [["||"], ["&&"], ["==", "!="], ["<", ">", "<=", ">="], ["+", "-"], ["*", "/", "%"]];
+const PF_OPS = {
+  "||": (a, b) => (a || b ? 1 : 0), "&&": (a, b) => (a && b ? 1 : 0),
+  "==": (a, b) => (a === b ? 1 : 0), "!=": (a, b) => (a !== b ? 1 : 0),
+  "<": (a, b) => (a < b ? 1 : 0), ">": (a, b) => (a > b ? 1 : 0),
+  "<=": (a, b) => (a <= b ? 1 : 0), ">=": (a, b) => (a >= b ? 1 : 0),
+  "+": (a, b) => a + b, "-": (a, b) => a - b, "*": (a, b) => a * b,
+  "/": (a, b) => Math.floor(a / b), "%": (a, b) => a % b,
+};
+
+function pfTokens(expr) {
+  const out = [];
+  const s = rstrip(expr);
+  let pos = 0;
+  while (pos < s.length) {
+    PF_TOKEN_RE.lastIndex = pos;
+    const m = PF_TOKEN_RE.exec(s);
+    if (!m) return null;
+    out.push(m[1]);
+    pos = PF_TOKEN_RE.lastIndex;
+  }
+  return out;
+}
+
+// The slot index the formula gives for `n`. Throws on a malformed formula.
+function pfEval(tokens, n) {
+  let pos = 0;
+  const bad = () => { throw new ValueError("bad Plural-Forms formula"); };
+  const peek = () => (pos < tokens.length ? tokens[pos] : null);
+  const take = (expected = null) => {
+    const tok = peek();
+    if (tok === null || (expected && tok !== expected)) bad();
+    pos += 1;
+    return tok;
+  };
+  const unary = () => {
+    const tok = take();
+    if (tok === "!") return unary() ? 0 : 1;
+    if (tok === "-") return -unary();
+    if (tok === "(") {
+      const v = ternary();
+      take(")");
+      return v;
+    }
+    if (tok === "n") return n;
+    if (/^[0-9]+$/.test(tok)) return parseInt(tok, 10);
+    return bad();
+  };
+  const binary = (level) => {
+    if (level === PF_LEVELS.length) return unary();
+    let left = binary(level + 1);
+    while (PF_LEVELS[level].includes(peek())) {
+      const op = take();
+      const right = binary(level + 1);
+      if ((op === "/" || op === "%") && right === 0) bad();
+      left = PF_OPS[op](left, right);
+    }
+    return left;
+  };
+  const ternary = () => {
+    const cond = binary(0);
+    if (peek() !== "?") return cond;
+    take("?");
+    const yes = ternary();
+    take(":");
+    const no = ternary();
+    return cond ? yes : no;
+  };
+  const value = ternary();
+  if (pos !== tokens.length) bad();
+  return value;
+}
+
+// The msgstr indexes the header's formula gives for exactly one n in 0..upto; null when there is
+// no formula or it does not parse.
+export function singleNumberSlots(header, upto = 1000) {
+  const m = PF_RE.exec(header || "");
+  const tokens = m ? pfTokens(m[1]) : null;
+  if (!tokens || !tokens.length) return null;
+  const hits = new Map();
+  try {
+    for (let n = 0; n <= upto; n++) {
+      const i = pfEval(tokens, n);
+      if (!hits.has(i)) hits.set(i, new Set());
+      hits.get(i).add(n);
+    }
+  } catch (e) {
+    if (e instanceof ValueError || e instanceof RangeError) return null;
+    throw e;
+  }
+  return new Set([...hits].filter(([, ns]) => ns.size === 1).map(([i]) => i));
 }
 
 const NPLURALS_RE = rx("nplurals\\s*=\\s*(\\d+)");
