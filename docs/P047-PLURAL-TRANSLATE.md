@@ -192,6 +192,12 @@ check on every `.po` target (pl/ru each slot its own word, ar six in zero..other
 singular in msgstr[1], ja one slot = the plural form), and `--only-new` on `.po` (whole file,
 byte-identical, slots right). Before: `docs/p047/e2e-po-before-0e3eb54-8a6b41cd.txt`, 18/42.
 
+Full suites: CLI py 869 passed (36 skipped, all structural), npm 345 passed. Server pytest in 4
+groups on 8a8177ba: 105 failing ids, none of them new against 94114a89; browser tests run on this
+machine now (they errored at the earlier base run), so the 13 files holding failures were rerun on
+94114a89 and 8a8177ba in the same environment: 105 = 105, 0 new (server
+`docs/p047/full-pytest-compare-94114a89-vs-8a8177ba.txt`, `failing-files-rerun-...txt`).
+
 `--only-new` and the project memory on `.po`: the CLI still sends the whole file (JSON/ARB only)
 and builds no memory lookup for `.po`, so neither can lose or repeat a slot; the server's
 whole-entry reuse rule is covered by its unit tests (de reused, pl reused only with slot 2).
