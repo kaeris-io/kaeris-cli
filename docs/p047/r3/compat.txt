@@ -1,0 +1,1650 @@
+# pids 14160 20944 21704 2128 19612 26340 16136 14920 20152 2520 20420 1904
+# cli new: C:/Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121 @ 43dcd9f docs(p047): round 2 results on cli d9b0689 + server 636c089a - e2e matri
+# cli cand: C:/Users/Inzagi/AppData/Local/Temp/claude/a43205edf0b1eb40/1d41411c-380d-43ba-80ea-359c271f4a08/scratchpad/r3/cli-43dcd9f @ 43dcd9f docs(p047): round 2 results on cli d9b0689 + server 636c089a - e2e matri
+# cli 046: C:/Users/Inzagi/projects/kaeris/cli/.claude/worktrees/pretag-0246 @ d5535f0 Merge branch 'release-0.2.45-pluralwarn' into release-0.2.46-pluralwarn:
+# cli 045: C:/Users/Inzagi/projects/kaeris/cli/.claude/worktrees/pretag-1119 @ 4ff7020 test: no babel-dependent test (CI allows no skip): the CLDR table is che
+# server new: C:/Users/Inzagi/projects/kaeris/i18n_tool/.claude/worktrees/plural-translate-1121 @ 71228d7d fix(p047): B3 - the text of one form never silently stands in for anoth
+# server cand: C:/Users/Inzagi/AppData/Local/Temp/claude/a43205edf0b1eb40/1d41411c-380d-43ba-80ea-359c271f4a08/scratchpad/r3/srv-c9118a03 @ c9118a03 docs(p047): full pytest 4 groups, 94114a89 (cli d5535f0) vs 636c089a (c
+# server prod: C:/Users/Inzagi/AppData/Local/Temp/claude/a43205edf0b1eb40/1d41411c-380d-43ba-80ea-359c271f4a08/scratchpad/r3/srv-94114a89 @ 94114a89 docs(paytail2-r4): round 4 summary and full pytest compare - 105 = 105,
+# kaeris new runs from: using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+# kaeris cand runs from: using C:\Users/Inzagi/AppData/Local/Temp/claude/a43205edf0b1eb40/1d41411c-380d-43ba-80ea-359c271f4a08/scratchpad/r3/cli-43dcd9f\kaeris\__init__.py 0.2.47
+# kaeris 046 runs from: using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/pretag-0246\kaeris\__init__.py 0.2.46
+# kaeris 045 runs from: using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/pretag-1119\kaeris\__init__.py 0.2.45
+# /api/config plural_forms: {'new': 'cldr', 'cand': 'cldr', 'prod': None}
+
+######## B1: ja/zh/ko, a set whose singular has no number (critic: invented {{count}})
+
+=== B1 before: translate with py cand on server cand
+$ [py cand -> cand] kaeris translate en.json --langs ja,zh,ko --no-only-new --no-tm  -> exit 0
+  | ja.json
+  | zh.json
+  | ko.json
+  | 
+  | [stderr] using C:\Users/Inzagi/AppData/Local/Temp/claude/a43205edf0b1eb40/1d41411c-380d-43ba-80ea-359c271f4a08/scratchpad/r3/cli-43dcd9f\kaeris\__init__.py 0.2.47
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | → Translating en.json → ja, zh, ko
+  | → 100%  ko
+  | ✓ Wrote 3 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat\b1-before
+  | ✓ Translation QA: no placeholder loss, no overflow risks
+  | → Run: openai/gpt-6-luna · Free · 3/3 languages · 7 strings · 0.0s
+  |      342 charged
+--- before/ja.json
+{
+  "msg_one": "ソセオ スオテテアキオ カツソス {{name}}",
+  "msg_other": "{{count}} スオテテアキオテ カツソス {{name}}",
+  "tag_one": "ケトオス #{{count}}",
+  "tag_other": "ケトオステ #{{count}}",
+  "day": {
+    "one": "ソセオ エアオ",
+    "other": "{{count}} エアオテ"
+  },
+  "title": "ケセイソエ"
+}
+--- before/zh.json
+{
+  "msg_one": "上来了 大了说说的我了 人到上大 {{name}}",
+  "msg_other": "{{count}} 大了说说的我了说 人到上大 {{name}}",
+  "tag_one": "有们了大 #{{count}}",
+  "tag_other": "有们了大说 #{{count}}",
+  "day": {
+    "one": "上来了 不的地",
+    "other": "{{count}} 不的地说"
+  },
+  "title": "有来一上你"
+}
+--- before/ko.json
+{
+  "msg_one": "거하마 파마머머가사마 바러거파 {{name}}",
+  "msg_other": "{{count}} 파마머머가사마머 바러거파 {{name}}",
+  "tag_one": "자버마파 #{{count}}",
+  "tag_other": "자버마파머 #{{count}}",
+  "day": {
+    "one": "거하마 라가커",
+    "other": "{{count}} 라가커머"
+  },
+  "title": "자하나거처"
+}
+$ [py new -> cand] kaeris check --source en.json --langs ja  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ ja: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [py new -> cand] kaeris check --source en.json --langs zh  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ zh: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [py new -> cand] kaeris check --source en.json --langs ko  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ ko: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> cand] kaeris check --source en.json --langs ja  -> exit 0
+  | [stderr] ✓ ja: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> cand] kaeris check --source en.json --langs zh  -> exit 0
+  | [stderr] ✓ zh: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> cand] kaeris check --source en.json --langs ko  -> exit 0
+  | [stderr] ✓ ko: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [py 046 -> cand] kaeris check --source en.json --langs ja  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/pretag-0246\kaeris\__init__.py 0.2.46
+  | ✓ ja: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [py 046 -> cand] kaeris check --source en.json --langs zh  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/pretag-0246\kaeris\__init__.py 0.2.46
+  | ✓ zh: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [py 046 -> cand] kaeris check --source en.json --langs ko  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/pretag-0246\kaeris\__init__.py 0.2.46
+  | ✓ ko: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [py 045 -> cand] kaeris check --source en.json --langs ja  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/pretag-1119\kaeris\__init__.py 0.2.45
+  | ✓ ja: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [py 045 -> cand] kaeris check --source en.json --langs zh  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/pretag-1119\kaeris\__init__.py 0.2.45
+  | ✓ zh: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [py 045 -> cand] kaeris check --source en.json --langs ko  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/pretag-1119\kaeris\__init__.py 0.2.45
+  | ✓ ko: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+  => [info] B1: before (cli e721b68 + server 88ee3052): check exits (new/py/ja=0 new/py/zh=0 new/py/ko=0 new/npm/ja=0 new/npm/zh=0 new/npm/ko=0 046/py/ja=0 046/py/zh=0 046/py/ko=0 045/py/ja=0 045/py/zh=0 045/py/ko=0)
+
+=== B1 after: translate with py new on server new
+$ [py new -> new] kaeris translate en.json --langs ja,zh,ko --no-only-new --no-tm  -> exit 0
+  | ja.json
+  | zh.json
+  | ko.json
+  | 
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | → Translating en.json → ja, zh, ko
+  | → 100%  ko
+  | ✓ Wrote 3 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat\b1-after
+  | ✓ Translation QA: no placeholder loss, no overflow risks
+  | → Run: openai/gpt-6-luna · Free · 3/3 languages · 7 strings · 0.0s
+  |      342 charged
+--- after/ja.json
+{
+  "msg_one": "ソセオ スオテテアキオ カツソス {{name}}",
+  "msg_other": "{{count}} スオテテアキオテ カツソス {{name}}",
+  "tag_one": "ケトオス #{{count}}",
+  "tag_other": "ケトオステ #{{count}}",
+  "day": {
+    "one": "ソセオ エアオ",
+    "other": "{{count}} エアオテ"
+  },
+  "title": "ケセイソエ"
+}
+--- after/zh.json
+{
+  "msg_one": "上来了 大了说说的我了 人到上大 {{name}}",
+  "msg_other": "{{count}} 大了说说的我了说 人到上大 {{name}}",
+  "tag_one": "有们了大 #{{count}}",
+  "tag_other": "有们了大说 #{{count}}",
+  "day": {
+    "one": "上来了 不的地",
+    "other": "{{count}} 不的地说"
+  },
+  "title": "有来一上你"
+}
+--- after/ko.json
+{
+  "msg_one": "거하마 파마머머가사마 바러거파 {{name}}",
+  "msg_other": "{{count}} 파마머머가사마머 바러거파 {{name}}",
+  "tag_one": "자버마파 #{{count}}",
+  "tag_other": "자버마파머 #{{count}}",
+  "day": {
+    "one": "거하마 라가커",
+    "other": "{{count}} 라가커머"
+  },
+  "title": "자하나거처"
+}
+$ [py new -> new] kaeris check --source en.json --langs ja  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ ja: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [py new -> new] kaeris check --source en.json --langs zh  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ zh: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [py new -> new] kaeris check --source en.json --langs ko  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ ko: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.json --langs ja  -> exit 0
+  | [stderr] ✓ ja: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.json --langs zh  -> exit 0
+  | [stderr] ✓ zh: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.json --langs ko  -> exit 0
+  | [stderr] ✓ ko: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [py 046 -> new] kaeris check --source en.json --langs ja  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/pretag-0246\kaeris\__init__.py 0.2.46
+  | ✓ ja: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [py 046 -> new] kaeris check --source en.json --langs zh  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/pretag-0246\kaeris\__init__.py 0.2.46
+  | ✓ zh: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [py 046 -> new] kaeris check --source en.json --langs ko  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/pretag-0246\kaeris\__init__.py 0.2.46
+  | ✓ ko: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [py 045 -> new] kaeris check --source en.json --langs ja  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/pretag-1119\kaeris\__init__.py 0.2.45
+  | ✓ ja: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [py 045 -> new] kaeris check --source en.json --langs zh  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/pretag-1119\kaeris\__init__.py 0.2.45
+  | ✓ zh: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [py 045 -> new] kaeris check --source en.json --langs ko  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/pretag-1119\kaeris\__init__.py 0.2.45
+  | ✓ ko: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+  => [GREEN] B1: after: check 0.2.47 py/npm, 0.2.46, 0.2.45 on ja/zh/ko all exit 0 (new/py/ja=0 new/py/zh=0 new/py/ko=0 new/npm/ja=0 new/npm/zh=0 new/npm/ko=0 046/py/ja=0 046/py/zh=0 046/py/ko=0 045/py/ja=0 045/py/zh=0 045/py/ko=0)
+
+=== B1 after-npm: translate with npm new on server new
+$ [npm new -> new] kaeris translate en.json --langs ja,zh,ko --no-only-new  -> exit 0
+  | ja.json
+  | zh.json
+  | ko.json
+  | 
+  | [stderr] → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | → Translating en.json → ja, zh, ko
+  | → 100%  ko
+  | ✓ Wrote 3 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat\b1-after-npm
+  | ✓ Translation QA: no placeholder loss, no overflow risks
+  | → Run: openai/gpt-6-luna · Free · 3/3 languages · 7 strings · 0s
+  |      342 charged
+--- after-npm/ja.json
+{
+  "msg_one": "ソセオ スオテテアキオ カツソス {{name}}",
+  "msg_other": "{{count}} スオテテアキオテ カツソス {{name}}",
+  "tag_one": "ケトオス #{{count}}",
+  "tag_other": "ケトオステ #{{count}}",
+  "day": {
+    "one": "ソセオ エアオ",
+    "other": "{{count}} エアオテ"
+  },
+  "title": "ケセイソエ"
+}
+--- after-npm/zh.json
+{
+  "msg_one": "上来了 大了说说的我了 人到上大 {{name}}",
+  "msg_other": "{{count}} 大了说说的我了说 人到上大 {{name}}",
+  "tag_one": "有们了大 #{{count}}",
+  "tag_other": "有们了大说 #{{count}}",
+  "day": {
+    "one": "上来了 不的地",
+    "other": "{{count}} 不的地说"
+  },
+  "title": "有来一上你"
+}
+--- after-npm/ko.json
+{
+  "msg_one": "거하마 파마머머가사마 바러거파 {{name}}",
+  "msg_other": "{{count}} 파마머머가사마머 바러거파 {{name}}",
+  "tag_one": "자버마파 #{{count}}",
+  "tag_other": "자버마파머 #{{count}}",
+  "day": {
+    "one": "거하마 라가커",
+    "other": "{{count}} 라가커머"
+  },
+  "title": "자하나거처"
+}
+$ [py new -> new] kaeris check --source en.json --langs ja  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ ja: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [py new -> new] kaeris check --source en.json --langs zh  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ zh: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [py new -> new] kaeris check --source en.json --langs ko  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ ko: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.json --langs ja  -> exit 0
+  | [stderr] ✓ ja: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.json --langs zh  -> exit 0
+  | [stderr] ✓ zh: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.json --langs ko  -> exit 0
+  | [stderr] ✓ ko: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [py 046 -> new] kaeris check --source en.json --langs ja  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/pretag-0246\kaeris\__init__.py 0.2.46
+  | ✓ ja: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [py 046 -> new] kaeris check --source en.json --langs zh  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/pretag-0246\kaeris\__init__.py 0.2.46
+  | ✓ zh: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [py 046 -> new] kaeris check --source en.json --langs ko  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/pretag-0246\kaeris\__init__.py 0.2.46
+  | ✓ ko: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [py 045 -> new] kaeris check --source en.json --langs ja  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/pretag-1119\kaeris\__init__.py 0.2.45
+  | ✓ ja: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [py 045 -> new] kaeris check --source en.json --langs zh  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/pretag-1119\kaeris\__init__.py 0.2.45
+  | ✓ zh: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [py 045 -> new] kaeris check --source en.json --langs ko  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/pretag-1119\kaeris\__init__.py 0.2.45
+  | ✓ ko: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+  => [GREEN] B1: after-npm: check 0.2.47 py/npm, 0.2.46, 0.2.45 on ja/zh/ko all exit 0 (new/py/ja=0 new/py/zh=0 new/py/ko=0 new/npm/ja=0 new/npm/zh=0 new/npm/ko=0 046/py/ja=0 046/py/zh=0 046/py/ko=0 045/py/ja=0 045/py/zh=0 045/py/ko=0)
+
+=== B1 prod: translate with py 046 on server prod
+$ [py 046 -> prod] kaeris translate en.json --langs ja,zh,ko --no-only-new --no-tm  -> exit 0
+  | ja.json
+  | zh.json
+  | ko.json
+  | 
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/pretag-0246\kaeris\__init__.py 0.2.46
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | → Translating en.json → ja, zh, ko
+  | → 100%  ko
+  | ✓ Wrote 3 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat\b1-prod
+  | ✓ Translation QA: no placeholder loss, no overflow risks
+  | → Run: openai/gpt-6-luna · Free · 3/3 languages · 7 strings · 0.0s
+  |      342 charged
+--- prod/ja.json
+{
+  "msg_one": "ソセオ スオテテアキオ カツソス {{name}}",
+  "msg_other": "{{count}} スオテテアキオテ カツソス {{name}}",
+  "tag_one": "ケトオス #{{count}}",
+  "tag_other": "ケトオステ #{{count}}",
+  "day": {
+    "one": "ソセオ エアオ",
+    "other": "{{count}} エアオテ"
+  },
+  "title": "ケセイソエ"
+}
+--- prod/zh.json
+{
+  "msg_one": "上来了 大了说说的我了 人到上大 {{name}}",
+  "msg_other": "{{count}} 大了说说的我了说 人到上大 {{name}}",
+  "tag_one": "有们了大 #{{count}}",
+  "tag_other": "有们了大说 #{{count}}",
+  "day": {
+    "one": "上来了 不的地",
+    "other": "{{count}} 不的地说"
+  },
+  "title": "有来一上你"
+}
+--- prod/ko.json
+{
+  "msg_one": "거하마 파마머머가사마 바러거파 {{name}}",
+  "msg_other": "{{count}} 파마머머가사마머 바러거파 {{name}}",
+  "tag_one": "자버마파 #{{count}}",
+  "tag_other": "자버마파머 #{{count}}",
+  "day": {
+    "one": "거하마 라가커",
+    "other": "{{count}} 라가커머"
+  },
+  "title": "자하나거처"
+}
+$ [py new -> prod] kaeris check --source en.json --langs ja  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ ja: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [py new -> prod] kaeris check --source en.json --langs zh  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ zh: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [py new -> prod] kaeris check --source en.json --langs ko  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ ko: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> prod] kaeris check --source en.json --langs ja  -> exit 0
+  | [stderr] ✓ ja: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> prod] kaeris check --source en.json --langs zh  -> exit 0
+  | [stderr] ✓ zh: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> prod] kaeris check --source en.json --langs ko  -> exit 0
+  | [stderr] ✓ ko: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [py 046 -> prod] kaeris check --source en.json --langs ja  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/pretag-0246\kaeris\__init__.py 0.2.46
+  | ✓ ja: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [py 046 -> prod] kaeris check --source en.json --langs zh  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/pretag-0246\kaeris\__init__.py 0.2.46
+  | ✓ zh: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [py 046 -> prod] kaeris check --source en.json --langs ko  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/pretag-0246\kaeris\__init__.py 0.2.46
+  | ✓ ko: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [py 045 -> prod] kaeris check --source en.json --langs ja  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/pretag-1119\kaeris\__init__.py 0.2.45
+  | ✓ ja: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [py 045 -> prod] kaeris check --source en.json --langs zh  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/pretag-1119\kaeris\__init__.py 0.2.45
+  | ✓ zh: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [py 045 -> prod] kaeris check --source en.json --langs ko  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/pretag-1119\kaeris\__init__.py 0.2.45
+  | ✓ ko: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+  => [GREEN] B1: ja.json after (0.2.47 + new server) == 0.2.46 + production server
+  => [GREEN] B1: zh.json after (0.2.47 + new server) == 0.2.46 + production server
+  => [GREEN] B1: ko.json after (0.2.47 + new server) == 0.2.46 + production server
+
+######## B2: Plural-Forms the loose reading must not trust
+
+=== B2 plural=n
+$ [py cand -> new] kaeris check --source en.po --langs ru  -> exit 1
+  | [stderr] using C:\Users/Inzagi/AppData/Local/Temp/claude/a43205edf0b1eb40/1d41411c-380d-43ba-80ea-359c271f4a08/scratchpad/r3/cli-43dcd9f\kaeris\__init__.py 0.2.47
+  | ✗ ru: 2 placeholder mismatch(es):
+  |     %d file (plural): missing ['%d'], added -
+  |     %d file (plural 2): missing ['%d'], added -
+  | ✗ ru: 2 translation fault(s):
+  |     %d file (plural): lost placeholder %d
+  |     %d file (plural 2): lost placeholder %d
+  | ✗ 2 placeholder mismatches, 2 translation faults
+$ [py new -> new] kaeris check --source en.po --langs ru  -> exit 1
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✗ ru: 2 placeholder mismatch(es):
+  |     %d file (plural): missing ['%d'], added -
+  |     %d file (plural 2): missing ['%d'], added -
+  | ✗ ru: 2 translation fault(s):
+  |     %d file (plural): lost placeholder %d
+  |     %d file (plural 2): lost placeholder %d
+  | ✗ 2 placeholder mismatches, 2 translation faults
+$ [npm new -> new] kaeris check --source en.po --langs ru  -> exit 1
+  | [stderr] ✗ ru: 2 placeholder mismatch(es):
+  |     %d file (plural): missing ['%d'], added -
+  |     %d file (plural 2): missing ['%d'], added -
+  | ✗ ru: 2 translation fault(s):
+  |     %d file (plural): lost placeholder %d
+  |     %d file (plural 2): lost placeholder %d
+  | ✗ 2 placeholder mismatches, 2 translation faults
+$ [py 046 -> new] kaeris check --source en.po --langs ru  -> exit 1
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/pretag-0246\kaeris\__init__.py 0.2.46
+  | ✗ ru: 2 placeholder mismatch(es):
+  |     %d file (plural): missing ['%d'], added -
+  |     %d file (plural 2): missing ['%d'], added -
+  | ✗ ru: 2 translation fault(s):
+  |     %d file (plural): lost placeholder %d
+  |     %d file (plural 2): lost placeholder %d
+  | ✗ 2 placeholder mismatches, 2 translation faults
+  => [GREEN] B2: plural=n: check 0.2.47 py and npm exit 1 (strict, as 0.2.46) (cand/py=1 new/py=1 new/npm=1 046/py=1)
+
+=== B2 hebrew-formula-in-ru
+$ [py cand -> new] kaeris check --source en.po --langs ru  -> exit 1
+  | [stderr] using C:\Users/Inzagi/AppData/Local/Temp/claude/a43205edf0b1eb40/1d41411c-380d-43ba-80ea-359c271f4a08/scratchpad/r3/cli-43dcd9f\kaeris\__init__.py 0.2.47
+  | ✗ ru: 1 placeholder mismatch(es):
+  |     %d file (plural): missing ['%d'], added -
+  | ✗ ru: 1 translation fault(s):
+  |     %d file (plural): lost placeholder %d
+  | ✗ 1 placeholder mismatch, 1 translation fault
+$ [py new -> new] kaeris check --source en.po --langs ru  -> exit 1
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✗ ru: 1 placeholder mismatch(es):
+  |     %d file (plural): missing ['%d'], added -
+  | ✗ ru: 1 translation fault(s):
+  |     %d file (plural): lost placeholder %d
+  | ✗ 1 placeholder mismatch, 1 translation fault
+$ [npm new -> new] kaeris check --source en.po --langs ru  -> exit 1
+  | [stderr] ✗ ru: 1 placeholder mismatch(es):
+  |     %d file (plural): missing ['%d'], added -
+  | ✗ ru: 1 translation fault(s):
+  |     %d file (plural): lost placeholder %d
+  | ✗ 1 placeholder mismatch, 1 translation fault
+$ [py 046 -> new] kaeris check --source en.po --langs ru  -> exit 1
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/pretag-0246\kaeris\__init__.py 0.2.46
+  | ✗ ru: 1 placeholder mismatch(es):
+  |     %d file (plural): missing ['%d'], added -
+  | ✗ ru: 1 translation fault(s):
+  |     %d file (plural): lost placeholder %d
+  | ✗ 1 placeholder mismatch, 1 translation fault
+  => [GREEN] B2: hebrew-formula-in-ru: check 0.2.47 py and npm exit 1 (strict, as 0.2.46) (cand/py=1 new/py=1 new/npm=1 046/py=1)
+
+=== B2 every case of tests/test_po_single_number_slots.py against msgfmt -c
+  | # kaeris C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py
+  | case                                   expect  py  npm msgfmt  msgfmt says
+  | ar-many-without-number                 fail     1    1      1  number of format specifications in 'msgid_plural' and 'msgstr[4]' does not match
+  | ar-zero-one-two-without-number         pass     0    0      0  ok
+  | he-nplurals-below-values               fail     1    1      1  nplurals = 2 but plural expression can produce values as large as 2
+  | he-two-without-number                  pass     0    0      0  ok
+  | pl-few-without-number                  fail     1    1      1  number of format specifications in 'msgid_plural' and 'msgstr[1]' does not match
+  | pl-one-without-number                  pass     0    0      0  ok
+  | ru-formula-plural-n                    fail     1    1      1  nplurals = 3 but plural expression can produce values as large as 3
+  | ru-hebrew-formula                      fail     1    1      0  ok
+  => [GREEN] B2: slot cases: py and npm agree with the expected verdict
+
+######## old CLI 0.2.46 + new server = what the production server gives
+
+=== only-new 046-on-new: py 046 on new
+$ [py 046 -> new] kaeris translate en.json --langs pl,de --no-only-new  -> exit 0
+  | pl.json
+  | de.json
+  | 
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/pretag-0246\kaeris\__init__.py 0.2.46
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | → Translating en.json → pl, de
+  | → 100%  de
+  | ✓ Wrote 2 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat\onlynew-046-on-new
+  | ✓ Translation QA: no placeholder loss, no overflow risks
+  | → Project memory: +10 · 5 strings, 10 translations in kaeris-tm.json
+  | → Run: openai/gpt-6-luna · Free · 2/2 languages · 5 strings · 0.0s
+  |      172 charged
+$ [py 046 -> new] kaeris translate en.json --langs pl,de --only-new  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/pretag-0246\kaeris\__init__.py 0.2.46
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | → pl: 3 new key(s) to translate
+  | → de: 3 new key(s) to translate
+  | → 100%  pl  pl
+  | → Run: openai/gpt-6-luna · Free · 1/1 languages · 3 strings · 0.0s
+  |      49 charged
+  | ✓ Translation QA: no placeholder loss, no overflow risks
+  | → Project memory: +1 · 6 strings, 11 translations in kaeris-tm.json
+  | ✓ pl: merged 3 key(s) → pl.json
+  | → 100%  de  de
+  | → Run: openai/gpt-6-luna · Free · 1/1 languages · 3 strings · 0.1s
+  |      49 charged
+  | ✓ Translation QA: no placeholder loss, no overflow risks
+  | → Project memory: +1 · 6 strings, 12 translations in kaeris-tm.json
+  | ✓ de: merged 3 key(s) → de.json
+  | → 5 key(s) already exist in de, pl but nothing in kaeris.lock vouches for them, so they were left alone AND left unlocked. If the source changed after those files were made, those edits are NOT translated. Re-run once with --no-only-new to rebuild them, or with --assume-current if the files are known to match.
+$ [py 046 -> new] kaeris translate en.json --langs pl,de --only-new  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/pretag-0246\kaeris\__init__.py 0.2.46
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | ✓ pl: up to date (8 keys)
+  | ✓ de: up to date (8 keys)
+  | → 5 key(s) already exist in de, pl but nothing in kaeris.lock vouches for them, so they were left alone AND left unlocked. If the source changed after those files were made, those edits are NOT translated. Re-run once with --no-only-new to rebuild them, or with --assume-current if the files are known to match.
+  | ✓ Everything already up to date — nothing to translate
+$ [py 046 -> new] kaeris translate en.json --langs pl,de --only-new  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/pretag-0246\kaeris\__init__.py 0.2.46
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | ✓ pl: up to date (8 keys)
+  | ✓ de: up to date (8 keys)
+  | → 5 key(s) already exist in de, pl but nothing in kaeris.lock vouches for them, so they were left alone AND left unlocked. If the source changed after those files were made, those edits are NOT translated. Re-run once with --no-only-new to rebuild them, or with --assume-current if the files are known to match.
+  | ✓ Everything already up to date — nothing to translate
+--- 046-on-new/pl.json
+{
+  "cart": {
+    "items_one": "{{count}} metiy niy ehty tracy",
+    "items_other": "{{count}} smetiy niy ehty tracy",
+    "title": "tracy",
+    "saved_one": "{{count}} devasy metiy",
+    "saved_other": "{{count}} devasy smetiy"
+  },
+  "files": {
+    "one": "{{count}} elify",
+    "other": "{{count}} selify"
+  },
+  "new_title": "tsilhsiwy"
+}
+
+$ [py 046 -> new] kaeris check --source en.json --langs pl  -> exit 1
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/pretag-0246\kaeris\__init__.py 0.2.46
+  | ✗ pl: 4 translation fault(s):
+  |     plural form missing: cart.items_few — pl needs the one/few/many/other forms of 'cart.items'
+  |     plural form missing: cart.items_many — pl needs the one/few/many/other forms of 'cart.items'
+  |     plural form missing: cart.saved_few — pl needs the one/few/many/other forms of 'cart.saved'
+  |     plural form missing: cart.saved_many — pl needs the one/few/many/other forms of 'cart.saved'
+  | ! pl: 2 warning(s):
+  |     : plural form missing: files.few — pl needs the one/few/many/other forms of 'files'
+  |     : plural form missing: files.many — pl needs the one/few/many/other forms of 'files'
+  | ✗ 4 translation faults
+$ [py 046 -> new] kaeris check --source en.json --langs de  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/pretag-0246\kaeris\__init__.py 0.2.46
+  | ✓ de: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+
+=== only-new 046-on-prod: py 046 on prod
+$ [py 046 -> prod] kaeris translate en.json --langs pl,de --no-only-new  -> exit 0
+  | pl.json
+  | de.json
+  | 
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/pretag-0246\kaeris\__init__.py 0.2.46
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | → Translating en.json → pl, de
+  | → 100%  de
+  | ✓ Wrote 2 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat\onlynew-046-on-prod
+  | ✓ Translation QA: no placeholder loss, no overflow risks
+  | → Project memory: +10 · 5 strings, 10 translations in kaeris-tm.json
+  | → Run: openai/gpt-6-luna · Free · 2/2 languages · 5 strings · 0.0s
+  |      172 charged
+$ [py 046 -> prod] kaeris translate en.json --langs pl,de --only-new  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/pretag-0246\kaeris\__init__.py 0.2.46
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | → pl: 3 new key(s) to translate
+  | → de: 3 new key(s) to translate
+  | → 100%  pl  pl
+  | → 100%  de  de
+  | → Run: openai/gpt-6-luna · Free · 1/1 languages · 3 strings · 0.1s
+  |      49 charged
+  | ✓ Translation QA: no placeholder loss, no overflow risks
+  | → Project memory: +1 · 6 strings, 11 translations in kaeris-tm.json
+  | ✓ pl: merged 3 key(s) → pl.json
+  | → Run: openai/gpt-6-luna · Free · 1/1 languages · 3 strings · 0.1s
+  |      49 charged
+  | ✓ Translation QA: no placeholder loss, no overflow risks
+  | → Project memory: +1 · 6 strings, 12 translations in kaeris-tm.json
+  | ✓ de: merged 3 key(s) → de.json
+  | → 5 key(s) already exist in de, pl but nothing in kaeris.lock vouches for them, so they were left alone AND left unlocked. If the source changed after those files were made, those edits are NOT translated. Re-run once with --no-only-new to rebuild them, or with --assume-current if the files are known to match.
+$ [py 046 -> prod] kaeris translate en.json --langs pl,de --only-new  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/pretag-0246\kaeris\__init__.py 0.2.46
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | ✓ pl: up to date (8 keys)
+  | ✓ de: up to date (8 keys)
+  | → 5 key(s) already exist in de, pl but nothing in kaeris.lock vouches for them, so they were left alone AND left unlocked. If the source changed after those files were made, those edits are NOT translated. Re-run once with --no-only-new to rebuild them, or with --assume-current if the files are known to match.
+  | ✓ Everything already up to date — nothing to translate
+$ [py 046 -> prod] kaeris translate en.json --langs pl,de --only-new  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/pretag-0246\kaeris\__init__.py 0.2.46
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | ✓ pl: up to date (8 keys)
+  | ✓ de: up to date (8 keys)
+  | → 5 key(s) already exist in de, pl but nothing in kaeris.lock vouches for them, so they were left alone AND left unlocked. If the source changed after those files were made, those edits are NOT translated. Re-run once with --no-only-new to rebuild them, or with --assume-current if the files are known to match.
+  | ✓ Everything already up to date — nothing to translate
+--- 046-on-prod/pl.json
+{
+  "cart": {
+    "items_one": "{{count}} metiy niy ehty tracy",
+    "items_other": "{{count}} smetiy niy ehty tracy",
+    "title": "tracy",
+    "saved_one": "{{count}} devasy metiy",
+    "saved_other": "{{count}} devasy smetiy"
+  },
+  "files": {
+    "one": "{{count}} elify",
+    "other": "{{count}} selify"
+  },
+  "new_title": "tsilhsiwy"
+}
+
+$ [py 046 -> prod] kaeris check --source en.json --langs pl  -> exit 1
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/pretag-0246\kaeris\__init__.py 0.2.46
+  | ✗ pl: 4 translation fault(s):
+  |     plural form missing: cart.items_few — pl needs the one/few/many/other forms of 'cart.items'
+  |     plural form missing: cart.items_many — pl needs the one/few/many/other forms of 'cart.items'
+  |     plural form missing: cart.saved_few — pl needs the one/few/many/other forms of 'cart.saved'
+  |     plural form missing: cart.saved_many — pl needs the one/few/many/other forms of 'cart.saved'
+  | ! pl: 2 warning(s):
+  |     : plural form missing: files.few — pl needs the one/few/many/other forms of 'files'
+  |     : plural form missing: files.many — pl needs the one/few/many/other forms of 'files'
+  | ✗ 4 translation faults
+$ [py 046 -> prod] kaeris check --source en.json --langs de  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/pretag-0246\kaeris\__init__.py 0.2.46
+  | ✓ de: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+  => [GREEN] old CLI + new server: --only-new: no dotted key at the root of pl.json
+  => [GREEN] old CLI + new server: --only-new pl.json == old CLI + production
+  => [GREEN] old CLI + new server: --only-new de.json == old CLI + production
+$ [py 046 -> new] kaeris translate en.json --langs pl,ar,ja --no-only-new --no-tm  -> exit 0
+  | pl.json
+  | ar.json
+  | ja.json
+  | 
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/pretag-0246\kaeris\__init__.py 0.2.46
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | → Translating en.json → pl, ar, ja
+  | → 100%  ja
+  | ✓ Wrote 3 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat\old-full-i18next-new
+  | ✓ Translation QA: no placeholder loss, no overflow risks
+  | → Run: openai/gpt-6-luna · Free · 3/3 languages · 2 strings · 0.0s
+  |      87 charged
+$ [py 046 -> prod] kaeris translate en.json --langs pl,ar,ja --no-only-new --no-tm  -> exit 0
+  | pl.json
+  | ar.json
+  | ja.json
+  | 
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/pretag-0246\kaeris\__init__.py 0.2.46
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | → Translating en.json → pl, ar, ja
+  | → 100%  ja
+  | ✓ Wrote 3 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat\old-full-i18next-prod
+  | ✓ Translation QA: no placeholder loss, no overflow risks
+  | → Run: openai/gpt-6-luna · Free · 3/3 languages · 2 strings · 0.0s
+  |      87 charged
+  => [GREEN] old CLI + new server: full translate i18next pl,ar,ja: files == old CLI + production
+$ [py 046 -> new] kaeris translate en.po --langs pl,ar,ja --no-only-new --no-tm  -> exit 0
+  | pl.po
+  | ar.po
+  | ja.po
+  | 
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/pretag-0246\kaeris\__init__.py 0.2.46
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | → Translating en.po → pl, ar, ja
+  | → 100%  ja
+  | ✓ Wrote 3 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat\old-full-po-new
+  | ✓ Translation QA: no placeholder loss, no overflow risks
+  | → Run: openai/gpt-6-luna · Free · 3/3 languages · 3 strings · 0.0s
+  |      72 charged
+$ [py 046 -> prod] kaeris translate en.po --langs pl,ar,ja --no-only-new --no-tm  -> exit 0
+  | pl.po
+  | ar.po
+  | ja.po
+  | 
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/pretag-0246\kaeris\__init__.py 0.2.46
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | → Translating en.po → pl, ar, ja
+  | → 100%  ja
+  | ✓ Wrote 3 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat\old-full-po-prod
+  | ✓ Translation QA: no placeholder loss, no overflow risks
+  | → Run: openai/gpt-6-luna · Free · 3/3 languages · 3 strings · 0.0s
+  |      72 charged
+  => [GREEN] old CLI + new server: full translate po pl,ar,ja: files == old CLI + production
+
+######## new CLI 0.2.47 + production server 94114a89
+
+=== only-new new-on-prod: py new on prod
+$ [py new -> prod] kaeris translate en.json --langs pl,de --no-only-new  -> exit 0
+  | pl.json
+  | de.json
+  | 
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | → Translating en.json → pl, de
+  | → 100%  de
+  | ✓ Wrote 2 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat\onlynew-new-on-prod
+  | ✓ Translation QA: no placeholder loss, no overflow risks
+  | → Project memory: +10 · 5 strings, 10 translations in kaeris-tm.json
+  | → Run: openai/gpt-6-luna · Free · 2/2 languages · 5 strings · 0.0s
+  |      172 charged
+$ [py new -> prod] kaeris translate en.json --langs pl,de --only-new  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | → pl: 3 new key(s) to translate
+  | → de: 3 new key(s) to translate
+  | → 100%  de  de
+  | → 100%  pl  pl
+  | → Run: openai/gpt-6-luna · Free · 1/1 languages · 3 strings · 0.1s
+  |      49 charged
+  | ✓ Translation QA: no placeholder loss, no overflow risks
+  | → Project memory: +1 · 6 strings, 11 translations in kaeris-tm.json
+  | ✓ pl: merged 3 key(s) → pl.json
+  | → Run: openai/gpt-6-luna · Free · 1/1 languages · 3 strings · 0.0s
+  |      49 charged
+  | ✓ Translation QA: no placeholder loss, no overflow risks
+  | → Project memory: +1 · 6 strings, 12 translations in kaeris-tm.json
+  | ✓ de: merged 3 key(s) → de.json
+  | → 5 key(s) already exist in de, pl but nothing in kaeris.lock vouches for them, so they were left alone AND left unlocked. If the source changed after those files were made, those edits are NOT translated. Re-run once with --no-only-new to rebuild them, or with --assume-current if the files are known to match.
+$ [py new -> prod] kaeris translate en.json --langs pl,de --only-new  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | ✓ pl: up to date (8 keys)
+  | ✓ de: up to date (8 keys)
+  | → 5 key(s) already exist in de, pl but nothing in kaeris.lock vouches for them, so they were left alone AND left unlocked. If the source changed after those files were made, those edits are NOT translated. Re-run once with --no-only-new to rebuild them, or with --assume-current if the files are known to match.
+  | ✓ Everything already up to date — nothing to translate
+$ [py new -> prod] kaeris translate en.json --langs pl,de --only-new  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | ✓ pl: up to date (8 keys)
+  | ✓ de: up to date (8 keys)
+  | → 5 key(s) already exist in de, pl but nothing in kaeris.lock vouches for them, so they were left alone AND left unlocked. If the source changed after those files were made, those edits are NOT translated. Re-run once with --no-only-new to rebuild them, or with --assume-current if the files are known to match.
+  | ✓ Everything already up to date — nothing to translate
+--- new-on-prod/pl.json
+{
+  "cart": {
+    "items_one": "{{count}} metiy niy ehty tracy",
+    "items_other": "{{count}} smetiy niy ehty tracy",
+    "title": "tracy",
+    "saved_one": "{{count}} devasy metiy",
+    "saved_other": "{{count}} devasy smetiy"
+  },
+  "files": {
+    "one": "{{count}} elify",
+    "other": "{{count}} selify"
+  },
+  "new_title": "tsilhsiwy"
+}
+
+$ [py new -> prod] kaeris check --source en.json --langs pl  -> exit 1
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✗ pl: 4 translation fault(s):
+  |     plural form missing: cart.items_few — pl needs the one/few/many/other forms of 'cart.items'
+  |     plural form missing: cart.items_many — pl needs the one/few/many/other forms of 'cart.items'
+  |     plural form missing: cart.saved_few — pl needs the one/few/many/other forms of 'cart.saved'
+  |     plural form missing: cart.saved_many — pl needs the one/few/many/other forms of 'cart.saved'
+  | ! pl: 2 warning(s):
+  |     : plural form missing: files.few — pl needs the one/few/many/other forms of 'files'
+  |     : plural form missing: files.many — pl needs the one/few/many/other forms of 'files'
+  | ✗ 4 translation faults
+$ [py new -> prod] kaeris check --source en.json --langs de  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ de: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+  => [GREEN] new CLI + prod: --only-new: no dotted key at the root of pl.json
+  => [GREEN] new CLI + prod: --only-new runs 2 and 3: up to date, nothing sent to the model (model calls per run [2, 0, 0], up-to-date [False, True, True])
+
+=== only-new 046-on-prod-2: py 046 on prod
+$ [py 046 -> prod] kaeris translate en.json --langs pl,de --no-only-new  -> exit 0
+  | pl.json
+  | de.json
+  | 
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/pretag-0246\kaeris\__init__.py 0.2.46
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | → Translating en.json → pl, de
+  | → 100%  de
+  | ✓ Wrote 2 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat\onlynew-046-on-prod-2
+  | ✓ Translation QA: no placeholder loss, no overflow risks
+  | → Project memory: +10 · 5 strings, 10 translations in kaeris-tm.json
+  | → Run: openai/gpt-6-luna · Free · 2/2 languages · 5 strings · 0.0s
+  |      172 charged
+$ [py 046 -> prod] kaeris translate en.json --langs pl,de --only-new  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/pretag-0246\kaeris\__init__.py 0.2.46
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | → pl: 3 new key(s) to translate
+  | → de: 3 new key(s) to translate
+  | →   0%  pl  pl
+  | → 100%  de  de
+  | → 100%  pl  pl
+  | → Run: openai/gpt-6-luna · Free · 1/1 languages · 3 strings · 0.0s
+  |      49 charged
+  | ✓ Translation QA: no placeholder loss, no overflow risks
+  | → Project memory: +1 · 6 strings, 11 translations in kaeris-tm.json
+  | ✓ pl: merged 3 key(s) → pl.json
+  | → Run: openai/gpt-6-luna · Free · 1/1 languages · 3 strings · 0.1s
+  |      49 charged
+  | ✓ Translation QA: no placeholder loss, no overflow risks
+  | → Project memory: +1 · 6 strings, 12 translations in kaeris-tm.json
+  | ✓ de: merged 3 key(s) → de.json
+  | → 5 key(s) already exist in de, pl but nothing in kaeris.lock vouches for them, so they were left alone AND left unlocked. If the source changed after those files were made, those edits are NOT translated. Re-run once with --no-only-new to rebuild them, or with --assume-current if the files are known to match.
+$ [py 046 -> prod] kaeris translate en.json --langs pl,de --only-new  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/pretag-0246\kaeris\__init__.py 0.2.46
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | ✓ pl: up to date (8 keys)
+  | ✓ de: up to date (8 keys)
+  | → 5 key(s) already exist in de, pl but nothing in kaeris.lock vouches for them, so they were left alone AND left unlocked. If the source changed after those files were made, those edits are NOT translated. Re-run once with --no-only-new to rebuild them, or with --assume-current if the files are known to match.
+  | ✓ Everything already up to date — nothing to translate
+$ [py 046 -> prod] kaeris translate en.json --langs pl,de --only-new  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/pretag-0246\kaeris\__init__.py 0.2.46
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | ✓ pl: up to date (8 keys)
+  | ✓ de: up to date (8 keys)
+  | → 5 key(s) already exist in de, pl but nothing in kaeris.lock vouches for them, so they were left alone AND left unlocked. If the source changed after those files were made, those edits are NOT translated. Re-run once with --no-only-new to rebuild them, or with --assume-current if the files are known to match.
+  | ✓ Everything already up to date — nothing to translate
+--- 046-on-prod-2/pl.json
+{
+  "cart": {
+    "items_one": "{{count}} metiy niy ehty tracy",
+    "items_other": "{{count}} smetiy niy ehty tracy",
+    "title": "tracy",
+    "saved_one": "{{count}} devasy metiy",
+    "saved_other": "{{count}} devasy smetiy"
+  },
+  "files": {
+    "one": "{{count}} elify",
+    "other": "{{count}} selify"
+  },
+  "new_title": "tsilhsiwy"
+}
+
+$ [py 046 -> prod] kaeris check --source en.json --langs pl  -> exit 1
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/pretag-0246\kaeris\__init__.py 0.2.46
+  | ✗ pl: 4 translation fault(s):
+  |     plural form missing: cart.items_few — pl needs the one/few/many/other forms of 'cart.items'
+  |     plural form missing: cart.items_many — pl needs the one/few/many/other forms of 'cart.items'
+  |     plural form missing: cart.saved_few — pl needs the one/few/many/other forms of 'cart.saved'
+  |     plural form missing: cart.saved_many — pl needs the one/few/many/other forms of 'cart.saved'
+  | ! pl: 2 warning(s):
+  |     : plural form missing: files.few — pl needs the one/few/many/other forms of 'files'
+  |     : plural form missing: files.many — pl needs the one/few/many/other forms of 'files'
+  | ✗ 4 translation faults
+$ [py 046 -> prod] kaeris check --source en.json --langs de  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/pretag-0246\kaeris\__init__.py 0.2.46
+  | ✓ de: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+  => [GREEN] new CLI + prod: pl.json == 0.2.46 on production
+  => [GREEN] new CLI + prod: de.json == 0.2.46 on production
+  => [info] new CLI + prod: check pl: forms production never writes are named (as with 0.2.46) (check exits {'pl': 1, 'de': 0})
+$ [py new -> prod] kaeris translate en.json --langs pl --only-new --assume-current  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | ✓ pl: up to date (2 keys)
+  | ✓ Everything already up to date — nothing to translate
+$ [py new -> prod] kaeris translate en.json --langs pl --only-new  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | ✓ pl: up to date (2 keys)
+  | ✓ Everything already up to date — nothing to translate
+  => [GREEN] new CLI + prod: a pl target with one/other only: up to date twice, no model call (model calls 0)
+
+######## new CLI 0.2.47 + new server
+
+=== only-new new-on-new: py new on new
+$ [py new -> new] kaeris translate en.json --langs pl,de --no-only-new  -> exit 0
+  | pl.json
+  | de.json
+  | 
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | → Translating en.json → pl, de
+  | → 100%  de
+  | ✓ Wrote 2 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat\onlynew-new-on-new
+  | ✓ Translation QA: no placeholder loss, no overflow risks
+  | → Project memory: +10 · 5 strings, 10 translations in kaeris-tm.json
+  | → Run: openai/gpt-6-luna · Free · 2/2 languages · 5 strings · 0.0s
+  |      172 charged
+$ [py new -> new] kaeris translate en.json --langs pl,de --only-new  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | → pl: 3 new key(s) to translate
+  | → de: 3 new key(s) to translate
+  | →   0%  pl  
+  | → 100%  pl  pl
+  | → 100%  de  de
+  | → Run: openai/gpt-6-luna · Free · 1/1 languages · 3 strings · 0.0s
+  |      49 charged
+  | ✓ Translation QA: no placeholder loss, no overflow risks
+  | → Project memory: +1 · 6 strings, 11 translations in kaeris-tm.json
+  | ✓ pl: merged 3 key(s) → pl.json
+  | → Run: openai/gpt-6-luna · Free · 1/1 languages · 3 strings · 0.0s
+  |      49 charged
+  | ✓ Translation QA: no placeholder loss, no overflow risks
+  | → Project memory: +1 · 6 strings, 12 translations in kaeris-tm.json
+  | ✓ de: merged 3 key(s) → de.json
+  | → 5 key(s) already exist in de, pl but nothing in kaeris.lock vouches for them, so they were left alone AND left unlocked. If the source changed after those files were made, those edits are NOT translated. Re-run once with --no-only-new to rebuild them, or with --assume-current if the files are known to match.
+$ [py new -> new] kaeris translate en.json --langs pl,de --only-new  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | ✓ pl: up to date (14 keys)
+  | ✓ de: up to date (8 keys)
+  | → 5 key(s) already exist in de, pl but nothing in kaeris.lock vouches for them, so they were left alone AND left unlocked. If the source changed after those files were made, those edits are NOT translated. Re-run once with --no-only-new to rebuild them, or with --assume-current if the files are known to match.
+  | ✓ Everything already up to date — nothing to translate
+$ [py new -> new] kaeris translate en.json --langs pl,de --only-new  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | ✓ pl: up to date (14 keys)
+  | ✓ de: up to date (8 keys)
+  | → 5 key(s) already exist in de, pl but nothing in kaeris.lock vouches for them, so they were left alone AND left unlocked. If the source changed after those files were made, those edits are NOT translated. Re-run once with --no-only-new to rebuild them, or with --assume-current if the files are known to match.
+  | ✓ Everything already up to date — nothing to translate
+--- new-on-new/pl.json
+{
+  "cart": {
+    "items_one": "{{count}} metiy niy ehty tracy",
+    "items_few": "{{count}} smetiy niy ehty tracy fe",
+    "items_many": "{{count}} smetiy niy ehty tracy ma",
+    "items_other": "{{count}} smetiy niy ehty tracy",
+    "title": "tracy",
+    "saved_one": "{{count}} devasy metiy",
+    "saved_few": "{{count}} devasy smetiy fe",
+    "saved_many": "{{count}} devasy smetiy ma",
+    "saved_other": "{{count}} devasy smetiy"
+  },
+  "files": {
+    "one": "{{count}} elify",
+    "few": "{{count}} selify fe",
+    "many": "{{count}} selify ma",
+    "other": "{{count}} selify"
+  },
+  "new_title": "tsilhsiwy"
+}
+
+$ [py new -> new] kaeris check --source en.json --langs pl  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ pl: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [py new -> new] kaeris check --source en.json --langs de  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ de: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+  => [GREEN] new CLI + new server: --only-new: pl forms inside their objects
+  => [GREEN] new CLI + new server: --only-new runs 2 and 3: up to date, nothing sent (model calls per run [2, 0, 0])
+  => [GREEN] new CLI + new server: check pl and de exit 0 ({'pl': 0, 'de': 0})
+$ [py new -> new] kaeris translate en.json --langs pl --only-new --assume-current --no-tm  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | → pl: sending 2 key(s) of plural sets whole, so every form pl needs is written
+  | → pl: 2 key(s) to translate (2 edited, 0 new)
+  | → 100%  pl
+  | → Run: openai/gpt-6-luna · Free · 1/1 languages · 2 strings · 0.0s
+  |      29 charged
+  | ✓ Translation QA: no placeholder loss, no overflow risks
+  | ✓ pl: merged 2 key(s) → pl.json
+$ [py new -> new] kaeris translate en.json --langs pl --only-new --no-tm  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | → pl: 1 more key(s) of plural sets sent with them, so every form pl needs is written
+  | → pl: 3 key(s) to translate (3 edited, 0 new)
+  | → 100%  pl
+  | → Run: openai/gpt-6-luna · Free · 1/1 languages · 3 strings · 0.0s
+  |      42 charged
+  | ✓ Translation QA: no placeholder loss, no overflow risks
+  | ✓ pl: merged 3 key(s) → pl.json
+  => [GREEN] new CLI + new server: set completed alone: 'sending … whole', no 'with them'; beside an edit: 'sent with them' (→ pl: sending 2 key(s) of plural sets whole, so every form pl needs is written / → pl: 1 more key(s) of plural sets sent with them, so every form pl needs is written)
+
+=== memory before: cand on cand
+$ [py cand -> cand] kaeris translate en.json --langs de,pl,ja --no-only-new  -> exit 0
+  | de.json
+  | pl.json
+  | ja.json
+  | 
+  | [stderr] using C:\Users/Inzagi/AppData/Local/Temp/claude/a43205edf0b1eb40/1d41411c-380d-43ba-80ea-359c271f4a08/scratchpad/r3/cli-43dcd9f\kaeris\__init__.py 0.2.47
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | → Translating en.json → de, pl, ja
+  | →   0%  ja
+  | → 100%  ja
+  | ✓ Wrote 3 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat\memory-before
+  | ✓ Translation QA: no placeholder loss, no overflow risks
+  | → Project memory: +12 · 4 strings, 12 translations in kaeris-tm.json
+  | → Run: openai/gpt-6-luna · Free · 3/3 languages · 4 strings · 0.0s
+  |      138 charged
+$ [py cand -> cand] kaeris translate en.json --langs de,pl,ja --no-only-new  -> exit 0
+  | de.json
+  | pl.json
+  | ja.json
+  | 
+  | [stderr] using C:\Users/Inzagi/AppData/Local/Temp/claude/a43205edf0b1eb40/1d41411c-380d-43ba-80ea-359c271f4a08/scratchpad/r3/cli-43dcd9f\kaeris\__init__.py 0.2.47
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | → Project memory: 10 string/language pair(s) reused, not re-translated
+  | → Translating en.json → de, pl, ja
+  | →   0%  ja
+  | → 100%  ja
+  | ✓ Wrote 3 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat\memory-before
+  | ✓ Translation QA: no placeholder loss, no overflow risks
+  | → Run: openai/gpt-6-luna · Free · 3/3 languages · 4 strings · 0.0s
+  |      29 charged · 117 reused free
+  => [info] memory: before: CLI said 10 remembered (model calls 1)
+
+=== memory after: new on new
+$ [py new -> new] kaeris translate en.json --langs de,pl,ja --no-only-new  -> exit 0
+  | de.json
+  | pl.json
+  | ja.json
+  | 
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | → Translating en.json → de, pl, ja
+  | → 100%  ja
+  | ✓ Wrote 3 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat\memory-after
+  | ✓ Translation QA: no placeholder loss, no overflow risks
+  | → Project memory: +12 · 4 strings, 12 translations in kaeris-tm.json
+  | → Run: openai/gpt-6-luna · Free · 3/3 languages · 4 strings · 0.0s
+  |      138 charged
+$ [py new -> new] kaeris translate en.json --langs de,pl,ja --no-only-new  -> exit 0
+  | de.json
+  | pl.json
+  | ja.json
+  | 
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | → Project memory: 10 string/language pair(s) reused, not re-translated
+  | → Translating en.json → de, pl, ja
+  | → 100%  ja
+  | ✓ Wrote 3 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat\memory-after
+  | ✓ Translation QA: no placeholder loss, no overflow risks
+  | → Run: openai/gpt-6-luna · Free · 3/3 languages · 4 strings · 0.0s
+  |      29 charged · 117 reused free
+  => [GREEN] memory: second full run: remembered lines counted = 10 (de 4, ja 4, pl 2: the pl set is translated again) (said 10; model calls 1)
+$ [npm new -> new] kaeris translate en.json --langs pl --no-only-new  -> exit 0
+  | pl.json
+  | 
+  | [stderr] → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | → Translating en.json → pl
+  | → 100%  pl
+  | ✓ Wrote 1 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat\npm-new-on-new
+  | ✓ Translation QA: no placeholder loss, no overflow risks
+  | → Run: openai/gpt-6-luna · Free · 1/1 languages · 2 strings · 0s
+  |      29 charged
+$ [npm new -> new] kaeris check --source en.json --langs pl  -> exit 0
+  | [stderr] ✓ pl: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+  => [GREEN] new CLI + new server: npm translate pl: items_few/items_many, check exit 0
+
+######## broken model answers (new CLI + new server on a broken stub)
+
+=== broken plain en.json
+$ [py new -> new-plain] kaeris translate en.json --langs pl,ar,ja --no-only-new --no-tm  -> exit 0
+  | pl.json
+  | ar.json
+  | ja.json
+  | 
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | → Translating en.json → pl, ar, ja
+  | → 100%  ar
+  | ✓ Wrote 3 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat\broken-plain-json
+  | ✓ Translation QA: no placeholder loss, no overflow risks
+  | → Run: openai/gpt-6-luna · Free · 3/3 languages · 7 strings · 0.0s
+  |      342 charged
+$ [py new -> new-plain] kaeris check --source en.json --langs pl  -> exit 1
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✗ pl: 4 translation fault(s):
+  |     plural form missing: msg_few — pl needs the one/few/many/other forms of 'msg'
+  |     plural form missing: msg_many — pl needs the one/few/many/other forms of 'msg'
+  |     plural form missing: tag_few — pl needs the one/few/many/other forms of 'tag'
+  |     plural form missing: tag_many — pl needs the one/few/many/other forms of 'tag'
+  | ! pl: 2 warning(s):
+  |     : plural form missing: day.few — pl needs the one/few/many/other forms of 'day'
+  |     : plural form missing: day.many — pl needs the one/few/many/other forms of 'day'
+  | ✗ 4 translation faults
+$ [py new -> new-plain] kaeris check --source en.json --langs ar  -> exit 1
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✗ ar: 8 translation fault(s):
+  |     plural form missing: msg_few — ar needs the zero/one/two/few/many/other forms of 'msg'
+  |     plural form missing: msg_many — ar needs the zero/one/two/few/many/other forms of 'msg'
+  |     plural form missing: msg_two — ar needs the zero/one/two/few/many/other forms of 'msg'
+  |     plural form missing: msg_zero — ar needs the zero/one/two/few/many/other forms of 'msg'
+  |     plural form missing: tag_few — ar needs the zero/one/two/few/many/other forms of 'tag'
+  |     plural form missing: tag_many — ar needs the zero/one/two/few/many/other forms of 'tag'
+  |     plural form missing: tag_two — ar needs the zero/one/two/few/many/other forms of 'tag'
+  |     plural form missing: tag_zero — ar needs the zero/one/two/few/many/other forms of 'tag'
+  | ! ar: 4 warning(s):
+  |     : plural form missing: day.few — ar needs the zero/one/two/few/many/other forms of 'day'
+  |     : plural form missing: day.many — ar needs the zero/one/two/few/many/other forms of 'day'
+  |     : plural form missing: day.two — ar needs the zero/one/two/few/many/other forms of 'day'
+  |     : plural form missing: day.zero — ar needs the zero/one/two/few/many/other forms of 'day'
+  | ✗ 8 translation faults
+$ [py new -> new-plain] kaeris check --source en.json --langs ja  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ ja: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+--- plain/pl.json
+{
+  "msg_one": "enoy egassemy morfy {{name}}",
+  "msg_other": "{{count}} segassemy morfy {{name}}",
+  "tag_one": "metiy #{{count}}",
+  "tag_other": "smetiy #{{count}}",
+  "day": {
+    "one": "enoy yady",
+    "other": "{{count}} syady"
+  },
+  "title": "xobniy"
+}
+  => [GREEN] broken plain: en.json: no English source left in pl/ar/ja ({})
+  => [GREEN] broken plain: en.json: QA says neither {count} nor ICU
+  => [info] broken plain: en.json: check exits ({'pl': 1, 'ar': 1, 'ja': 0})
+
+=== broken plain en.po
+$ [py new -> new-plain] kaeris translate en.po --langs pl,ar,ja --no-only-new --no-tm  -> exit 0
+  | pl.po
+  | ar.po
+  | ja.po
+  | 
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | → Translating en.po → pl, ar, ja
+  | → 100%  ja
+  | ✓ Wrote 3 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat\broken-plain-po
+  | ✓ Translation QA: no placeholder loss, no overflow risks
+  | → Run: openai/gpt-6-luna · Free · 3/3 languages · 4 strings · 0.0s
+  |      189 charged
+$ [py new -> new-plain] kaeris check --source en.po --langs pl  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ pl: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [py new -> new-plain] kaeris check --source en.po --langs ar  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ ar: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [py new -> new-plain] kaeris check --source en.po --langs ja  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ ja: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+--- plain/pl.po
+# Generated by KAERIS i18n Tool
+# Language: pl
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Language: pl\n"
+
+msgid "Don't delete %d file"
+msgid_plural "Don't delete %d files"
+msgstr[0] "nody'ty eteledy %d elify"
+msgstr[1] "nody'ty eteledy %d selify"
+msgstr[2] "nody'ty eteledy %d selify"
+
+msgid "One message"
+msgid_plural "%d messages"
+msgstr[0] "enoy egassemy"
+msgstr[1] "%d segassemy"
+msgstr[2] "%d segassemy"
+
+  => [GREEN] broken plain: en.po: no English source left in pl/ar/ja ({})
+  => [GREEN] broken plain: en.po: QA says neither {count} nor ICU
+  => [info] broken plain: en.po: check exits ({'pl': 0, 'ar': 0, 'ja': 0})
+
+=== broken noother en.json
+$ [py new -> new-noother] kaeris translate en.json --langs pl,ar,ja --no-only-new --no-tm  -> exit 0
+  | pl.json
+  | ar.json
+  | ja.json
+  | 
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | → Translating en.json → pl, ar, ja
+  | → 100%  ja
+  | → 100%  ar
+  | ✓ Wrote 3 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat\broken-noother-json
+  | ✓ Translation QA: no placeholder loss, no overflow risks
+  | → Run: openai/gpt-6-luna · Free · 3/3 languages · 7 strings · 0.0s
+  |      342 charged
+$ [py new -> new-noother] kaeris check --source en.json --langs pl  -> exit 1
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✗ pl: 4 translation fault(s):
+  |     plural form missing: msg_few — pl needs the one/few/many/other forms of 'msg'
+  |     plural form missing: msg_many — pl needs the one/few/many/other forms of 'msg'
+  |     plural form missing: tag_few — pl needs the one/few/many/other forms of 'tag'
+  |     plural form missing: tag_many — pl needs the one/few/many/other forms of 'tag'
+  | ! pl: 2 warning(s):
+  |     : plural form missing: day.few — pl needs the one/few/many/other forms of 'day'
+  |     : plural form missing: day.many — pl needs the one/few/many/other forms of 'day'
+  | ✗ 4 translation faults
+$ [py new -> new-noother] kaeris check --source en.json --langs ar  -> exit 1
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✗ ar: 8 translation fault(s):
+  |     plural form missing: msg_few — ar needs the zero/one/two/few/many/other forms of 'msg'
+  |     plural form missing: msg_many — ar needs the zero/one/two/few/many/other forms of 'msg'
+  |     plural form missing: msg_two — ar needs the zero/one/two/few/many/other forms of 'msg'
+  |     plural form missing: msg_zero — ar needs the zero/one/two/few/many/other forms of 'msg'
+  |     plural form missing: tag_few — ar needs the zero/one/two/few/many/other forms of 'tag'
+  |     plural form missing: tag_many — ar needs the zero/one/two/few/many/other forms of 'tag'
+  |     plural form missing: tag_two — ar needs the zero/one/two/few/many/other forms of 'tag'
+  |     plural form missing: tag_zero — ar needs the zero/one/two/few/many/other forms of 'tag'
+  | ! ar: 4 warning(s):
+  |     : plural form missing: day.few — ar needs the zero/one/two/few/many/other forms of 'day'
+  |     : plural form missing: day.many — ar needs the zero/one/two/few/many/other forms of 'day'
+  |     : plural form missing: day.two — ar needs the zero/one/two/few/many/other forms of 'day'
+  |     : plural form missing: day.zero — ar needs the zero/one/two/few/many/other forms of 'day'
+  | ✗ 8 translation faults
+$ [py new -> new-noother] kaeris check --source en.json --langs ja  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ ja: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+--- noother/pl.json
+{
+  "msg_one": "enoy egassemy morfy {{name}}",
+  "msg_other": "{{count}} segassemy morfy {{name}}",
+  "tag_one": "metiy #{{count}}",
+  "tag_other": "smetiy #{{count}}",
+  "day": {
+    "one": "enoy yady",
+    "other": "{{count}} syady"
+  },
+  "title": "xobniy"
+}
+  => [GREEN] broken noother: en.json: no English source left in pl/ar/ja ({})
+  => [GREEN] broken noother: en.json: QA says neither {count} nor ICU
+  => [info] broken noother: en.json: check exits ({'pl': 1, 'ar': 1, 'ja': 0})
+
+=== broken noother en.po
+$ [py new -> new-noother] kaeris translate en.po --langs pl,ar,ja --no-only-new --no-tm  -> exit 0
+  | pl.po
+  | ar.po
+  | ja.po
+  | 
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | → Translating en.po → pl, ar, ja
+  | →   0%  ja
+  | → 100%  ja
+  | ✓ Wrote 3 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat\broken-noother-po
+  | ✓ Translation QA: no placeholder loss, no overflow risks
+  | → Run: openai/gpt-6-luna · Free · 3/3 languages · 4 strings · 0.0s
+  |      189 charged
+$ [py new -> new-noother] kaeris check --source en.po --langs pl  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ pl: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [py new -> new-noother] kaeris check --source en.po --langs ar  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ ar: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [py new -> new-noother] kaeris check --source en.po --langs ja  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ ja: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+--- noother/pl.po
+# Generated by KAERIS i18n Tool
+# Language: pl
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Language: pl\n"
+
+msgid "Don't delete %d file"
+msgid_plural "Don't delete %d files"
+msgstr[0] "nody'ty eteledy %d elify"
+msgstr[1] "nody'ty eteledy %d selify"
+msgstr[2] "nody'ty eteledy %d selify"
+
+msgid "One message"
+msgid_plural "%d messages"
+msgstr[0] "enoy egassemy"
+msgstr[1] "%d segassemy"
+msgstr[2] "%d segassemy"
+
+  => [GREEN] broken noother: en.po: no English source left in pl/ar/ja ({})
+  => [GREEN] broken noother: en.po: QA says neither {count} nor ICU
+  => [info] broken noother: en.po: check exits ({'pl': 0, 'ar': 0, 'ja': 0})
+
+=== broken short en.json
+$ [py new -> new-short] kaeris translate en.json --langs pl,ar,ja --no-only-new --no-tm  -> exit 0
+  | pl.json
+  | ar.json
+  | ja.json
+  | 
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | → Translating en.json → pl, ar, ja
+  | → 100%  ja
+  | → 100%  ar
+  | ✓ Wrote 3 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat\broken-short-json
+  | ✓ Translation QA: no placeholder loss, no overflow risks
+  | → Run: openai/gpt-6-luna · Free · 3/3 languages · 7 strings · 0.1s
+  |      342 charged
+$ [py new -> new-short] kaeris check --source en.json --langs pl  -> exit 1
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✗ pl: 4 translation fault(s):
+  |     plural form missing: msg_few — pl needs the one/few/many/other forms of 'msg'
+  |     plural form missing: msg_many — pl needs the one/few/many/other forms of 'msg'
+  |     plural form missing: tag_few — pl needs the one/few/many/other forms of 'tag'
+  |     plural form missing: tag_many — pl needs the one/few/many/other forms of 'tag'
+  | ! pl: 2 warning(s):
+  |     : plural form missing: day.few — pl needs the one/few/many/other forms of 'day'
+  |     : plural form missing: day.many — pl needs the one/few/many/other forms of 'day'
+  | ✗ 4 translation faults
+$ [py new -> new-short] kaeris check --source en.json --langs ar  -> exit 1
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✗ ar: 8 translation fault(s):
+  |     plural form missing: msg_few — ar needs the zero/one/two/few/many/other forms of 'msg'
+  |     plural form missing: msg_many — ar needs the zero/one/two/few/many/other forms of 'msg'
+  |     plural form missing: msg_two — ar needs the zero/one/two/few/many/other forms of 'msg'
+  |     plural form missing: msg_zero — ar needs the zero/one/two/few/many/other forms of 'msg'
+  |     plural form missing: tag_few — ar needs the zero/one/two/few/many/other forms of 'tag'
+  |     plural form missing: tag_many — ar needs the zero/one/two/few/many/other forms of 'tag'
+  |     plural form missing: tag_two — ar needs the zero/one/two/few/many/other forms of 'tag'
+  |     plural form missing: tag_zero — ar needs the zero/one/two/few/many/other forms of 'tag'
+  | ! ar: 4 warning(s):
+  |     : plural form missing: day.few — ar needs the zero/one/two/few/many/other forms of 'day'
+  |     : plural form missing: day.many — ar needs the zero/one/two/few/many/other forms of 'day'
+  |     : plural form missing: day.two — ar needs the zero/one/two/few/many/other forms of 'day'
+  |     : plural form missing: day.zero — ar needs the zero/one/two/few/many/other forms of 'day'
+  | ✗ 8 translation faults
+$ [py new -> new-short] kaeris check --source en.json --langs ja  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ ja: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+--- short/pl.json
+{
+  "msg_one": "enoy egassemy morfy {{name}}",
+  "msg_other": "{{count}} segassemy morfy {{name}}",
+  "tag_one": "metiy #{{count}}",
+  "tag_other": "smetiy #{{count}}",
+  "day": {
+    "one": "enoy yady",
+    "other": "{{count}} syady"
+  },
+  "title": "xobniy"
+}
+  => [GREEN] broken short: en.json: no English source left in pl/ar/ja ({})
+  => [GREEN] broken short: en.json: QA says neither {count} nor ICU
+  => [info] broken short: en.json: check exits ({'pl': 1, 'ar': 1, 'ja': 0})
+
+=== broken short en.po
+$ [py new -> new-short] kaeris translate en.po --langs pl,ar,ja --no-only-new --no-tm  -> exit 0
+  | pl.po
+  | ar.po
+  | ja.po
+  | 
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | → Translating en.po → pl, ar, ja
+  | → 100%  ar
+  | ✓ Wrote 3 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat\broken-short-po
+  | ✓ Translation QA: no placeholder loss, no overflow risks
+  | → Run: openai/gpt-6-luna · Free · 3/3 languages · 4 strings · 0.0s
+  |      189 charged
+$ [py new -> new-short] kaeris check --source en.po --langs pl  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ pl: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [py new -> new-short] kaeris check --source en.po --langs ar  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ ar: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [py new -> new-short] kaeris check --source en.po --langs ja  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ ja: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+--- short/pl.po
+# Generated by KAERIS i18n Tool
+# Language: pl
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Language: pl\n"
+
+msgid "Don't delete %d file"
+msgid_plural "Don't delete %d files"
+msgstr[0] "nody'ty eteledy %d elify"
+msgstr[1] "nody'ty eteledy %d selify"
+msgstr[2] "nody'ty eteledy %d selify"
+
+msgid "One message"
+msgid_plural "%d messages"
+msgstr[0] "enoy egassemy"
+msgstr[1] "%d segassemy"
+msgstr[2] "%d segassemy"
+
+  => [GREEN] broken short: en.po: no English source left in pl/ar/ja ({})
+  => [GREEN] broken short: en.po: QA says neither {count} nor ICU
+  => [info] broken short: en.po: check exits ({'pl': 0, 'ar': 0, 'ja': 0})
+
+######## B3: i18next _zero (other words: cart; the same words as _other: left), de/pl/ru
+
+=== B3 prod: 0.2.46 on the production server
+$ [py 046 -> prod] kaeris translate en.json --langs de,pl,ru --no-only-new --no-tm  -> exit 0
+  | de.json
+  | pl.json
+  | ru.json
+  | 
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/pretag-0246\kaeris\__init__.py 0.2.46
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | → Translating en.json → de, pl, ru
+  | → 100%  ru
+  | ✓ Wrote 3 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat\b3-prod
+  | ✓ Translation QA: no placeholder loss, no overflow risks
+  | → Run: openai/gpt-6-luna · Free · 3/3 languages · 6 strings · 0.0s
+  |      387 charged
+
+=== B3 normal: 0.2.47 on the new server, the model keeps =0
+$ [py new -> new] kaeris translate en.json --langs de,pl,ru --no-only-new --no-tm  -> exit 0
+  | de.json
+  | pl.json
+  | ru.json
+  | 
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | → Translating en.json → de, pl, ru
+  | → 100%  ru
+  | ✓ Wrote 3 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat\b3-normal
+  | ✓ Translation QA: no placeholder loss, no overflow risks
+  | → Run: openai/gpt-6-luna · Free · 3/3 languages · 6 strings · 0.0s
+  |      387 charged
+--- folded strings sent: [["de", "{count, plural, =0 {Your cart is empty ({{count}})} one {{{count}} item in your cart} other {{{count}} items in your cart}}"], ["de", "{count, plural, =0 {{{count}} files} one {{{count}} file} other {{{count}} files}}"], ["ru", "{count, plural, =0 {Your cart is empty ({{count}})} one {{{count}} item in your cart} other {{{count}} items in your cart}}"]]
+  => [GREEN] B3 normal: the zero form travels as =0 {…}, never as the CLDR category zero {…} (6 folded strings)
+  => [GREEN] B3 normal: keys sent on their own: none ([])
+--- normal/de.json
+{
+  "cart_zero": "ruoyy tracy siy ytpmey ({{count}})",
+  "cart_one": "{{count}} metiy niy ruoyy tracy",
+  "cart_other": "{{count}} smetiy niy ruoyy tracy",
+  "left_zero": "{{count}} selify",
+  "left_one": "{{count}} elify",
+  "left_other": "{{count}} selify"
+}
+  => [GREEN] B3 normal: de: cart_zero and left_zero are their own text, not the other text ({"cart_zero": "ruoyy tracy siy ytpmey ({{count}})", "left_zero": "{{count}} selify"})
+$ [py new -> new] kaeris check --source en.json --langs de  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ de: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.json --langs de  -> exit 0
+  | [stderr] ✓ de: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+  => [GREEN] B3 normal: de: check py/npm exit 0, every form there ({'py': 0, 'npm': 0})
+--- normal/pl.json
+{
+  "cart_zero": "ruoyy tracy siy ytpmey ({{count}})",
+  "cart_one": "{{count}} metiy niy ruoyy tracy",
+  "cart_few": "{{count}} smetiy niy ruoyy tracy fe",
+  "cart_many": "{{count}} smetiy niy ruoyy tracy ma",
+  "cart_other": "{{count}} smetiy niy ruoyy tracy",
+  "left_zero": "{{count}} selify",
+  "left_one": "{{count}} elify",
+  "left_few": "{{count}} selify fe",
+  "left_many": "{{count}} selify ma",
+  "left_other": "{{count}} selify"
+}
+  => [GREEN] B3 normal: pl: cart_zero and left_zero are their own text, not the other text ({"cart_zero": "ruoyy tracy siy ytpmey ({{count}})", "left_zero": "{{count}} selify"})
+$ [py new -> new] kaeris check --source en.json --langs pl  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ pl: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.json --langs pl  -> exit 0
+  | [stderr] ✓ pl: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+  => [GREEN] B3 normal: pl: check py/npm exit 0, every form there ({'py': 0, 'npm': 0})
+--- normal/ru.json
+{
+  "cart_zero": "шофс васу ит дмпуш ({{count}})",
+  "cart_one": "{{count}} иудм ин шофс васу",
+  "cart_few": "{{count}} иудмт ин шофс васу fe",
+  "cart_many": "{{count}} иудмт ин шофс васу ma",
+  "cart_other": "{{count}} иудмт ин шофс васу",
+  "left_zero": "{{count}} еилдт",
+  "left_one": "{{count}} еилд",
+  "left_few": "{{count}} еилдт fe",
+  "left_many": "{{count}} еилдт ma",
+  "left_other": "{{count}} еилдт"
+}
+  => [GREEN] B3 normal: ru: cart_zero and left_zero are their own text, not the other text ({"cart_zero": "шофс васу ит дмпуш ({{count}})", "left_zero": "{{count}} еилдт"})
+$ [py new -> new] kaeris check --source en.json --langs ru  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ ru: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.json --langs ru  -> exit 0
+  | [stderr] ✓ ru: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+  => [GREEN] B3 normal: ru: check py/npm exit 0, every form there ({'py': 0, 'npm': 0})
+  => [GREEN] B3 normal: de.json == 0.2.46 on the production server (de translated _zero right)
+
+=== B3 drop-zero: 0.2.47 on the new server, the model loses =0
+$ [py new -> new-drop-zero] kaeris translate en.json --langs de,pl,ru --no-only-new --no-tm  -> exit 0
+  | de.json
+  | pl.json
+  | ru.json
+  | 
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | → Translating en.json → de, pl, ru
+  | → 100%  ru
+  | → 100%  ru
+  | ✓ Wrote 3 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-compat\b3-drop-zero
+  | ✓ Translation QA: no placeholder loss, no overflow risks
+  | → Run: openai/gpt-6-luna · Free · 3/3 languages · 6 strings · 0.1s
+  |      387 charged
+--- folded strings sent: [["pl", "{count, plural, =0 {Your cart is empty ({{count}})} one {{{count}} item in your cart} other {{{count}} items in your cart}}"], ["pl", "{count, plural, =0 {{{count}} files} one {{{count}} file} other {{{count}} files}}"], ["de", "{count, plural, =0 {Your cart is empty ({{count}})} one {{{count}} item in your cart} other {{{count}} items in your cart}}"]]
+  => [GREEN] B3 drop-zero: the zero form travels as =0 {…}, never as the CLDR category zero {…} (6 folded strings)
+  => [GREEN] B3 drop-zero: keys sent on their own: each language's two _zero keys ([('de', 'cart_zero'), ('de', 'left_zero'), ('pl', 'cart_zero'), ('pl', 'left_zero'), ('ru', 'cart_zero'), ('ru', 'left_zero')])
+--- drop-zero/de.json
+{
+  "cart_zero": "ruoyy tracy siy ytpmey ({{count}})",
+  "cart_one": "{{count}} metiy niy ruoyy tracy",
+  "cart_other": "{{count}} smetiy niy ruoyy tracy",
+  "left_zero": "{{count}} selify",
+  "left_one": "{{count}} elify",
+  "left_other": "{{count}} selify"
+}
+  => [GREEN] B3 drop-zero: de: cart_zero and left_zero are their own text, not the other text ({"cart_zero": "ruoyy tracy siy ytpmey ({{count}})", "left_zero": "{{count}} selify"})
+$ [py new -> new-drop-zero] kaeris check --source en.json --langs de  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ de: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new-drop-zero] kaeris check --source en.json --langs de  -> exit 0
+  | [stderr] ✓ de: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+  => [GREEN] B3 drop-zero: de: check py/npm exit 0, every form there ({'py': 0, 'npm': 0})
+--- drop-zero/pl.json
+{
+  "cart_zero": "ruoyy tracy siy ytpmey ({{count}})",
+  "cart_one": "{{count}} metiy niy ruoyy tracy",
+  "cart_few": "{{count}} smetiy niy ruoyy tracy fe",
+  "cart_many": "{{count}} smetiy niy ruoyy tracy ma",
+  "cart_other": "{{count}} smetiy niy ruoyy tracy",
+  "left_zero": "{{count}} selify",
+  "left_one": "{{count}} elify",
+  "left_few": "{{count}} selify fe",
+  "left_many": "{{count}} selify ma",
+  "left_other": "{{count}} selify"
+}
+  => [GREEN] B3 drop-zero: pl: cart_zero and left_zero are their own text, not the other text ({"cart_zero": "ruoyy tracy siy ytpmey ({{count}})", "left_zero": "{{count}} selify"})
+$ [py new -> new-drop-zero] kaeris check --source en.json --langs pl  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ pl: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new-drop-zero] kaeris check --source en.json --langs pl  -> exit 0
+  | [stderr] ✓ pl: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+  => [GREEN] B3 drop-zero: pl: check py/npm exit 0, every form there ({'py': 0, 'npm': 0})
+--- drop-zero/ru.json
+{
+  "cart_zero": "шофс васу ит дмпуш ({{count}})",
+  "cart_one": "{{count}} иудм ин шофс васу",
+  "cart_few": "{{count}} иудмт ин шофс васу fe",
+  "cart_many": "{{count}} иудмт ин шофс васу ma",
+  "cart_other": "{{count}} иудмт ин шофс васу",
+  "left_zero": "{{count}} еилдт",
+  "left_one": "{{count}} еилд",
+  "left_few": "{{count}} еилдт fe",
+  "left_many": "{{count}} еилдт ma",
+  "left_other": "{{count}} еилдт"
+}
+  => [GREEN] B3 drop-zero: ru: cart_zero and left_zero are their own text, not the other text ({"cart_zero": "шофс васу ит дмпуш ({{count}})", "left_zero": "{{count}} еилдт"})
+$ [py new -> new-drop-zero] kaeris check --source en.json --langs ru  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ ru: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new-drop-zero] kaeris check --source en.json --langs ru  -> exit 0
+  | [stderr] ✓ ru: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+  => [GREEN] B3 drop-zero: ru: check py/npm exit 0, every form there ({'py': 0, 'npm': 0})
+  => [GREEN] B3 drop-zero: de.json == 0.2.46 on the production server (de translated _zero right)
+# stopped pids 14160 20944 21704 2128 19612 26340 16136 14920 20152 2520 20420 1904: rc [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+
+# SUMMARY
+  [info] B1: before (cli e721b68 + server 88ee3052): check exits — new/py/ja=0 new/py/zh=0 new/py/ko=0 new/npm/ja=0 new/npm/zh=0 new/npm/ko=0 046/py/ja=0 046/py/zh=0 046/py/ko=0 045/py/ja=0 045/py/zh=0 045/py/ko=0
+  [GREEN] B1: after: check 0.2.47 py/npm, 0.2.46, 0.2.45 on ja/zh/ko all exit 0 — new/py/ja=0 new/py/zh=0 new/py/ko=0 new/npm/ja=0 new/npm/zh=0 new/npm/ko=0 046/py/ja=0 046/py/zh=0 046/py/ko=0 045/py/ja=0 045/py/zh=0 045/py/ko=0
+  [GREEN] B1: after-npm: check 0.2.47 py/npm, 0.2.46, 0.2.45 on ja/zh/ko all exit 0 — new/py/ja=0 new/py/zh=0 new/py/ko=0 new/npm/ja=0 new/npm/zh=0 new/npm/ko=0 046/py/ja=0 046/py/zh=0 046/py/ko=0 045/py/ja=0 045/py/zh=0 045/py/ko=0
+  [GREEN] B1: ja.json after (0.2.47 + new server) == 0.2.46 + production server
+  [GREEN] B1: zh.json after (0.2.47 + new server) == 0.2.46 + production server
+  [GREEN] B1: ko.json after (0.2.47 + new server) == 0.2.46 + production server
+  [GREEN] B2: plural=n: check 0.2.47 py and npm exit 1 (strict, as 0.2.46) — cand/py=1 new/py=1 new/npm=1 046/py=1
+  [GREEN] B2: hebrew-formula-in-ru: check 0.2.47 py and npm exit 1 (strict, as 0.2.46) — cand/py=1 new/py=1 new/npm=1 046/py=1
+  [GREEN] B2: slot cases: py and npm agree with the expected verdict
+  [GREEN] old CLI + new server: --only-new: no dotted key at the root of pl.json
+  [GREEN] old CLI + new server: --only-new pl.json == old CLI + production
+  [GREEN] old CLI + new server: --only-new de.json == old CLI + production
+  [GREEN] old CLI + new server: full translate i18next pl,ar,ja: files == old CLI + production
+  [GREEN] old CLI + new server: full translate po pl,ar,ja: files == old CLI + production
+  [GREEN] new CLI + prod: --only-new: no dotted key at the root of pl.json
+  [GREEN] new CLI + prod: --only-new runs 2 and 3: up to date, nothing sent to the model — model calls per run [2, 0, 0], up-to-date [False, True, True]
+  [GREEN] new CLI + prod: pl.json == 0.2.46 on production
+  [GREEN] new CLI + prod: de.json == 0.2.46 on production
+  [info] new CLI + prod: check pl: forms production never writes are named (as with 0.2.46) — check exits {'pl': 1, 'de': 0}
+  [GREEN] new CLI + prod: a pl target with one/other only: up to date twice, no model call — model calls 0
+  [GREEN] new CLI + new server: --only-new: pl forms inside their objects
+  [GREEN] new CLI + new server: --only-new runs 2 and 3: up to date, nothing sent — model calls per run [2, 0, 0]
+  [GREEN] new CLI + new server: check pl and de exit 0 — {'pl': 0, 'de': 0}
+  [GREEN] new CLI + new server: set completed alone: 'sending … whole', no 'with them'; beside an edit: 'sent with them' — → pl: sending 2 key(s) of plural sets whole, so every form pl needs is written / → pl: 1 more key(s) of plural sets sent with them, so every form pl needs is written
+  [info] memory: before: CLI said 10 remembered — model calls 1
+  [GREEN] memory: second full run: remembered lines counted = 10 (de 4, ja 4, pl 2: the pl set is translated again) — said 10; model calls 1
+  [GREEN] new CLI + new server: npm translate pl: items_few/items_many, check exit 0
+  [GREEN] broken plain: en.json: no English source left in pl/ar/ja — {}
+  [GREEN] broken plain: en.json: QA says neither {count} nor ICU
+  [info] broken plain: en.json: check exits — {'pl': 1, 'ar': 1, 'ja': 0}
+  [GREEN] broken plain: en.po: no English source left in pl/ar/ja — {}
+  [GREEN] broken plain: en.po: QA says neither {count} nor ICU
+  [info] broken plain: en.po: check exits — {'pl': 0, 'ar': 0, 'ja': 0}
+  [GREEN] broken noother: en.json: no English source left in pl/ar/ja — {}
+  [GREEN] broken noother: en.json: QA says neither {count} nor ICU
+  [info] broken noother: en.json: check exits — {'pl': 1, 'ar': 1, 'ja': 0}
+  [GREEN] broken noother: en.po: no English source left in pl/ar/ja — {}
+  [GREEN] broken noother: en.po: QA says neither {count} nor ICU
+  [info] broken noother: en.po: check exits — {'pl': 0, 'ar': 0, 'ja': 0}
+  [GREEN] broken short: en.json: no English source left in pl/ar/ja — {}
+  [GREEN] broken short: en.json: QA says neither {count} nor ICU
+  [info] broken short: en.json: check exits — {'pl': 1, 'ar': 1, 'ja': 0}
+  [GREEN] broken short: en.po: no English source left in pl/ar/ja — {}
+  [GREEN] broken short: en.po: QA says neither {count} nor ICU
+  [info] broken short: en.po: check exits — {'pl': 0, 'ar': 0, 'ja': 0}
+  [GREEN] B3 normal: the zero form travels as =0 {…}, never as the CLDR category zero {…} — 6 folded strings
+  [GREEN] B3 normal: keys sent on their own: none — []
+  [GREEN] B3 normal: de: cart_zero and left_zero are their own text, not the other text — {"cart_zero": "ruoyy tracy siy ytpmey ({{count}})", "left_zero": "{{count}} selify"}
+  [GREEN] B3 normal: de: check py/npm exit 0, every form there — {'py': 0, 'npm': 0}
+  [GREEN] B3 normal: pl: cart_zero and left_zero are their own text, not the other text — {"cart_zero": "ruoyy tracy siy ytpmey ({{count}})", "left_zero": "{{count}} selify"}
+  [GREEN] B3 normal: pl: check py/npm exit 0, every form there — {'py': 0, 'npm': 0}
+  [GREEN] B3 normal: ru: cart_zero and left_zero are their own text, not the other text — {"cart_zero": "шофс васу ит дмпуш ({{count}})", "left_zero": "{{count}} еилдт"}
+  [GREEN] B3 normal: ru: check py/npm exit 0, every form there — {'py': 0, 'npm': 0}
+  [GREEN] B3 normal: de.json == 0.2.46 on the production server (de translated _zero right)
+  [GREEN] B3 drop-zero: the zero form travels as =0 {…}, never as the CLDR category zero {…} — 6 folded strings
+  [GREEN] B3 drop-zero: keys sent on their own: each language's two _zero keys — [('de', 'cart_zero'), ('de', 'left_zero'), ('pl', 'cart_zero'), ('pl', 'left_zero'), ('ru', 'cart_zero'), ('ru', 'left_zero')]
+  [GREEN] B3 drop-zero: de: cart_zero and left_zero are their own text, not the other text — {"cart_zero": "ruoyy tracy siy ytpmey ({{count}})", "left_zero": "{{count}} selify"}
+  [GREEN] B3 drop-zero: de: check py/npm exit 0, every form there — {'py': 0, 'npm': 0}
+  [GREEN] B3 drop-zero: pl: cart_zero and left_zero are their own text, not the other text — {"cart_zero": "ruoyy tracy siy ytpmey ({{count}})", "left_zero": "{{count}} selify"}
+  [GREEN] B3 drop-zero: pl: check py/npm exit 0, every form there — {'py': 0, 'npm': 0}
+  [GREEN] B3 drop-zero: ru: cart_zero and left_zero are their own text, not the other text — {"cart_zero": "шофс васу ит дмпуш ({{count}})", "left_zero": "{{count}} еилдт"}
+  [GREEN] B3 drop-zero: ru: check py/npm exit 0, every form there — {'py': 0, 'npm': 0}
+  [GREEN] B3 drop-zero: de.json == 0.2.46 on the production server (de translated _zero right)
+# 54/54 GREEN

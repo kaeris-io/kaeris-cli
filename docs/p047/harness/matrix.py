@@ -85,7 +85,9 @@ def wait_up(url, secs=60):
 def run(cmd, cwd, env):
     p = subprocess.run(cmd, cwd=cwd, env=env, capture_output=True, text=True, encoding="utf-8",
                        errors="replace", timeout=300)
-    return p.returncode, (p.stdout + ("\n[stderr] " + p.stderr if p.stderr.strip() else "")).strip()
+    # run_cli.py's "using <tree>/kaeris/__init__.py" line: the header names it once per run
+    err = "\n".join(l for l in p.stderr.splitlines() if not l.startswith("using "))
+    return p.returncode, (p.stdout + ("\n[stderr] " + err if err.strip() else "")).strip()
 
 
 def plural_lines(text):
@@ -116,10 +118,11 @@ def main():
         cli_env = dict(os.environ, PYTHONUTF8="1", CI="1",
                        KAERIS_API_URL=f"http://127.0.0.1:{API_PORT}", PYTHONPATH=CLI)
         cli_env.pop("KAERIS_API_KEY", None)
+        runner = os.path.join(HERE, "run_cli.py")      # the tree's kaeris, not an installed one
         say("# kaeris run from: " + subprocess.run(
-            [sys.executable, "-c", "import kaeris; print(kaeris.__file__, kaeris.__version__)"],
-            env=cli_env, capture_output=True, text=True).stdout.strip())
-        tools = {"py": [sys.executable, "-m", "kaeris"],
+            [sys.executable, runner, CLI, "--which"], cwd=work,
+            env=cli_env, capture_output=True, text=True).stderr.strip())
+        tools = {"py": [sys.executable, runner, CLI],
                  "npm": ["node", os.path.join(CLI, "npm", "bin", "kaeris.js")]}
         summary = []
         d = os.path.join(work, "cy-probe")

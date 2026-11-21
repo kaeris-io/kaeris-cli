@@ -8,7 +8,8 @@ round-3 acceptance run (pl ICU -> one/few/many/other). Any other call (repairs, 
 
 STUB_MODE (critic 21.11), how an ICU plural is answered: normal (above); plain (the `other` text,
 no plural at all); noother (a plural without `other`); short (one/other only, whatever the
-language needs). STUB_LOG=<file>: every cargo sent to the model, one JSON line each.
+language needs); drop-zero (critic round 2, B3: the exact `=0` arm left out, the language's
+categories kept). STUB_LOG=<file>: every cargo sent to the model, one JSON line each.
 """
 import os
 import json
@@ -86,7 +87,7 @@ def translate(text, lang):
         base = src.get(cat) or src.get("one" if cat == "one" else "other")
         out.append(f"{cat} {{{plain(base, lang)}{'' if cat in ('one', 'other') else ' ' + cat[:2]}}}")
     for label, body in src.items():
-        if label.startswith("="):
+        if label.startswith("=") and MODE != "drop-zero":
             out.insert(0, f"{label} {{{plain(body, lang)}}}")
     return "{" + var + ", plural, " + " ".join(out) + "}"
 

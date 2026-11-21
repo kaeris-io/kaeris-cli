@@ -1,0 +1,214 @@
+# pids 14452 7400 16416 18588 2984 11360 23028 15424 13668 3376 20124 24716
+# cli new: C:/Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121 @ 43dcd9f docs(p047): round 2 results on cli d9b0689 + server 636c089a - e2e matri
+# cli cand: C:/Users/Inzagi/AppData/Local/Temp/claude/a43205edf0b1eb40/1d41411c-380d-43ba-80ea-359c271f4a08/scratchpad/r3/cli-43dcd9f @ 43dcd9f docs(p047): round 2 results on cli d9b0689 + server 636c089a - e2e matri
+# cli 046: C:/Users/Inzagi/projects/kaeris/cli/.claude/worktrees/pretag-0246 @ d5535f0 Merge branch 'release-0.2.45-pluralwarn' into release-0.2.46-pluralwarn:
+# cli 045: C:/Users/Inzagi/projects/kaeris/cli/.claude/worktrees/pretag-1119 @ 4ff7020 test: no babel-dependent test (CI allows no skip): the CLDR table is che
+# server new: C:/Users/Inzagi/AppData/Local/Temp/claude/a43205edf0b1eb40/1d41411c-380d-43ba-80ea-359c271f4a08/scratchpad/r3/srv-c9118a03 @ c9118a03 docs(p047): full pytest 4 groups, 94114a89 (cli d5535f0) vs 636c089a (c
+# server cand: C:/Users/Inzagi/AppData/Local/Temp/claude/a43205edf0b1eb40/1d41411c-380d-43ba-80ea-359c271f4a08/scratchpad/r3/srv-c9118a03 @ c9118a03 docs(p047): full pytest 4 groups, 94114a89 (cli d5535f0) vs 636c089a (c
+# server prod: C:/Users/Inzagi/AppData/Local/Temp/claude/a43205edf0b1eb40/1d41411c-380d-43ba-80ea-359c271f4a08/scratchpad/r3/srv-94114a89 @ 94114a89 docs(paytail2-r4): round 4 summary and full pytest compare - 105 = 105,
+# kaeris new runs from: using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+# kaeris cand runs from: using C:\Users/Inzagi/AppData/Local/Temp/claude/a43205edf0b1eb40/1d41411c-380d-43ba-80ea-359c271f4a08/scratchpad/r3/cli-43dcd9f\kaeris\__init__.py 0.2.47
+# kaeris 046 runs from: using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/pretag-0246\kaeris\__init__.py 0.2.46
+# kaeris 045 runs from: using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/pretag-1119\kaeris\__init__.py 0.2.45
+# /api/config plural_forms: {'new': 'cldr', 'cand': 'cldr', 'prod': None}
+
+######## B3: i18next _zero (other words: cart; the same words as _other: left), de/pl/ru
+
+=== B3 prod: 0.2.46 on the production server
+$ [py 046 -> prod] kaeris translate en.json --langs de,pl,ru --no-only-new --no-tm  -> exit 0
+  | de.json
+  | pl.json
+  | ru.json
+  | 
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/pretag-0246\kaeris\__init__.py 0.2.46
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | → Translating en.json → de, pl, ru
+  | → 100%  ru
+  | ✓ Wrote 3 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-red\b3-prod
+  | ✓ Translation QA: no placeholder loss, no overflow risks
+  | → Run: openai/gpt-6-luna · Free · 3/3 languages · 6 strings · 0.0s
+  |      387 charged
+
+=== B3 normal: 0.2.47 on the new server, the model keeps =0
+$ [py new -> new] kaeris translate en.json --langs de,pl,ru --no-only-new --no-tm  -> exit 0
+  | de.json
+  | pl.json
+  | ru.json
+  | 
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | → Translating en.json → de, pl, ru
+  | → 100%  ru
+  | ✓ Wrote 3 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-red\b3-normal
+  | ✓ Translation QA: no placeholder loss, no overflow risks
+  | → Run: openai/gpt-6-luna · Free · 3/3 languages · 6 strings · 0.0s
+  |      387 charged
+--- folded strings sent: [["de", "{count, plural, zero {Your cart is empty ({{count}})} one {{{count}} item in your cart} other {{{count}} items in your cart}}"], ["de", "{count, plural, zero {{{count}} files} one {{{count}} file} other {{{count}} files}}"], ["pl", "{count, plural, zero {Your cart is empty ({{count}})} one {{{count}} item in your cart} other {{{count}} items in your cart}}"]]
+  => [RED] B3 normal: the zero form travels as =0 {…}, never as the CLDR category zero {…} (6 folded strings)
+  => [GREEN] B3 normal: keys sent on their own: none ([])
+--- normal/de.json
+{
+  "cart_zero": "{{count}} smetiy niy ruoyy tracy",
+  "cart_one": "{{count}} metiy niy ruoyy tracy",
+  "cart_other": "{{count}} smetiy niy ruoyy tracy",
+  "left_zero": "{{count}} selify",
+  "left_one": "{{count}} elify",
+  "left_other": "{{count}} selify"
+}
+  => [RED] B3 normal: de: cart_zero and left_zero are their own text, not the other text ({"cart_zero": "{{count}} smetiy niy ruoyy tracy", "left_zero": "{{count}} selify"})
+$ [py new -> new] kaeris check --source en.json --langs de  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ de: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.json --langs de  -> exit 0
+  | [stderr] ✓ de: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+  => [GREEN] B3 normal: de: check py/npm exit 0, every form there ({'py': 0, 'npm': 0})
+--- normal/pl.json
+{
+  "cart_zero": "{{count}} smetiy niy ruoyy tracy",
+  "cart_one": "{{count}} metiy niy ruoyy tracy",
+  "cart_few": "{{count}} smetiy niy ruoyy tracy fe",
+  "cart_many": "{{count}} smetiy niy ruoyy tracy ma",
+  "cart_other": "{{count}} smetiy niy ruoyy tracy",
+  "left_zero": "{{count}} selify",
+  "left_one": "{{count}} elify",
+  "left_few": "{{count}} selify fe",
+  "left_many": "{{count}} selify ma",
+  "left_other": "{{count}} selify"
+}
+  => [RED] B3 normal: pl: cart_zero and left_zero are their own text, not the other text ({"cart_zero": "{{count}} smetiy niy ruoyy tracy", "left_zero": "{{count}} selify"})
+$ [py new -> new] kaeris check --source en.json --langs pl  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ pl: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.json --langs pl  -> exit 0
+  | [stderr] ✓ pl: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+  => [GREEN] B3 normal: pl: check py/npm exit 0, every form there ({'py': 0, 'npm': 0})
+--- normal/ru.json
+{
+  "cart_zero": "{{count}} иудмт ин шофс васу",
+  "cart_one": "{{count}} иудм ин шофс васу",
+  "cart_few": "{{count}} иудмт ин шофс васу fe",
+  "cart_many": "{{count}} иудмт ин шофс васу ma",
+  "cart_other": "{{count}} иудмт ин шофс васу",
+  "left_zero": "{{count}} еилдт",
+  "left_one": "{{count}} еилд",
+  "left_few": "{{count}} еилдт fe",
+  "left_many": "{{count}} еилдт ma",
+  "left_other": "{{count}} еилдт"
+}
+  => [RED] B3 normal: ru: cart_zero and left_zero are their own text, not the other text ({"cart_zero": "{{count}} иудмт ин шофс васу", "left_zero": "{{count}} еилдт"})
+$ [py new -> new] kaeris check --source en.json --langs ru  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ ru: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.json --langs ru  -> exit 0
+  | [stderr] ✓ ru: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+  => [GREEN] B3 normal: ru: check py/npm exit 0, every form there ({'py': 0, 'npm': 0})
+  => [RED] B3 normal: de.json == 0.2.46 on the production server (de translated _zero right)
+
+=== B3 drop-zero: 0.2.47 on the new server, the model loses =0
+$ [py new -> new-drop-zero] kaeris translate en.json --langs de,pl,ru --no-only-new --no-tm  -> exit 0
+  | de.json
+  | pl.json
+  | ru.json
+  | 
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | → Translating en.json → de, pl, ru
+  | → 100%  ru
+  | ✓ Wrote 3 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\1d41411c-380d-43ba-80ea-359c271f4a08\scratchpad\r3\runs-red\b3-drop-zero
+  | ✓ Translation QA: no placeholder loss, no overflow risks
+  | → Run: openai/gpt-6-luna · Free · 3/3 languages · 6 strings · 0.0s
+  |      387 charged
+--- folded strings sent: [["de", "{count, plural, zero {Your cart is empty ({{count}})} one {{{count}} item in your cart} other {{{count}} items in your cart}}"], ["de", "{count, plural, zero {{{count}} files} one {{{count}} file} other {{{count}} files}}"], ["ru", "{count, plural, zero {Your cart is empty ({{count}})} one {{{count}} item in your cart} other {{{count}} items in your cart}}"]]
+  => [RED] B3 drop-zero: the zero form travels as =0 {…}, never as the CLDR category zero {…} (4 folded strings)
+  => [RED] B3 drop-zero: keys sent on their own: each language's two _zero keys ([])
+--- drop-zero/de.json
+{
+  "cart_zero": "{{count}} smetiy niy ruoyy tracy",
+  "cart_one": "{{count}} metiy niy ruoyy tracy",
+  "cart_other": "{{count}} smetiy niy ruoyy tracy",
+  "left_zero": "{{count}} selify",
+  "left_one": "{{count}} elify",
+  "left_other": "{{count}} selify"
+}
+  => [RED] B3 drop-zero: de: cart_zero and left_zero are their own text, not the other text ({"cart_zero": "{{count}} smetiy niy ruoyy tracy", "left_zero": "{{count}} selify"})
+$ [py new -> new-drop-zero] kaeris check --source en.json --langs de  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ de: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new-drop-zero] kaeris check --source en.json --langs de  -> exit 0
+  | [stderr] ✓ de: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+  => [GREEN] B3 drop-zero: de: check py/npm exit 0, every form there ({'py': 0, 'npm': 0})
+--- drop-zero/pl.json
+{
+  "cart_zero": "{{count}} smetiy niy ruoyy tracy",
+  "cart_one": "{{count}} metiy niy ruoyy tracy",
+  "cart_few": "{{count}} smetiy niy ruoyy tracy fe",
+  "cart_many": "{{count}} smetiy niy ruoyy tracy ma",
+  "cart_other": "{{count}} smetiy niy ruoyy tracy",
+  "left_zero": "{{count}} selify",
+  "left_one": "{{count}} elify",
+  "left_few": "{{count}} selify fe",
+  "left_many": "{{count}} selify ma",
+  "left_other": "{{count}} selify"
+}
+  => [RED] B3 drop-zero: pl: cart_zero and left_zero are their own text, not the other text ({"cart_zero": "{{count}} smetiy niy ruoyy tracy", "left_zero": "{{count}} selify"})
+$ [py new -> new-drop-zero] kaeris check --source en.json --langs pl  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ pl: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new-drop-zero] kaeris check --source en.json --langs pl  -> exit 0
+  | [stderr] ✓ pl: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+  => [GREEN] B3 drop-zero: pl: check py/npm exit 0, every form there ({'py': 0, 'npm': 0})
+--- drop-zero/ru.json
+{
+  "cart_zero": "{{count}} иудмт ин шофс васу",
+  "cart_one": "{{count}} иудм ин шофс васу",
+  "cart_few": "{{count}} иудмт ин шофс васу fe",
+  "cart_many": "{{count}} иудмт ин шофс васу ma",
+  "cart_other": "{{count}} иудмт ин шофс васу",
+  "left_zero": "{{count}} еилдт",
+  "left_one": "{{count}} еилд",
+  "left_few": "{{count}} еилдт fe",
+  "left_many": "{{count}} еилдт ma",
+  "left_other": "{{count}} еилдт"
+}
+  => [RED] B3 drop-zero: ru: cart_zero and left_zero are their own text, not the other text ({"cart_zero": "{{count}} иудмт ин шофс васу", "left_zero": "{{count}} еилдт"})
+$ [py new -> new-drop-zero] kaeris check --source en.json --langs ru  -> exit 0
+  | [stderr] using C:\Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ ru: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new-drop-zero] kaeris check --source en.json --langs ru  -> exit 0
+  | [stderr] ✓ ru: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+  => [GREEN] B3 drop-zero: ru: check py/npm exit 0, every form there ({'py': 0, 'npm': 0})
+  => [RED] B3 drop-zero: de.json == 0.2.46 on the production server (de translated _zero right)
+# stopped pids 14452 7400 16416 18588 2984 11360 23028 15424 13668 3376 20124 24716: rc [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+
+# SUMMARY
+  [RED] B3 normal: the zero form travels as =0 {…}, never as the CLDR category zero {…} — 6 folded strings
+  [GREEN] B3 normal: keys sent on their own: none — []
+  [RED] B3 normal: de: cart_zero and left_zero are their own text, not the other text — {"cart_zero": "{{count}} smetiy niy ruoyy tracy", "left_zero": "{{count}} selify"}
+  [GREEN] B3 normal: de: check py/npm exit 0, every form there — {'py': 0, 'npm': 0}
+  [RED] B3 normal: pl: cart_zero and left_zero are their own text, not the other text — {"cart_zero": "{{count}} smetiy niy ruoyy tracy", "left_zero": "{{count}} selify"}
+  [GREEN] B3 normal: pl: check py/npm exit 0, every form there — {'py': 0, 'npm': 0}
+  [RED] B3 normal: ru: cart_zero and left_zero are their own text, not the other text — {"cart_zero": "{{count}} иудмт ин шофс васу", "left_zero": "{{count}} еилдт"}
+  [GREEN] B3 normal: ru: check py/npm exit 0, every form there — {'py': 0, 'npm': 0}
+  [RED] B3 normal: de.json == 0.2.46 on the production server (de translated _zero right)
+  [RED] B3 drop-zero: the zero form travels as =0 {…}, never as the CLDR category zero {…} — 4 folded strings
+  [RED] B3 drop-zero: keys sent on their own: each language's two _zero keys — []
+  [RED] B3 drop-zero: de: cart_zero and left_zero are their own text, not the other text — {"cart_zero": "{{count}} smetiy niy ruoyy tracy", "left_zero": "{{count}} selify"}
+  [GREEN] B3 drop-zero: de: check py/npm exit 0, every form there — {'py': 0, 'npm': 0}
+  [RED] B3 drop-zero: pl: cart_zero and left_zero are their own text, not the other text — {"cart_zero": "{{count}} smetiy niy ruoyy tracy", "left_zero": "{{count}} selify"}
+  [GREEN] B3 drop-zero: pl: check py/npm exit 0, every form there — {'py': 0, 'npm': 0}
+  [RED] B3 drop-zero: ru: cart_zero and left_zero are their own text, not the other text — {"cart_zero": "{{count}} иудмт ин шофс васу", "left_zero": "{{count}} еилдт"}
+  [GREEN] B3 drop-zero: ru: check py/npm exit 0, every form there — {'py': 0, 'npm': 0}
+  [RED] B3 drop-zero: de.json == 0.2.46 on the production server (de translated _zero right)
+# 7/18 GREEN

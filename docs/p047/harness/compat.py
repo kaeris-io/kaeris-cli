@@ -6,8 +6,8 @@ usage: python compat.py <out.txt> <runs-dir> CLI_NEW CLI_CAND CLI_046 CLI_045 SR
   CLI_CAND e721b68 (round-1 candidate)                 SRV_CAND 88ee3052 (round-1 candidate)
   CLI_046  d5535f0 (0.2.46)  CLI_045 0.2.45            SRV_PROD 94114a89 (production)
 
-Starts four stubs (normal, plain, noother, short) and six uvicorns (new, cand, prod, and new on
-each broken stub), runs every case in a fresh folder under <runs-dir>, writes the log to
+Starts five stubs (normal, plain, noother, short, drop-zero) and seven uvicorns (new, cand, prod,
+and new on each broken stub), runs every case in a fresh folder under <runs-dir>, writes the log to
 <out.txt>, and stops every child by its own PID. Python CLIs run from their tree (PYTHONPATH;
 each one's kaeris.__file__ is printed), npm from <cli>/npm/bin/kaeris.js.
 """
@@ -26,10 +26,11 @@ OUT, RUNS = sys.argv[1], sys.argv[2]
 CLI = dict(zip(("new", "cand", "046", "045"), sys.argv[3:7]))
 SRV = dict(zip(("new", "cand", "prod"), sys.argv[7:10]))
 VENV_PY = r"C:\Users\Inzagi\projects\kaeris\i18n_tool\.venv\Scripts\python.exe"
-STUBS = {"normal": 18960, "plain": 18961, "noother": 18962, "short": 18963}
+STUBS = {"normal": 18960, "plain": 18961, "noother": 18962, "short": 18963, "drop-zero": 18970}
 SERVERS = {"new": ("new", "normal", 18964), "cand": ("cand", "normal", 18965),
            "prod": ("prod", "normal", 18966), "new-plain": ("new", "plain", 18967),
-           "new-noother": ("new", "noother", 18968), "new-short": ("new", "short", 18969)}
+           "new-noother": ("new", "noother", 18968), "new-short": ("new", "short", 18969),
+           "new-drop-zero": ("new", "drop-zero", 18971)}
 LOG, ROWS = [], []
 
 
@@ -65,7 +66,7 @@ def cli_env(cli, server):
 
 
 def run(cli, server, args, cwd, tool="py", show=True):
-    cmd = ([sys.executable, "-m", "kaeris"] if tool == "py"
+    cmd = ([sys.executable, os.path.join(HERE, "run_cli.py"), CLI[cli]] if tool == "py"
            else ["node", os.path.join(CLI[cli], "npm", "bin", "kaeris.js")]) + args
     p = subprocess.run(cmd, cwd=cwd, env=cli_env(cli, server), capture_output=True, text=True,
                        encoding="utf-8", errors="replace", timeout=300)
@@ -384,6 +385,61 @@ def case_broken():
             row(f"broken {mode}", f"{fn}: check exits", "info", str(checks))
 
 
+# ── B3 (critic round 2): a form the answer lacks never takes another form's text ───────────
+
+B3_SRC = {"cart_zero": "Your cart is empty ({{count}})", "cart_one": "{{count}} item in your cart",
+          "cart_other": "{{count}} items in your cart",
+          "left_zero": "{{count}} files", "left_one": "{{count}} file", "left_other": "{{count}} files"}
+
+
+def cargo_since(mode, n0):
+    p = os.path.join(RUNS, f"_stub-{mode}.jsonl")
+    lines = open(p, encoding="utf-8").read().splitlines() if os.path.isfile(p) else []
+    return [json.loads(l) for l in lines[n0:]]
+
+
+def case_b3():
+    say("\n######## B3: i18next _zero (other words: cart; the same words as _other: left), de/pl/ru")
+    sys.path.insert(0, HERE)
+    import stub_model                      # the stub's own wording: what a form's translation is
+    langs = ["de", "pl", "ru"]
+    d_prod = fresh("b3-prod")
+    write(d_prod, "en.json", B3_SRC)
+    say("\n=== B3 prod: 0.2.46 on the production server")
+    run("046", "prod", ["translate", "en.json", "--langs", ",".join(langs), "--no-only-new", "--no-tm"], d_prod)
+    for mode, srv in (("normal", "new"), ("drop-zero", "new-drop-zero")):
+        d = fresh(f"b3-{mode}")
+        write(d, "en.json", B3_SRC)
+        say(f"\n=== B3 {mode}: 0.2.47 on the new server, the model {'keeps' if mode == 'normal' else 'loses'} =0")
+        n0 = stub_calls(mode)
+        run("new", srv, ["translate", "en.json", "--langs", ",".join(langs), "--no-only-new", "--no-tm"], d)
+        cargo = cargo_since(mode, n0)
+        folded = [(c["lang"], v) for c in cargo for v in c["cargo"].values() if ", plural," in str(v)]
+        say("--- folded strings sent: " + json.dumps(folded[:3], ensure_ascii=False))
+        row(f"B3 {mode}", "the zero form travels as =0 {…}, never as the CLDR category zero {…}",
+            "GREEN" if folded and all("=0 {" in v and not re.search(r"(?<![\w=])zero \{", v) for _, v in folded)
+            else "RED", f"{len(folded)} folded strings")
+        alone = sorted((c["lang"], k) for c in cargo for k, v in c["cargo"].items() if ", plural," not in str(v))
+        want_alone = sorted((l, k) for l in langs for k in ("cart_zero", "left_zero")) if mode == "drop-zero" else []
+        row(f"B3 {mode}", "keys sent on their own: " + ("each language's two _zero keys" if want_alone else "none"),
+            "GREEN" if alone == want_alone else "RED", str(alone))
+        for lang in langs:
+            out = json.loads(read(d, f"{lang}.json") or "{}")
+            say(f"--- {mode}/{lang}.json\n{json.dumps(out, ensure_ascii=False, indent=2)}")
+            want = {k: stub_model.plain(B3_SRC[k], lang) for k in ("cart_zero", "left_zero")}
+            got = {k: out.get(k) for k in want}
+            row(f"B3 {mode}", f"{lang}: cart_zero and left_zero are their own text, not the other text",
+                "GREEN" if got == want and out.get("cart_zero") != out.get("cart_other") else "RED",
+                json.dumps(got, ensure_ascii=False))
+            codes = {t: run("new", srv, ["check", "--source", "en.json", "--langs", lang], d, t)[0]
+                     for t in ("py", "npm")}
+            need = {"cart_few", "cart_many", "left_few", "left_many"} if lang != "de" else set()
+            row(f"B3 {mode}", f"{lang}: check py/npm exit 0, every form there",
+                "GREEN" if not any(codes.values()) and need <= set(out) else "RED", str(codes))
+        row(f"B3 {mode}", "de.json == 0.2.46 on the production server (de translated _zero right)",
+            "GREEN" if same_file(d, d_prod, "de.json") else "RED")
+
+
 def main():
     os.makedirs(RUNS, exist_ok=True)
     procs = []
@@ -410,8 +466,8 @@ def main():
             say(f"# {name}: {path} @ {head}")
         for k in CLI:
             say(f"# kaeris {k} runs from: " + subprocess.run(
-                [sys.executable, "-c", "import kaeris; print(kaeris.__file__, kaeris.__version__)"],
-                env=cli_env(k, "new"), capture_output=True, text=True).stdout.strip())
+                [sys.executable, os.path.join(HERE, "run_cli.py"), CLI[k], "--which"], cwd=RUNS,
+                env=cli_env(k, "new"), capture_output=True, text=True).stderr.strip())
         for name, (_, _, port) in SERVERS.items():
             if not wait_up(f"http://127.0.0.1:{port}/api/languages"):
                 say(f"server {name} did not come up")
@@ -422,7 +478,7 @@ def main():
         only = set(os.environ.get("COMPAT_ONLY", "").split(",")) - {""}
         for name, fn in (("b1", case_b1), ("b2", case_b2), ("oldnew", case_old_cli_new_server),
                          ("newprod", case_new_cli_prod_server), ("newnew", case_new_new),
-                         ("broken", case_broken)):
+                         ("broken", case_broken), ("b3", case_b3)):
             if not only or name in only:
                 fn()
     finally:
