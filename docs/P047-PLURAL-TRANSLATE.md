@@ -84,6 +84,32 @@ Not in scope, written down: `.po` slots beyond the source's two get a copy of th
 slots to categories). Ordinal categories of the target (cy needs six) are not added for the same
 reason `check` does not ask for them: no ordinal table. `.stringsdict` is not a supported format.
 
+## Result (21.11)
+
+Branches `plural-translate-1121` in both repos. Server: 5b43274f (test, red: 10 failed / 4
+passed on 94114a89, `docs/p047/server-test-red-94114a89.txt` there), cc4b3c09 (fix), 72d90db9
+(the accepted variant-B server patch carried along, so detector-parity against this branch can
+pass; drop it if the server release brings that patch another way), 9826f884 (a broken answer
+is named in QA). Parity locally (CLI tests beside this backend, `KAERIS_BACKEND` set):
+detector/encoding/xcstrings/formats parity 47 passed, nothing skipped. CLI: 9d0b67f (test, red: 4 failed / 2 passed on d5535f0, `docs/p047/cli-test-red-d5535f0.txt`),
+63319ec (fix), 5655796 (parity test).
+
+`translate` -> `check`, same local stub run as above (`docs/p047/e2e-before-d5535f0-94114a89.txt`
+vs `docs/p047/e2e-after.txt`, harness in `docs/p047/harness/`), py and npm, 11 source shapes,
+pl/ru/ar/ja, plus `--only-new` twice on targets cut back to one/other: **64/100 green before,
+100/100 after**; the second `--only-new` run is "up to date". Welsh: refused by the server in
+both (not one of its languages).
+
+Left as it is, on purpose:
+- `.po` slots past the source's two are a copy of the plural form (see "Not in scope").
+- With project memory, a Polish/Russian/Arabic plural set is translated again on every full run
+  (the memory holds only the source's forms; German and Japanese sets are reused). The CLI line
+  "N of them come from the project memory" still counts those members.
+- `--only-new` merges a new form at the end of its object (`items_few` after `title` in a flat
+  file); the file is valid, only the order differs from a full run.
+- A model answer that is no longer one plural keeps the source forms (Android's rule since D3),
+  and the run's QA names it in every language (server 9826f884).
+
 ## vs the leaders (missing plural forms when machine-translating)
 
 From the vendors' documentation (21.11, web; nothing run, no accounts):
