@@ -1,0 +1,828 @@
+# before: stub pid 24124, api pid 24936
+# cli C:/Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121 @ d5535f0 Merge branch 'release-0.2.45-pluralwarn' into release-0.2.46-pluralwarn: no babel ; server C:/Users/Inzagi/projects/kaeris/i18n_tool/.claude/worktrees/plural-translate-1121 @ 94114a89 docs(paytail2-r4): round 4 summary and full pytest compare - 105 = 105, no new fa
+$ kaeris translate en.json --langs cy -> exit 1
+  | [stderr] ✗ Unknown language code: cy. Run 'kaeris languages' for the list (codes like de, ja, pt-PT, zh-Hant).
+
+=== [py] i18next: en.json
+$ kaeris translate en.json --langs pl,ru,ar,ja  -> exit 0
+$ kaeris check --source en.json --langs pl  -> exit 1  RED
+  | plural form missing: items_few — pl needs the one/few/many/other forms of 'items'
+  | plural form missing: items_many — pl needs the one/few/many/other forms of 'items'
+$ kaeris check --source en.json --langs ru  -> exit 1  RED
+  | plural form missing: items_few — ru needs the one/few/many/other forms of 'items'
+  | plural form missing: items_many — ru needs the one/few/many/other forms of 'items'
+$ kaeris check --source en.json --langs ar  -> exit 1  RED
+  | plural form missing: items_few — ar needs the zero/one/two/few/many/other forms of 'items'
+  | plural form missing: items_many — ar needs the zero/one/two/few/many/other forms of 'items'
+  | plural form missing: items_two — ar needs the zero/one/two/few/many/other forms of 'items'
+  | plural form missing: items_zero — ar needs the zero/one/two/few/many/other forms of 'items'
+$ kaeris check --source en.json --langs ja  -> exit 0  GREEN
+  | [stderr] ✓ ja: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ kaeris translate en.json --langs pl,ru --only-new --assume-current  (first, targets trimmed to the source's own forms) -> exit 0
+  | ✓ pl: up to date (3 keys)
+  | ✓ ru: up to date (3 keys)
+$ kaeris check --source en.json --langs pl  -> exit 1  RED
+  | plural form missing: items_few — pl needs the one/few/many/other forms of 'items'
+  | plural form missing: items_many — pl needs the one/few/many/other forms of 'items'
+$ kaeris check --source en.json --langs ru  -> exit 1  RED
+  | plural form missing: items_few — ru needs the one/few/many/other forms of 'items'
+  | plural form missing: items_many — ru needs the one/few/many/other forms of 'items'
+  pl.json: {   "items_one": "{{count}} metiy",   "items_other": "{{count}} smetiy",   "title": "xobniy" }
+$ kaeris translate en.json --langs pl,ru --only-new  (second, targets trimmed to the source's own forms) -> exit 0
+  | ✓ pl: up to date (3 keys)
+  | ✓ ru: up to date (3 keys)
+$ kaeris check --source en.json --langs pl  -> exit 1  RED
+  | plural form missing: items_few — pl needs the one/few/many/other forms of 'items'
+  | plural form missing: items_many — pl needs the one/few/many/other forms of 'items'
+$ kaeris check --source en.json --langs ru  -> exit 1  RED
+  | plural form missing: items_few — ru needs the one/few/many/other forms of 'items'
+  | plural form missing: items_many — ru needs the one/few/many/other forms of 'items'
+  pl.json: {   "items_one": "{{count}} metiy",   "items_other": "{{count}} smetiy",   "title": "xobniy" }
+
+=== [py] i18next-nested-ns: en.json
+$ kaeris translate en.json --langs pl,ru,ar,ja  -> exit 0
+$ kaeris check --source en.json --langs pl  -> exit 1  RED
+  | plural form missing: cart.items_few — pl needs the one/few/many/other forms of 'cart.items'
+  | plural form missing: cart.items_many — pl needs the one/few/many/other forms of 'cart.items'
+$ kaeris check --source en.json --langs ru  -> exit 1  RED
+  | plural form missing: cart.items_few — ru needs the one/few/many/other forms of 'cart.items'
+  | plural form missing: cart.items_many — ru needs the one/few/many/other forms of 'cart.items'
+$ kaeris check --source en.json --langs ar  -> exit 1  RED
+  | plural form missing: cart.items_few — ar needs the zero/one/two/few/many/other forms of 'cart.items'
+  | plural form missing: cart.items_many — ar needs the zero/one/two/few/many/other forms of 'cart.items'
+  | plural form missing: cart.items_two — ar needs the zero/one/two/few/many/other forms of 'cart.items'
+  | plural form missing: cart.items_zero — ar needs the zero/one/two/few/many/other forms of 'cart.items'
+$ kaeris check --source en.json --langs ja  -> exit 0  GREEN
+  | [stderr] ✓ ja: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ kaeris translate en.json --langs pl,ru --only-new --assume-current  (first, targets trimmed to the source's own forms) -> exit 0
+  | ✓ pl: up to date (2 keys)
+  | ✓ ru: up to date (2 keys)
+$ kaeris check --source en.json --langs pl  -> exit 1  RED
+  | plural form missing: cart.items_few — pl needs the one/few/many/other forms of 'cart.items'
+  | plural form missing: cart.items_many — pl needs the one/few/many/other forms of 'cart.items'
+$ kaeris check --source en.json --langs ru  -> exit 1  RED
+  | plural form missing: cart.items_few — ru needs the one/few/many/other forms of 'cart.items'
+  | plural form missing: cart.items_many — ru needs the one/few/many/other forms of 'cart.items'
+  pl.json: {   "cart": {     "items_one": "{{count}} metiy niy ehty tracy",     "items_other": "{{count}} smetiy niy ehty tracy"   } }
+$ kaeris translate en.json --langs pl,ru --only-new  (second, targets trimmed to the source's own forms) -> exit 0
+  | ✓ pl: up to date (2 keys)
+  | ✓ ru: up to date (2 keys)
+$ kaeris check --source en.json --langs pl  -> exit 1  RED
+  | plural form missing: cart.items_few — pl needs the one/few/many/other forms of 'cart.items'
+  | plural form missing: cart.items_many — pl needs the one/few/many/other forms of 'cart.items'
+$ kaeris check --source en.json --langs ru  -> exit 1  RED
+  | plural form missing: cart.items_few — ru needs the one/few/many/other forms of 'cart.items'
+  | plural form missing: cart.items_many — ru needs the one/few/many/other forms of 'cart.items'
+  pl.json: {   "cart": {     "items_one": "{{count}} metiy niy ehty tracy",     "items_other": "{{count}} smetiy niy ehty tracy"   } }
+
+=== [py] nested: en.json
+$ kaeris translate en.json --langs pl,ru,ar,ja  -> exit 0
+$ kaeris check --source en.json --langs pl  -> exit 0  WARN
+  | : plural form missing: items.few — pl needs the one/few/many/other forms of 'items'
+  | : plural form missing: items.many — pl needs the one/few/many/other forms of 'items'
+$ kaeris check --source en.json --langs ru  -> exit 0  WARN
+  | : plural form missing: items.few — ru needs the one/few/many/other forms of 'items'
+  | : plural form missing: items.many — ru needs the one/few/many/other forms of 'items'
+$ kaeris check --source en.json --langs ar  -> exit 0  WARN
+  | : plural form missing: items.few — ar needs the zero/one/two/few/many/other forms of 'items'
+  | : plural form missing: items.many — ar needs the zero/one/two/few/many/other forms of 'items'
+  | : plural form missing: items.two — ar needs the zero/one/two/few/many/other forms of 'items'
+  | : plural form missing: items.zero — ar needs the zero/one/two/few/many/other forms of 'items'
+$ kaeris check --source en.json --langs ja  -> exit 0  GREEN
+  | [stderr] ✓ ja: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ kaeris translate en.json --langs pl,ru --only-new --assume-current  (first, targets trimmed to the source's own forms) -> exit 0
+  | ✓ pl: up to date (3 keys)
+  | ✓ ru: up to date (3 keys)
+$ kaeris check --source en.json --langs pl  -> exit 0  WARN
+  | : plural form missing: items.few — pl needs the one/few/many/other forms of 'items'
+  | : plural form missing: items.many — pl needs the one/few/many/other forms of 'items'
+$ kaeris check --source en.json --langs ru  -> exit 0  WARN
+  | : plural form missing: items.few — ru needs the one/few/many/other forms of 'items'
+  | : plural form missing: items.many — ru needs the one/few/many/other forms of 'items'
+  pl.json: {   "items": {     "one": "{{count}} metiy",     "other": "{{count}} smetiy"   },   "title": "xobniy" }
+$ kaeris translate en.json --langs pl,ru --only-new  (second, targets trimmed to the source's own forms) -> exit 0
+  | ✓ pl: up to date (3 keys)
+  | ✓ ru: up to date (3 keys)
+$ kaeris check --source en.json --langs pl  -> exit 0  WARN
+  | : plural form missing: items.few — pl needs the one/few/many/other forms of 'items'
+  | : plural form missing: items.many — pl needs the one/few/many/other forms of 'items'
+$ kaeris check --source en.json --langs ru  -> exit 0  WARN
+  | : plural form missing: items.few — ru needs the one/few/many/other forms of 'items'
+  | : plural form missing: items.many — ru needs the one/few/many/other forms of 'items'
+  pl.json: {   "items": {     "one": "{{count}} metiy",     "other": "{{count}} smetiy"   },   "title": "xobniy" }
+
+=== [py] icu: en.json
+$ kaeris translate en.json --langs pl,ru,ar,ja  -> exit 0
+$ kaeris check --source en.json --langs pl  -> exit 0  GREEN
+  | [stderr] ✓ pl: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ kaeris check --source en.json --langs ru  -> exit 0  GREEN
+  | [stderr] ✓ ru: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ kaeris check --source en.json --langs ar  -> exit 0  GREEN
+  | [stderr] ✓ ar: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ kaeris check --source en.json --langs ja  -> exit 0  GREEN
+  | [stderr] ✓ ja: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+
+=== [py] ordinal: en.json
+$ kaeris translate en.json --langs pl,ru,ar,ja  -> exit 0
+$ kaeris check --source en.json --langs pl  -> exit 0  GREEN
+  | [stderr] ✓ pl: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ kaeris check --source en.json --langs ru  -> exit 0  GREEN
+  | [stderr] ✓ ru: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ kaeris check --source en.json --langs ar  -> exit 0  GREEN
+  | [stderr] ✓ ar: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ kaeris check --source en.json --langs ja  -> exit 0  GREEN
+  | [stderr] ✓ ja: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+
+=== [py] yaml: en.yml
+$ kaeris translate en.yml --langs pl,ru,ar,ja  -> exit 0
+$ kaeris check --source en.yml --langs pl  -> exit 0  WARN
+  | : plural form missing: items.few — pl needs the one/few/many/other forms of 'items'
+  | : plural form missing: items.many — pl needs the one/few/many/other forms of 'items'
+$ kaeris check --source en.yml --langs ru  -> exit 0  WARN
+  | : plural form missing: items.few — ru needs the one/few/many/other forms of 'items'
+  | : plural form missing: items.many — ru needs the one/few/many/other forms of 'items'
+$ kaeris check --source en.yml --langs ar  -> exit 0  WARN
+  | : plural form missing: items.few — ar needs the zero/one/two/few/many/other forms of 'items'
+  | : plural form missing: items.many — ar needs the zero/one/two/few/many/other forms of 'items'
+  | : plural form missing: items.two — ar needs the zero/one/two/few/many/other forms of 'items'
+  | : plural form missing: items.zero — ar needs the zero/one/two/few/many/other forms of 'items'
+$ kaeris check --source en.yml --langs ja  -> exit 0  GREEN
+  | [stderr] ✓ ja: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+
+=== [py] po: en.po
+$ kaeris translate en.po --langs pl,ru,ar,ja  -> exit 0
+$ kaeris check --source en.po --langs pl  -> exit 0  GREEN
+  | [stderr] ✓ pl: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ kaeris check --source en.po --langs ru  -> exit 0  GREEN
+  | [stderr] ✓ ru: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ kaeris check --source en.po --langs ar  -> exit 0  GREEN
+  | [stderr] ✓ ar: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ kaeris check --source en.po --langs ja  -> exit 0  GREEN
+  | [stderr] ✓ ja: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+
+=== [py] arb: app_en.arb
+$ kaeris translate app_en.arb --langs pl,ru,ar,ja  -> exit 0
+$ kaeris check --source app_en.arb --langs pl  -> exit 0  GREEN
+  | [stderr] ✓ pl: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ kaeris check --source app_en.arb --langs ru  -> exit 0  GREEN
+  | [stderr] ✓ ru: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ kaeris check --source app_en.arb --langs ar  -> exit 0  GREEN
+  | [stderr] ✓ ar: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ kaeris check --source app_en.arb --langs ja  -> exit 0  GREEN
+  | [stderr] ✓ ja: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+
+=== [py] xcstrings: Localizable.xcstrings
+$ kaeris translate Localizable.xcstrings --langs pl,ru,ar,ja  -> exit 0
+$ kaeris check --source Localizable.xcstrings --langs pl  -> exit 0  GREEN
+  | [stderr] ✓ pl: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ kaeris check --source Localizable.xcstrings --langs ru  -> exit 0  GREEN
+  | [stderr] ✓ ru: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ kaeris check --source Localizable.xcstrings --langs ar  -> exit 0  GREEN
+  | [stderr] ✓ ar: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ kaeris check --source Localizable.xcstrings --langs ja  -> exit 0  GREEN
+  | [stderr] ✓ ja: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+
+=== [py] android: values/strings.xml
+$ kaeris translate values/strings.xml --langs pl,ru,ar,ja  -> exit 0
+$ kaeris check --source values/strings.xml --langs pl  -> exit 0  GREEN
+  | [stderr] ✓ pl: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ kaeris check --source values/strings.xml --langs ru  -> exit 0  GREEN
+  | [stderr] ✓ ru: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ kaeris check --source values/strings.xml --langs ar  -> exit 0  GREEN
+  | [stderr] ✓ ar: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ kaeris check --source values/strings.xml --langs ja  -> exit 0  GREEN
+  | [stderr] ✓ ja: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+
+=== [py] ftl: en.ftl
+$ kaeris translate en.ftl --langs pl,ru,ar,ja  -> exit 0
+$ kaeris check --source en.ftl --langs pl  -> exit 0  GREEN
+  | [stderr] ✓ pl: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ kaeris check --source en.ftl --langs ru  -> exit 0  GREEN
+  | [stderr] ✓ ru: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ kaeris check --source en.ftl --langs ar  -> exit 0  GREEN
+  | [stderr] ✓ ar: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ kaeris check --source en.ftl --langs ja  -> exit 0  GREEN
+  | [stderr] ✓ ja: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+
+
+=== [npm] i18next: en.json
+$ kaeris translate en.json --langs pl,ru,ar,ja  -> exit 0
+$ kaeris check --source en.json --langs pl  -> exit 1  RED
+  | plural form missing: items_few — pl needs the one/few/many/other forms of 'items'
+  | plural form missing: items_many — pl needs the one/few/many/other forms of 'items'
+$ kaeris check --source en.json --langs ru  -> exit 1  RED
+  | plural form missing: items_few — ru needs the one/few/many/other forms of 'items'
+  | plural form missing: items_many — ru needs the one/few/many/other forms of 'items'
+$ kaeris check --source en.json --langs ar  -> exit 1  RED
+  | plural form missing: items_few — ar needs the zero/one/two/few/many/other forms of 'items'
+  | plural form missing: items_many — ar needs the zero/one/two/few/many/other forms of 'items'
+  | plural form missing: items_two — ar needs the zero/one/two/few/many/other forms of 'items'
+  | plural form missing: items_zero — ar needs the zero/one/two/few/many/other forms of 'items'
+$ kaeris check --source en.json --langs ja  -> exit 0  GREEN
+  | [stderr] ✓ ja: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+
+=== [npm] i18next-nested-ns: en.json
+$ kaeris translate en.json --langs pl,ru,ar,ja  -> exit 0
+$ kaeris check --source en.json --langs pl  -> exit 1  RED
+  | plural form missing: cart.items_few — pl needs the one/few/many/other forms of 'cart.items'
+  | plural form missing: cart.items_many — pl needs the one/few/many/other forms of 'cart.items'
+$ kaeris check --source en.json --langs ru  -> exit 1  RED
+  | plural form missing: cart.items_few — ru needs the one/few/many/other forms of 'cart.items'
+  | plural form missing: cart.items_many — ru needs the one/few/many/other forms of 'cart.items'
+$ kaeris check --source en.json --langs ar  -> exit 1  RED
+  | plural form missing: cart.items_few — ar needs the zero/one/two/few/many/other forms of 'cart.items'
+  | plural form missing: cart.items_many — ar needs the zero/one/two/few/many/other forms of 'cart.items'
+  | plural form missing: cart.items_two — ar needs the zero/one/two/few/many/other forms of 'cart.items'
+  | plural form missing: cart.items_zero — ar needs the zero/one/two/few/many/other forms of 'cart.items'
+$ kaeris check --source en.json --langs ja  -> exit 0  GREEN
+  | [stderr] ✓ ja: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+
+=== [npm] nested: en.json
+$ kaeris translate en.json --langs pl,ru,ar,ja  -> exit 0
+$ kaeris check --source en.json --langs pl  -> exit 0  WARN
+  | : plural form missing: items.few — pl needs the one/few/many/other forms of 'items'
+  | : plural form missing: items.many — pl needs the one/few/many/other forms of 'items'
+$ kaeris check --source en.json --langs ru  -> exit 0  WARN
+  | : plural form missing: items.few — ru needs the one/few/many/other forms of 'items'
+  | : plural form missing: items.many — ru needs the one/few/many/other forms of 'items'
+$ kaeris check --source en.json --langs ar  -> exit 0  WARN
+  | : plural form missing: items.few — ar needs the zero/one/two/few/many/other forms of 'items'
+  | : plural form missing: items.many — ar needs the zero/one/two/few/many/other forms of 'items'
+  | : plural form missing: items.two — ar needs the zero/one/two/few/many/other forms of 'items'
+  | : plural form missing: items.zero — ar needs the zero/one/two/few/many/other forms of 'items'
+$ kaeris check --source en.json --langs ja  -> exit 0  GREEN
+  | [stderr] ✓ ja: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+
+=== [npm] icu: en.json
+$ kaeris translate en.json --langs pl,ru,ar,ja  -> exit 0
+$ kaeris check --source en.json --langs pl  -> exit 0  GREEN
+  | [stderr] ✓ pl: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ kaeris check --source en.json --langs ru  -> exit 0  GREEN
+  | [stderr] ✓ ru: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ kaeris check --source en.json --langs ar  -> exit 0  GREEN
+  | [stderr] ✓ ar: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ kaeris check --source en.json --langs ja  -> exit 0  GREEN
+  | [stderr] ✓ ja: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+
+=== [npm] ordinal: en.json
+$ kaeris translate en.json --langs pl,ru,ar,ja  -> exit 0
+$ kaeris check --source en.json --langs pl  -> exit 0  GREEN
+  | [stderr] ✓ pl: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ kaeris check --source en.json --langs ru  -> exit 0  GREEN
+  | [stderr] ✓ ru: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ kaeris check --source en.json --langs ar  -> exit 0  GREEN
+  | [stderr] ✓ ar: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ kaeris check --source en.json --langs ja  -> exit 0  GREEN
+  | [stderr] ✓ ja: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+
+=== [npm] yaml: en.yml
+$ kaeris translate en.yml --langs pl,ru,ar,ja  -> exit 0
+$ kaeris check --source en.yml --langs pl  -> exit 0  WARN
+  | : plural form missing: items.few — pl needs the one/few/many/other forms of 'items'
+  | : plural form missing: items.many — pl needs the one/few/many/other forms of 'items'
+$ kaeris check --source en.yml --langs ru  -> exit 0  WARN
+  | : plural form missing: items.few — ru needs the one/few/many/other forms of 'items'
+  | : plural form missing: items.many — ru needs the one/few/many/other forms of 'items'
+$ kaeris check --source en.yml --langs ar  -> exit 0  WARN
+  | : plural form missing: items.few — ar needs the zero/one/two/few/many/other forms of 'items'
+  | : plural form missing: items.many — ar needs the zero/one/two/few/many/other forms of 'items'
+  | : plural form missing: items.two — ar needs the zero/one/two/few/many/other forms of 'items'
+  | : plural form missing: items.zero — ar needs the zero/one/two/few/many/other forms of 'items'
+$ kaeris check --source en.yml --langs ja  -> exit 0  GREEN
+  | [stderr] ✓ ja: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+
+=== [npm] po: en.po
+$ kaeris translate en.po --langs pl,ru,ar,ja  -> exit 0
+$ kaeris check --source en.po --langs pl  -> exit 0  GREEN
+  | [stderr] ✓ pl: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ kaeris check --source en.po --langs ru  -> exit 0  GREEN
+  | [stderr] ✓ ru: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ kaeris check --source en.po --langs ar  -> exit 0  GREEN
+  | [stderr] ✓ ar: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ kaeris check --source en.po --langs ja  -> exit 0  GREEN
+  | [stderr] ✓ ja: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+
+=== [npm] arb: app_en.arb
+$ kaeris translate app_en.arb --langs pl,ru,ar,ja  -> exit 0
+$ kaeris check --source app_en.arb --langs pl  -> exit 0  GREEN
+  | [stderr] ✓ pl: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ kaeris check --source app_en.arb --langs ru  -> exit 0  GREEN
+  | [stderr] ✓ ru: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ kaeris check --source app_en.arb --langs ar  -> exit 0  GREEN
+  | [stderr] ✓ ar: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ kaeris check --source app_en.arb --langs ja  -> exit 0  GREEN
+  | [stderr] ✓ ja: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+
+=== [npm] xcstrings: Localizable.xcstrings
+$ kaeris translate Localizable.xcstrings --langs pl,ru,ar,ja  -> exit 0
+$ kaeris check --source Localizable.xcstrings --langs pl  -> exit 0  GREEN
+  | [stderr] ✓ pl: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ kaeris check --source Localizable.xcstrings --langs ru  -> exit 0  GREEN
+  | [stderr] ✓ ru: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ kaeris check --source Localizable.xcstrings --langs ar  -> exit 0  GREEN
+  | [stderr] ✓ ar: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ kaeris check --source Localizable.xcstrings --langs ja  -> exit 0  GREEN
+  | [stderr] ✓ ja: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+
+=== [npm] android: values/strings.xml
+$ kaeris translate values/strings.xml --langs pl,ru,ar,ja  -> exit 0
+$ kaeris check --source values/strings.xml --langs pl  -> exit 0  GREEN
+  | [stderr] ✓ pl: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ kaeris check --source values/strings.xml --langs ru  -> exit 0  GREEN
+  | [stderr] ✓ ru: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ kaeris check --source values/strings.xml --langs ar  -> exit 0  GREEN
+  | [stderr] ✓ ar: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ kaeris check --source values/strings.xml --langs ja  -> exit 0  GREEN
+  | [stderr] ✓ ja: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+
+=== [npm] ftl: en.ftl
+$ kaeris translate en.ftl --langs pl,ru,ar,ja  -> exit 0
+$ kaeris check --source en.ftl --langs pl  -> exit 0  GREEN
+  | [stderr] ✓ pl: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ kaeris check --source en.ftl --langs ru  -> exit 0  GREEN
+  | [stderr] ✓ ru: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ kaeris check --source en.ftl --langs ar  -> exit 0  GREEN
+  | [stderr] ✓ ar: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ kaeris check --source en.ftl --langs ja  -> exit 0  GREEN
+  | [stderr] ✓ ja: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+
+
+# SUMMARY tool case lang exit verdict
+  py i18next pl 1 RED
+  py i18next ru 1 RED
+  py i18next ar 1 RED
+  py i18next ja 0 GREEN
+  py i18next+only-new-first pl 1 RED
+  py i18next+only-new-first ru 1 RED
+  py i18next+only-new-second pl 1 RED
+  py i18next+only-new-second ru 1 RED
+  py i18next-nested-ns pl 1 RED
+  py i18next-nested-ns ru 1 RED
+  py i18next-nested-ns ar 1 RED
+  py i18next-nested-ns ja 0 GREEN
+  py i18next-nested-ns+only-new-first pl 1 RED
+  py i18next-nested-ns+only-new-first ru 1 RED
+  py i18next-nested-ns+only-new-second pl 1 RED
+  py i18next-nested-ns+only-new-second ru 1 RED
+  py nested pl 0 WARN
+  py nested ru 0 WARN
+  py nested ar 0 WARN
+  py nested ja 0 GREEN
+  py nested+only-new-first pl 0 WARN
+  py nested+only-new-first ru 0 WARN
+  py nested+only-new-second pl 0 WARN
+  py nested+only-new-second ru 0 WARN
+  py icu pl 0 GREEN
+  py icu ru 0 GREEN
+  py icu ar 0 GREEN
+  py icu ja 0 GREEN
+  py ordinal pl 0 GREEN
+  py ordinal ru 0 GREEN
+  py ordinal ar 0 GREEN
+  py ordinal ja 0 GREEN
+  py yaml pl 0 WARN
+  py yaml ru 0 WARN
+  py yaml ar 0 WARN
+  py yaml ja 0 GREEN
+  py po pl 0 GREEN
+  py po ru 0 GREEN
+  py po ar 0 GREEN
+  py po ja 0 GREEN
+  py arb pl 0 GREEN
+  py arb ru 0 GREEN
+  py arb ar 0 GREEN
+  py arb ja 0 GREEN
+  py xcstrings pl 0 GREEN
+  py xcstrings ru 0 GREEN
+  py xcstrings ar 0 GREEN
+  py xcstrings ja 0 GREEN
+  py android pl 0 GREEN
+  py android ru 0 GREEN
+  py android ar 0 GREEN
+  py android ja 0 GREEN
+  py ftl pl 0 GREEN
+  py ftl ru 0 GREEN
+  py ftl ar 0 GREEN
+  py ftl ja 0 GREEN
+  npm i18next pl 1 RED
+  npm i18next ru 1 RED
+  npm i18next ar 1 RED
+  npm i18next ja 0 GREEN
+  npm i18next-nested-ns pl 1 RED
+  npm i18next-nested-ns ru 1 RED
+  npm i18next-nested-ns ar 1 RED
+  npm i18next-nested-ns ja 0 GREEN
+  npm nested pl 0 WARN
+  npm nested ru 0 WARN
+  npm nested ar 0 WARN
+  npm nested ja 0 GREEN
+  npm icu pl 0 GREEN
+  npm icu ru 0 GREEN
+  npm icu ar 0 GREEN
+  npm icu ja 0 GREEN
+  npm ordinal pl 0 GREEN
+  npm ordinal ru 0 GREEN
+  npm ordinal ar 0 GREEN
+  npm ordinal ja 0 GREEN
+  npm yaml pl 0 WARN
+  npm yaml ru 0 WARN
+  npm yaml ar 0 WARN
+  npm yaml ja 0 GREEN
+  npm po pl 0 GREEN
+  npm po ru 0 GREEN
+  npm po ar 0 GREEN
+  npm po ja 0 GREEN
+  npm arb pl 0 GREEN
+  npm arb ru 0 GREEN
+  npm arb ar 0 GREEN
+  npm arb ja 0 GREEN
+  npm xcstrings pl 0 GREEN
+  npm xcstrings ru 0 GREEN
+  npm xcstrings ar 0 GREEN
+  npm xcstrings ja 0 GREEN
+  npm android pl 0 GREEN
+  npm android ru 0 GREEN
+  npm android ar 0 GREEN
+  npm android ja 0 GREEN
+  npm ftl pl 0 GREEN
+  npm ftl ru 0 GREEN
+  npm ftl ar 0 GREEN
+  npm ftl ja 0 GREEN
+# 64/100 GREEN
+
+# OUTPUT FILES (py)
+--- i18next/ar.json
+{
+  "items_one": "{{count}} ذفجش",
+  "items_other": "{{count}} ذفجشغ",
+  "title": "ذصبضم"
+}
+--- i18next/ja.json
+{
+  "items_one": "{{count}} ケトオス",
+  "items_other": "{{count}} ケトオステ",
+  "title": "ケセイソエ"
+}
+--- i18next/pl.json
+{
+  "items_one": "{{count}} metiy",
+  "items_other": "{{count}} smetiy",
+  "title": "xobniy"
+}
+--- i18next-nested-ns/ar.json
+{
+  "cart": {
+    "items_one": "{{count}} ذفجش ذص فدج تاعف",
+    "items_other": "{{count}} ذفجشغ ذص فدج تاعف"
+  }
+}
+--- i18next-nested-ns/ja.json
+{
+  "cart": {
+    "items_one": "{{count}} ケトオス ケセ トクオ ウアツト",
+    "items_other": "{{count}} ケトオステ ケセ トクオ ウアツト"
+  }
+}
+--- i18next-nested-ns/pl.json
+{
+  "cart": {
+    "items_one": "{{count}} metiy niy ehty tracy",
+    "items_other": "{{count}} smetiy niy ehty tracy"
+  }
+}
+--- nested/ar.json
+{
+  "items": {
+    "one": "{{count}} ذفجش",
+    "other": "{{count}} ذفجشغ"
+  },
+  "title": "ذصبضم"
+}
+--- nested/ja.json
+{
+  "items": {
+    "one": "{{count}} ケトオス",
+    "other": "{{count}} ケトオステ"
+  },
+  "title": "ケセイソエ"
+}
+--- nested/pl.json
+{
+  "items": {
+    "one": "{{count}} metiy",
+    "other": "{{count}} smetiy"
+  },
+  "title": "xobniy"
+}
+--- icu/ar.json
+{
+  "files": "{n, plural, zero {# حذسجغ ze} one {# حذسج} two {# حذسجغ tw} few {# حذسجغ fe} many {# حذسجغ ma} other {# حذسجغ}}"
+}
+--- icu/ja.json
+{
+  "files": "{n, plural, other {# カケシオテ}}"
+}
+--- icu/pl.json
+{
+  "files": "{n, plural, one {# elify} few {# selify fe} many {# selify ma} other {# selify}}"
+}
+--- ordinal/ar.json
+{
+  "place_ordinal_one": "{{count}}غف طساتج",
+  "place_ordinal_two": "{{count}}صث طساتج",
+  "place_ordinal_few": "{{count}}عث طساتج",
+  "place_ordinal_other": "{{count}}فد طساتج"
+}
+--- ordinal/ja.json
+{
+  "place_ordinal_one": "{{count}}テト タシアウオ",
+  "place_ordinal_two": "{{count}}セエ タシアウオ",
+  "place_ordinal_few": "{{count}}ツエ タシアウオ",
+  "place_ordinal_other": "{{count}}トク タシアウオ"
+}
+--- ordinal/pl.json
+{
+  "place_ordinal_one": "{{count}}tsy ecalpy",
+  "place_ordinal_two": "{{count}}dny ecalpy",
+  "place_ordinal_few": "{{count}}dry ecalpy",
+  "place_ordinal_other": "{{count}}hty ecalpy"
+}
+--- yaml/ar.yml
+ar:
+  items:
+    one: '%{count} ذفجش'
+    other: '%{count} ذفجشغ'
+  title: ذصبضم
+
+--- yaml/ja.yml
+ja:
+  items:
+    one: '%{count} ケトオス'
+    other: '%{count} ケトオステ'
+  title: ケセイソエ
+
+--- yaml/pl.yml
+pl:
+  items:
+    one: '%{count} metiy'
+    other: '%{count} smetiy'
+  title: xobniy
+
+--- po/ar.po
+# Generated by KAERIS i18n Tool
+# Language: ar
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5);\n"
+"Language: ar\n"
+
+msgid "%d file"
+msgid_plural "%d files"
+msgstr[0] "%d حذسج"
+msgstr[1] "%d حذسجغ"
+msgstr[2] "%d حذسجغ"
+msgstr[3] "%d حذسجغ"
+msgstr[4] "%d حذسجغ"
+msgstr[5] "%d حذسجغ"
+
+--- po/ja.po
+# Generated by KAERIS i18n Tool
+# Language: ja
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"Language: ja\n"
+
+msgid "%d file"
+msgid_plural "%d files"
+msgstr[0] "%d カケシオ"
+
+--- po/pl.po
+# Generated by KAERIS i18n Tool
+# Language: pl
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Language: pl\n"
+
+msgid "%d file"
+msgid_plural "%d files"
+msgstr[0] "%d elify"
+msgstr[1] "%d selify"
+msgstr[2] "%d selify"
+
+--- arb/app_ar.arb
+{
+  "@@locale": "ar",
+  "files": "{count, plural, zero {{count} حذسجغ ze} one {{count} حذسج} two {{count} حذسجغ tw} few {{count} حذسجغ fe} many {{count} حذسجغ ma} other {{count} حذسجغ}}",
+  "@files": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
+}
+--- arb/app_ja.arb
+{
+  "@@locale": "ja",
+  "files": "{count, plural, other {{count} カケシオテ}}",
+  "@files": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
+}
+--- arb/app_pl.arb
+{
+  "@@locale": "pl",
+  "files": "{count, plural, one {{count} elify} few {{count} selify fe} many {{count} selify ma} other {{count} selify}}",
+  "@files": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
+}
+--- xcstrings/Localizable.xcstrings
+{
+  "sourceLanguage": "en",
+  "version": "1.0",
+  "strings": {
+    "%lld files": {
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld file"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld files"
+                }
+              }
+            }
+          }
+        },
+        "pl": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld elify"
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld selify fe"
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld selify ma"
+                }
+              },
+              "other": {
+                "stringUnit": {
+  
+--- android/values-ar\strings.xml
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generated by KAERIS i18n Tool — ar -->
+<resources>
+    <plurals name="files">
+        <item quantity="zero">%d حذسجغ ze</item>
+        <item quantity="one">%d حذسج</item>
+        <item quantity="two">%d حذسجغ tw</item>
+        <item quantity="few">%d حذسجغ fe</item>
+        <item quantity="many">%d حذسجغ ma</item>
+        <item quantity="other">%d حذسجغ</item>
+    </plurals>
+</resources>
+
+--- android/values-ja\strings.xml
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generated by KAERIS i18n Tool — ja -->
+<resources>
+    <plurals name="files">
+        <item quantity="other">%d カケシオテ</item>
+    </plurals>
+</resources>
+
+--- android/values-pl\strings.xml
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generated by KAERIS i18n Tool — pl -->
+<resources>
+    <plurals name="files">
+        <item quantity="one">%d elify</item>
+        <item quantity="few">%d selify fe</item>
+        <item quantity="many">%d selify ma</item>
+        <item quantity="other">%d selify</item>
+    </plurals>
+</resources>
+
+--- ftl/ar.ftl
+emails =
+    { $count ->
+        [zero] { $count } جشاذسغ ze
+        [one] { $count } جشاذس
+        [two] { $count } جشاذسغ tw
+        [few] { $count } جشاذسغ fe
+        [many] { $count } جشاذسغ ma
+       *[other] { $count } جشاذسغ
+    }
+
+--- ftl/ja.ftl
+emails =
+    { $count ->
+        [one] { $count } email
+       *[other] { $count } オスアケシテ
+    }
+
+--- ftl/pl.ftl
+emails =
+    { $count ->
+        [one] { $count } liamey
+        [few] { $count } sliamey fe
+        [many] { $count } sliamey ma
+       *[other] { $count } sliamey
+    }
+
+# stopped pids 24936 24124: api rc=1 stub rc=1
