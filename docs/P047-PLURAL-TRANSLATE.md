@@ -212,8 +212,8 @@ and builds no memory lookup for `.po`, so neither can lose or repeat a slot; the
 whole-entry reuse rule is covered by its unit tests (de reused, pl reused only with slot 2).
 
 Left as it is:
-- A slot whose category the model's answer lacks (and the repair could not add) takes the
-  `other` form; the run's ICU warnings still name the missing category.
+- ~~A slot whose category the model's answer lacks (and the repair could not add) takes the
+  `other` form~~ — changed in round 3: the entry goes as before 0.2.47 and the run names it.
 - A source `.po` whose language has 3+ slots and no `_PO_SLOT_CATS` row is not folded (old
   behaviour); every 3+-slot language in `_PLURAL_RULES` has a row.
 - `check` reads a single-number slot loosely only for the count; the other placeholders are
@@ -282,7 +282,8 @@ Who else calls `/api/translate`:
 - the MCP server (`mcp/kaeris_mcp`) submits through `kaeris.client.KaerisClient` and merges with
   `kaeris.incremental.merge_translation`: with kaeris 0.2.47 installed it sends the field and
   merges the new forms in place; with an older kaeris it sends nothing and gets production
-  behaviour. Consistent either way.
+  behaviour. Not consistent as written in round 2: its `kaeris_status` ran the bare key diff and
+  called the new `items_few`/`items_many` "extra/stale" (critic round 2). Fixed in round 3, below.
 
 `/api/config` says `"plural_forms": "cldr"` (the capability, read by the CLI below).
 
@@ -360,6 +361,118 @@ Server change after the e2e found nothing but a review did: a JSON source form t
 first always sent the set form by form, which would have dropped i18next `_zero` sets in Polish
 to the fallback; now `other` stands in when it says the same placeholders
 (`_missing_form_unsafe`, test `test_a_dropped_form_with_the_same_placeholders_takes_other`).
+**This was blocker B3 of the round-2 critic; reverted and replaced in round 3.**
+
+## Round 3: critic round 2 (NOT ACCEPTED, B3) and what changed
+
+Verdict: `ops-logs/critic-p047-1121/round2/VERDICT.md`. B1 and B2 confirmed closed there.
+
+### B3: a form the answer lacked took the `other` text
+
+Round 2 (`636c089a`) filled a source form missing from the model's answer with the `other` text
+when the placeholders matched. i18next `_zero` went to the model as the CLDR category `zero`;
+de/pl/ru have none, so the model left it out: de `cart_zero` became the `cart_other` text, pl/ru
+`left_zero` the `other` form where n=0 takes `many`. `check` stayed green.
+
+Rule now (director's decision): **the text of one form never silently stands in for another.**
+Server (`translator.py`):
+- `_fold_label`: i18next / Rails `zero` (`_JSON_PLURAL_FORMATS`) travels as the ICU exact match
+  `=0 {…}` — its meaning in i18next and Rails (count == 0, any language) — never `zero {…}`.
+  The memory reuse (`_fold_reuse`) builds the same `=0`.
+- `_json_forms` → (forms from the answer, `own`) or None: `_zero` is the `=0` arm; lost, it is
+  `own` (that key translated on its own, as 0.2.46 sent it). A category the target has (de
+  `one`, pl `few`, any `_CLDR_REQUIRED` form) missing → None: the set goes form by form (the
+  round-1 fallback). A source category the target lacks (a ru source's `few` into de) missing →
+  `own`. `_plural_redo` gives `_forms_one_by_one` per language {set: categories}; warnings of a
+  set stay unless the whole set was redone; the "exact-match =0 dropped" warning goes when `=0`
+  was translated on its own; a failed second try is named (`kept`).
+- `.po`: a slot category the answer lacks → the entry goes as before 0.2.47 (msgid and
+  msgid_plural one by one, msgstr[2..] repeat msgstr[1]) and `_plural_gaps` names it
+  ("… without every form pl needs; msgstr[2..] (many) repeat msgstr[1], as before 0.2.47").
+  Round 2 put the `other` text in slot 2 without a word.
+- Found on the way: an answer that spells the number `#` was measured before `#` became
+  `{{count}}`, so QA said "{{count}}" was missing from forms that all have it (round 2 too).
+  `_plural_qa_words(laid_out=…)` drops that.
+
+Known limit: Latvian's CLDR `zero` covers 0, 10, 11–19, 20…; a source `_zero` ("cart is empty")
+lands in lv `_zero` as in 0.2.46, and i18next shows it for 10 too. The source file's design;
+same as 0.2.46. A source *in* Latvian with `_zero` would travel as `=0` too (not seen in use).
+
+Tests, red first: server `tests/test_plurals_critic_round3.py` on c9118a03 12 failed / 2 passed
+(i18n_tool `docs/p047/r3/b3-test-red-c9118a03.txt`), green 68/68 with round 2's and the fold
+tests (`b3-test-green.txt`); the round-2 tests that pinned the old behaviour were rewritten
+(`test_a_dropped_zero_is_translated_on_its_own`, `test_a_short_answer_goes_as_before_and_is_named`).
+e2e (`harness/compat.py` case `b3`, stub modes normal and the new `drop-zero`): source
+`cart_zero` (other words), `left_zero` (same words as `_other`), de/pl/ru. On server c9118a03
+11 RED (`r3/compat-b3-red-on-c9118a03.txt`); on the branch every row green: `=0` sent, never
+`zero {`; with `drop-zero` exactly the six `_zero` keys sent on their own; each `_zero` is its
+own text; check py/npm exit 0 with every form; de.json byte-identical to 0.2.46 on production.
+
+Harness fix: the CLI was meant to run from its tree via PYTHONPATH, but the "runs from" line was
+printed from the session's working directory, where another kaeris tree won the import.
+`harness/run_cli.py` now puts the tree first and drops imported kaeris modules on every call
+(compat and matrix); each call prints the file that answered.
+
+### Plural table parity in a CI that runs
+
+`tests/data/server_plural_tables.json` is the server's `_PLURAL_RULES`, `_PLURAL_DEFAULT`,
+`_CLDR_REQUIRED`, `_NO_SINGULAR`, `_HAS_ONE` (written by `tests/data/refresh_server_plural_tables.py
+<backend>`). kaeris-cli CI, every push: `tests/test_plural_tables_snapshot.py` (py copies) and
+`npm/test/plural-tables-snapshot.test.js` (npm copies) must equal it — no skip. Server side:
+`test_detector_parity.py::test_plural_table_snapshot_is_the_servers` (server CI, release machine)
+and the server's own `backend/tests/test_plural_tables_snapshot.py` with a pinned copy
+`backend/tests/data/plural_tables.json`: it must be the server's tables (fails on any table edit
+until refreshed) and equal the CLI's snapshot (`cli/` clone in the server CI, `KAERIS_CLI`
+locally). Drift check (`r3/plural-snapshot-drift-check.txt`): one changed row in py, in npm or in
+the server each fails exactly its check; restored, all green.
+What still has no running CI: a server table change is caught by the server's own tests, which
+run only when the server CI runs (billing) — hence the local run in the release checklist below.
+
+### MCP: new forms are not "extra/stale"
+
+`kaeris_status` and `kaeris_list_missing_keys` ran `chk.diff_locale` alone and listed Polish
+`items_few`/`items_many` under "extra" (the tool says "extra/stale keys"; an agent may delete
+them). Now `_diff_by_target_forms`: `diff_locale` then `chk.plural_set_faults` (new public name of
+`_plural_set_faults`, CLI 0.2.47; falls back to the private one on 0.2.44–0.2.46, to the plain
+diff before): owed forms are not extra, a ja file without `_one` is complete, and a set missing
+its forms gets the CLI's fault (the status verdict now matches `kaeris check`). i18n_tool
+`mcp/` and kaeris-mcp (branch `plural-translate-1121`, own worktree `p047-mcp-1121`; not
+published, version unchanged) carry the same `server.py` (`test_public_repo_matches` green
+against that clone). Test `mcp/tests/test_plural_forms_are_not_extra.py`: red on 94114a89
+(4 failed), green with kaeris 0.2.47 and with 0.2.46.
+
+### Small things
+
+- `Language:` against `--langs`: a `.po` whose `Language` is not the language it is checked as
+  (same base and same row of the table, so `pt_BR`/`pt` and `ar_EG`/`ar` agree, `he`/`ru` and
+  `pt_PT`/`pt` do not) is read strictly.
+- Plural-Forms limits, py and npm alike: over 1000 characters not evaluated (40k tokens took
+  10 s); nesting over 50 (`(`, `!`, `-`, `?:`), a value beyond 2^53−1, `/` or `%` of a negative →
+  strict. Shared corpus `npm/test/po-degenerate.json` (17 headers) read by both test suites;
+  before: py and npm disagreed on 3 (200 parens, n^6, a 17-digit literal), now 17/17 each
+  (`r3/po-degenerate-before-after.txt`).
+- `docs/api.html` (the `plurals` field): the page exists in 10 languages (`frontend/<lang>/docs/
+  api.html`), so it is not edited here. **Task for the site:** describe the optional
+  `/api/translate` form field `plurals=cldr` (every CLDR form of the target for JSON/YAML/ARB
+  sets and `.po` slots) in `frontend/docs/api.html` and its nine translations.
+
+### Release checklist
+
+1. Before anything goes out, on the release machine: the CLI branch nested as `cli/` in the
+   server branch, `KAERIS_BACKEND=<server>/backend`, run `tests/test_detector_parity.py`,
+   `tests/test_formats_match_the_server.py`, `tests/test_po_single_number_slots.py`,
+   `tests/test_translate_completes_plural_sets.py`, `tests/test_plural_tables_snapshot.py`
+   (0 skipped) and the server's `tests/test_plural_tables_snapshot.py` with `KAERIS_CLI` set.
+   Required while the server CI does not run; record the output.
+2. Server: merge `plural-translate-1121` (i18n_tool), deploy. Inert for every existing client.
+   Check `/api/config` says `"plural_forms": "cldr"`.
+3. CLI: merge `plural-translate-1121` (kaeris-cli) to main; CI green on the merge commit.
+4. Publish PyPI 0.2.47, then npm 0.2.47. The GitHub Action picks it up by itself.
+5. kaeris-mcp: merge its `plural-translate-1121`, bump the version and require `kaeris>=0.2.47`
+   at its own release; keep i18n_tool `mcp/` identical (`test_public_repo_matches`).
+6. Only then turn `plurals=cldr` on for the site (studio/demo, `frontend/app.js`) and describe it
+   in `docs/api.html` (task above): a site user whose CI still runs `check` 0.2.46 would see an
+   Arabic `.po` fail.
 
 ## vs the leaders (missing plural forms when machine-translating)
 

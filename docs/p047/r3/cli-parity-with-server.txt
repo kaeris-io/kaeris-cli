@@ -1,0 +1,6 @@
+$ (cd C:/Users/Inzagi/projects/kaeris/i18n_tool/.claude/worktrees/plural-translate-1121/cli) C:/Users/Inzagi/projects/kaeris/i18n_tool/.venv/Scripts/python.exe C:/Users/Inzagi/AppData/Local/Temp/claude/a43205edf0b1eb40/1d41411c-380d-43ba-80ea-359c271f4a08/scratchpad/r3/pytest_with_cli.py C:/Users/Inzagi/projects/kaeris/i18n_tool/.claude/worktrees/plural-translate-1121/cli -q -rs -p no:cacheprovider tests/test_detector_parity.py tests/test_formats_match_the_server.py tests/test_po_single_number_slots.py tests/test_translate_completes_plural_sets.py tests/test_plural_tables_snapshot.py
+# 2026-11-21 10:57:07  exit 0  7s
+using C:\Users/Inzagi/projects/kaeris/i18n_tool/.claude/worktrees/plural-translate-1121/cli\kaeris\__init__.py 0.2.47
+........................................................................ [ 92%]
+......                                                                   [100%]
+78 passed in 6.25s
