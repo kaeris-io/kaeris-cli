@@ -179,8 +179,8 @@ Plural-Forms formula picks for exactly ONE n may leave the number out (Arabic ze
 ### Result (21.11)
 
 Server: bcd325e5 (test, red: 14 failed / 1 passed on 8a6b41cd,
-`docs/p047/server-po-test-red-8a6b41cd.txt` there), 8a8177ba (fix; green 49/49 with the JSON
-plural and .po convert tests, `server-po-test-green.txt`). CLI: de076ca (repro), a283e55 (test,
+`docs/p047/server-po-test-red-8a6b41cd.txt` there), 8a8177ba (fix; with the JSON plural and
+.po convert tests 48 passed, `server-po-test-green.txt`). CLI: de076ca (repro), a283e55 (test,
 red: 4 failed / 3 passed, `docs/p047/cli-po-slots-test-red-387fb1e.txt`), c908630 (check fix,
 py + npm; the existing 294 npm baselines unchanged, 5 new), parity against this server 48
 passed, nothing skipped (the new one: every server Plural-Forms parses and its loose slots are
