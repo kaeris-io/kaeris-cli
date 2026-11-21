@@ -18,7 +18,14 @@ printed a warning. Now:
   message"): Latvian `msgstr[1]` also stands for 21, 31… and needs the number.
 - Japanese, Chinese, Korean, Vietnamese, Thai, Indonesian and Malay `.po`: `msgstr[0]`, the only
   slot, now holds the plural form ("%d files"). 0.2.46 put the singular there ("One file"),
-  which these languages then showed for every number. This is a fix.
+  which these languages then showed for every number. This is a fix. It is made only where
+  `kaeris check` (0.2.46 and 0.2.47) accepts it: the number is a lone `%d`. For a Django or
+  python-brace entry ("One file" / "%(count)s files", "{count} files") the slot keeps the
+  singular, as 0.2.46 wrote it, and translate says so: `check` compares `msgstr[0]` with the
+  msgid and would call `%(count)s` there invented.
+- Every `.po` slot is written from the model's answer only when it passes the placeholder
+  comparison `kaeris check` makes for that slot. Otherwise the entry is written as 0.2.46
+  wrote it, and translate says which slot and why.
 - JSON and YAML in Japanese, Chinese, Korean, Vietnamese, Thai, Indonesian and Malay: nothing is
   added, and each key is translated on its own, as in 0.2.46.
 - i18next `_zero` and Rails `zero` mean "the count is 0" in every language, so they are
@@ -32,7 +39,11 @@ printed a warning. Now:
 - When the model writes the number as `#`, translate puts the plural's own count placeholder
   there: `{{count}}`, `%{count}`, `{count}`, `%d`. When it cannot tell which placeholder is the
   number, that plural is translated form by form, as in 0.2.46.
+- A plural whose source text holds a `#` of its own ("{{count}} posts in #general") is
+  translated key by key, as in 0.2.46, and gets no new forms: a `#` in the answer could not be
+  told from the number.
 - i18next ordinals (`place_ordinal_*`) are translated key by key, as before.
+- Android XML and Fluent are translated exactly as before, for every client.
 
 What translate prints when a plural could not get every form of its own:
 
@@ -50,11 +61,22 @@ does not add them translates the file as it did for 0.2.46.
 ## What it costs
 
 - The first `--only-new` run after the update sends every plural set that lacks a form its
-  language needs, and those strings are charged. This hits Polish, Russian, Ukrainian, Czech,
-  Slovak, Croatian, Serbian, Lithuanian, Romanian, Latvian, Slovenian, Hebrew and Arabic.
+  language needs, once, and those strings are charged. This hits Polish, Russian, Ukrainian,
+  Czech, Slovak, Croatian, Serbian, Lithuanian, Romanian, Latvian, Slovenian, Hebrew and Arabic.
   German, French, Spanish and Japanese sets are not sent again.
+- If the forms still are not there after that run (the model lost one, or wrote the number in a
+  way no placeholder can stand for), the set is written into `kaeris.lock` and not sent again
+  until its source text changes. Translate says so; `kaeris check` names the missing forms, as
+  with 0.2.46. A set the server never completes (a form with an unbalanced brace, an ICU select
+  inside, a `#` of its own) is not sent for that at all.
+- An edited form sends its whole set only where that adds forms (Polish, Arabic…); in German
+  or Japanese the edited key goes alone, as in 0.2.46.
 - A full run (`--no-only-new`) pays for those sets every time. The project memory holds the
   source's forms, so a Polish set is never complete from memory.
+- When a plural has to be translated form by form and that second try fails (the model or the
+  provider), the language is still delivered and charged if the rest of it is translated;
+  those forms keep the source text and translate names them. If the language as a whole reads
+  as untranslated, it is not delivered and not charged, as in 0.2.46.
 - The GitHub Action installs `kaeris>=0.2.12`, so it picks up 0.2.47 on its next run with no
   change on your side. Its first run in these languages will cost more than usual.
 
@@ -92,8 +114,11 @@ Otherwise the 0.2.46 reading applies.
 
 Nothing that passed 0.2.46 fails 0.2.47.
 
-The reverse is not true. If translate 0.2.47 writes an Arabic `.po` and your CI still runs
-`kaeris check` 0.2.46, that check fails on `msgstr[1]` without `%d`. Update the check too.
+The reverse is not true. If translate 0.2.47 writes an Arabic or Hebrew `.po` with a `%d`
+count and your CI still runs `kaeris check` 0.2.46, that check fails on `msgstr[1]` (Hebrew
+`msgstr[1]`, Arabic `msgstr[1]`/`msgstr[2]`) without `%d`. Update the check too. This is the
+only file of 0.2.47 that check 0.2.46 rejects: a Django (`%(count)s`) or brace (`{count}`)
+entry is written so that both versions pass it.
 
 `msgfmt -c` is looser: it lets a slot go without the number when the formula picks it for
 fewer than five values of n in 0..1000 (Czech and Slovak `few`, Irish `msgstr[2]` and
