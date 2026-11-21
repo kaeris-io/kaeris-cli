@@ -1,0 +1,70 @@
+$ (cd C:/Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121) C:/Users/Inzagi/projects/kaeris/i18n_tool/.venv/Scripts/python.exe -m pytest -q -p no:cacheprovider tests/test_po_single_number_slots.py
+FFF...F                                                                  [100%]
+================================== FAILURES ===================================
+__________ test_slots_one_number_selects_are_found_from_the_formula ___________
+
+    def test_slots_one_number_selects_are_found_from_the_formula():
+>       assert fm.single_number_slots(f"Plural-Forms: {AR}\n") == {0, 1, 2}
+               ^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: module 'kaeris.formats' has no attribute 'single_number_slots'
+
+tests\test_po_single_number_slots.py:50: AttributeError
+_____________ test_a_formula_that_does_not_parse_selects_nothing ______________
+
+    def test_a_formula_that_does_not_parse_selects_nothing():
+>       assert fm.single_number_slots("Plural-Forms: nplurals=2; plural=(n != 1;\n") is None
+               ^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: module 'kaeris.formats' has no attribute 'single_number_slots'
+
+tests\test_po_single_number_slots.py:61: AttributeError
+______________ test_arabic_zero_one_two_without_the_number_pass _______________
+
+tmp_path = WindowsPath('C:/Users/Inzagi/AppData/Local/Temp/pytest-of-Inzagi/pytest-7509/test_arabic_zero_one_two_witho0')
+
+    def test_arabic_zero_one_two_without_the_number_pass(tmp_path):
+        msg = ["لا رسائل", "رسالة واحدة", "رسالتان", "%d رسائل", "%d رسالة", "%d رسالة"]
+        fil = ["لا ملفات", "ملف واحد", "ملفان", "%d ملفات", "%d ملفًا", "%d ملف"]
+        code, out = run(tmp_path, "ar", target("ar", msg, fil, AR))
+>       assert code == 0, out
+E       AssertionError: ✗ ar: 4 placeholder mismatch(es):
+E             One message (plural): missing ['%d'], added -
+E             %d file (plural): missing ['%d'], added -
+E             One message (plural 2): missing ['%d'], added -
+E             %d file (plural 2): missing ['%d'], added -
+E         ✗ ar: 4 translation fault(s):
+E             One message (plural): lost placeholder %d
+E             %d file (plural): lost placeholder %d
+E             One message (plural 2): lost placeholder %d
+E             %d file (plural 2): lost placeholder %d
+E         ✗ 4 placeholder mismatches, 4 translation faults
+E         
+E       assert 1 == 0
+
+tests\test_po_single_number_slots.py:70: AssertionError
+__________________ test_hebrew_two_without_the_number_passes __________________
+
+tmp_path = WindowsPath('C:/Users/Inzagi/AppData/Local/Temp/pytest-of-Inzagi/pytest-7509/test_hebrew_two_without_the_nu0')
+
+    def test_hebrew_two_without_the_number_passes(tmp_path):
+        msg = ["הודעה אחת", "שתי הודעות", "%d הודעות"]
+        fil = ["קובץ אחד", "שני קבצים", "%d קבצים"]
+        code, out = run(tmp_path, "he", target("he", msg, fil, HE))
+>       assert code == 0, out
+E       AssertionError: ✗ he: 2 placeholder mismatch(es):
+E             One message (plural): missing ['%d'], added -
+E             %d file (plural): missing ['%d'], added -
+E         ✗ he: 2 translation fault(s):
+E             One message (plural): lost placeholder %d
+E             %d file (plural): lost placeholder %d
+E         ✗ 2 placeholder mismatches, 2 translation faults
+E         
+E       assert 1 == 0
+
+tests\test_po_single_number_slots.py:99: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/test_po_single_number_slots.py::test_slots_one_number_selects_are_found_from_the_formula
+FAILED tests/test_po_single_number_slots.py::test_a_formula_that_does_not_parse_selects_nothing
+FAILED tests/test_po_single_number_slots.py::test_arabic_zero_one_two_without_the_number_pass
+FAILED tests/test_po_single_number_slots.py::test_hebrew_two_without_the_number_passes
+4 failed, 3 passed in 2.02s
+[exit code 1]
