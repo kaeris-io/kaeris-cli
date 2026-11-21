@@ -165,6 +165,30 @@ class TestDetectorParity(unittest.TestCase):
             theirs = {s: set(f) for s, f in BK._json_plural_sets(flat).items()}
             self.assertEqual(mine, theirs, flat)
 
+    def test_the_sets_only_new_completes_are_the_sets_the_server_folds(self):
+        """`--only-new` sends a set to be completed only when the server folds it
+        (check.plural_set_foldable vs backend _fold_plurals, every_form): one it leaves as it is
+        never gets a form, and would be sent and charged for nothing (critic round 4, B7)."""
+        from kaeris import check as chk
+        corpus = [
+            ("{{count}} item", "{{count}} items"),
+            ("{{count}} smile :-}", "{{count}} smiles :-}"),
+            ("{{count}} :-{", "{{count}} :-{ }"),
+            ("{{count}} item for {gender, select, male {him} other {them}}", "{{count}} items"),
+            ("{{count}} post in #general", "{{count}} posts in #general"),
+            ("One file", "{n, plural, other {# files}}"),
+            ("%{count} item", "%{count} items"),
+            ("{{count, number}} file", "{{count, number}} files"),
+            ("{ {count}", "{count} }"),
+            ("x {a, plural, one {b} other {c}}", "y"),
+            ("{{count}} item", "{count, selectordinal, one {#st} other {#th}}"),
+        ]
+        for one, other in corpus:
+            flat = {"k_one": one, "k_other": other}
+            _, groups = BK._fold_plurals(dict(flat), "json", None, every_form=True)
+            self.assertEqual(chk.plural_set_foldable({"one": one, "other": other}), bool(groups),
+                             (one, other))
+
     def test_po_formulas_the_server_writes_are_read(self):
         """`check` reads a .po slot one number selects without the number (formats.
         single_number_slots, 0.2.47 step 2). Every Plural-Forms the server writes must parse,

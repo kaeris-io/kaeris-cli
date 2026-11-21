@@ -1360,9 +1360,8 @@ def _dry_plan(client, path, langs, args):
                 if not settings_changed:
                     todo.update({k: source_flat[k] for k in stale if k not in todo})
             with_todo, to_complete = chk.plural_set_work(
-                source_flat, existing_flat, todo, lang,
-                complete=bool(chk.plural_keys_translated_again(source_flat, lang))
-                and _adds_plural_forms(client))
+                source_flat, existing_flat, todo, lang, complete=_adds_plural_forms(client),
+                incomplete=inc.lock_plural_incomplete(lock_raw).get(lang))
             todo.update(with_todo)
             todo.update(to_complete)
             reuse, _n = _tm_reuse(memory, todo, [lang], sig, entries, client)
@@ -2152,6 +2151,9 @@ def _translate_incremental(client, path, out_dir, langs, args):
     # language mutated mid-loop (that bug silently skipped later languages).
     detect_lock = inc.lock_keys(lock_raw)          # глобальный снимок (для совместимости)
     lang_locks = inc.lock_langs(lock_raw)           # состояние по каждому языку
+    # Plural sets sent whole that the server did not complete, per language, with their source
+    # hash: not sent again to be completed until the source changes (critic round 4, B7).
+    incomplete = inc.lock_plural_incomplete(lock_raw)
     broken_by_lang: dict[str, set] = {}
     # Reproducibility: if the tone/ICU/glossary/context/model changed since the lock was written, an
     # unchanged source string would still hash-match and be kept — leaving a locale that mixes
@@ -2218,9 +2220,8 @@ def _translate_incremental(client, path, out_dir, langs, args):
         # the production server before 0.2.47 never does, and the set would be sent and charged
         # on every run with the file never up to date (critic 21.11).
         with_todo, to_complete = chk.plural_set_work(
-            source_flat, existing_flat, todo, lang,
-            complete=bool(chk.plural_keys_translated_again(source_flat, lang))
-            and _adds_plural_forms(client))
+            source_flat, existing_flat, todo, lang, complete=_adds_plural_forms(client),
+            incomplete=incomplete.get(lang))
         if with_todo:
             info(f"{lang}: {len(with_todo)} more key(s) of plural sets sent with them, so every "
                  f"form {lang} needs is written")
@@ -2290,6 +2291,8 @@ def _translate_incremental(client, path, out_dir, langs, args):
         if is_arb:
             merged["@@locale"] = lang  # stamp the target locale on the written ARB
         inc.dump_json(merged, target_path)
+        if _adds_plural_forms(client):
+            _note_incomplete_sets(incomplete, source_flat, merged, lang, todo)
         args.__dict__.setdefault("verify_files", {}).setdefault(path, {})[lang] = target_path
         ok(f"{lang}: merged {len(todo)} key(s) → {target_path}")
 
@@ -2339,7 +2342,8 @@ def _translate_incremental(client, path, out_dir, langs, args):
         else:
             new_terms.pop(lang, None)
     inc.dump_lock(inc.build_lock(new_keys, final_settings, lang_locks,
-                                 glossary={l: m for l, m in new_terms.items() if m}),
+                                 glossary={l: m for l, m in new_terms.items() if m},
+                                 plural_incomplete=incomplete),
                   lock_path)
 
     if unverified_all:
@@ -2352,6 +2356,28 @@ def _translate_incremental(client, path, out_dir, langs, args):
     if not any_work:
         ok("Everything already up to date — nothing to translate")
     return 1 if job_failed else 0
+
+
+def _note_incomplete_sets(incomplete, source_flat, merged, lang, sent):
+    """Record in `incomplete` (kaeris.lock `plural_incomplete`) the plural sets this run sent
+    for `lang` that still lack a form it needs, and forget the ones that are complete now or no
+    longer in the source. Said once: such a set is not sent again to be completed until its
+    source changes (B7: it was sent and charged on every run)."""
+    marks = chk.plural_incomplete_marks(source_flat, inc.flatten(merged), lang, set(sent))
+    sets = {f"{base}{sep}" for base, sep in chk._plural_sets(source_flat)}
+    keep = {s: h for s, h in (incomplete.get(lang) or {}).items() if s in sets}
+    for s in sets:
+        if any(k.startswith(s) and k[len(s):] in chk.CLDR_ORDER_LOCAL for k in sent):
+            keep.pop(s, None)
+    keep.update(marks)
+    if keep:
+        incomplete[lang] = keep
+    else:
+        incomplete.pop(lang, None)
+    if marks:
+        warn(f"{lang}: the server did not add every form {lang} needs to {len(marks)} plural "
+             f"set(s) ({', '.join(sorted(s.rstrip('._') for s in marks)[:5])}); not sent again "
+             f"until its source changes — `kaeris check` names the forms")
 
 
 def _find_json_member(members, lang):

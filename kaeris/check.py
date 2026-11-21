@@ -11,6 +11,7 @@ Every format `translate` writes goes through the same comparison: a reader (kaer
 turns the file into {key: text}, and everything below works on those.
 """
 
+import json
 import re
 
 from .incremental import flatten_all
@@ -214,27 +215,93 @@ def _language_forms(lang):
     return (required | {"other"} if required else None), False
 
 
-def plural_set_work(source_flat, target_flat, todo, lang, complete=True):
+def plural_set_work(source_flat, target_flat, todo, lang, complete=True, incomplete=None):
     """({key: source text}, {key: source text}) of the plural sets `translate --only-new` must
-    send WHOLE, beyond `todo`: (1) a set one of whose keys is in `todo` (the server folds a set
-    into one ICU string only when it gets all of it); (2) a set the target lacks a form of that
-    `lang` needs — the forms this module asks for (a Polish file with `items_one/items_other`
-    only is not up to date). (2) only when `complete`: the server adds those forms (it says so
-    in /api/config); one that does not would get the set, and charge it, on every run.
+    send WHOLE, beyond `todo`: (1) a set one of whose keys is in `todo`, (2) a set the target
+    lacks a form of that `lang` needs (the forms this module asks for: a Polish file with
+    `items_one/items_other` only is not up to date).
+
+    Only where sending the whole set buys a form (round 5: new behaviour only where it is
+    plainly right, else what 0.2.46 sent):
+      - `complete`: the server adds forms (it says so in /api/config); one that does not would
+        get the set, and charge it, on every run;
+      - `lang` needs a form the set's source lacks (Polish few/many; never German, never a
+        one-form language): elsewhere an edited form goes alone, as 0.2.46 sent it;
+      - the server folds the set (plural_set_foldable): one it leaves as it is never gets a form;
+      - (2) only: the set is not in `incomplete` with its current source ({set id: hash} from
+        kaeris.lock, plural_incomplete_marks): sent whole once already, the server did not add
+        every form, and nothing changed since (critic round 4, B7: charged on every run).
     Ordinal sets owe only `_ordinal_other` and are translated form by form: never added."""
     forms, single = _language_forms(lang)
     need = set() if single or not forms else forms
     with_todo, to_complete = {}, {}
+    if not complete or not need:
+        return with_todo, to_complete
     for (base, sep), src_forms in _plural_sets(source_flat).items():
         if sep == "_" and base.endswith(_ORDINAL):
             continue
+        if not need - set(src_forms):
+            continue                    # the source has every form: nothing to add
         keys = [f"{base}{sep}{c}" for c in CLDR_ORDER_LOCAL if c in src_forms]
+        if not plural_set_foldable({k: source_flat[k] for k in keys}):
+            continue
         rest = {k: source_flat[k] for k in keys if k not in todo}
         if any(k in todo for k in keys):
             with_todo.update(rest)
-        elif complete and any(f"{base}{sep}{c}" not in target_flat for c in need):
+        elif any(f"{base}{sep}{c}" not in target_flat for c in need) and                 (incomplete or {}).get(f"{base}{sep}") != _set_hash(source_flat, keys):
             to_complete.update(rest)
     return with_todo, to_complete
+
+
+# What the server reads as an ICU block inside a form (translator._ICU_HEAD_RE).
+_ICU_HEAD_RE = re.compile(r"\{\s*[\w\d_]+\s*,\s*(plural|selectordinal|select)\s*,")
+
+
+def plural_set_foldable(forms):
+    """Whether the server folds this set into one ICU string (translator._fold_plurals, JSON/
+    YAML/ARB): every form plain text with balanced braces, none holding an ICU block, none with
+    a `#` of its own (that `#` could not be told from ICU's number). A set it does not fold is
+    translated key by key and never gets a new form, so `--only-new` does not send it to be
+    completed. tests/test_detector_parity.py holds this to the server's own fold."""
+    texts = list(forms.values())
+    if not texts or not all(isinstance(t, str) for t in texts):
+        return False
+    for t in texts:
+        if "#" in t or _ICU_HEAD_RE.search(t):
+            return False
+        depth = 0
+        for ch in t:
+            depth += ch == "{"
+            depth -= ch == "}"
+            if depth < 0:
+                return False
+        if depth:
+            return False
+    return True
+
+
+def _set_hash(source_flat, keys):
+    import hashlib
+    body = json.dumps({k: source_flat.get(k) for k in sorted(keys)}, ensure_ascii=False,
+                      sort_keys=True)
+    return hashlib.sha256(body.encode("utf-8")).hexdigest()
+
+
+def plural_incomplete_marks(source_flat, target_flat, lang, sent):
+    """{set id: hash of its source forms} of the sets with a key in `sent` that the target still
+    lacks a `lang` form of after the run: the server did not complete them. kaeris.lock keeps
+    these (`plural_incomplete`) so that plural_set_work does not send them again to be completed
+    until their source changes."""
+    forms, single = _language_forms(lang)
+    need = set() if single or not forms else forms
+    marks = {}
+    for (base, sep), src_forms in _plural_sets(source_flat).items():
+        keys = [f"{base}{sep}{c}" for c in CLDR_ORDER_LOCAL if c in src_forms]
+        if not any(k in sent for k in keys):
+            continue
+        if any(f"{base}{sep}{c}" not in target_flat for c in need):
+            marks[f"{base}{sep}"] = _set_hash(source_flat, keys)
+    return marks
 
 
 def plural_keys_translated_again(source_flat, lang):

@@ -218,7 +218,7 @@ def lock_settings(lock):
     return None
 
 
-def build_lock(keys, settings, langs=None, glossary=None):
+def build_lock(keys, settings, langs=None, glossary=None, plural_incomplete=None):
     """Assemble a lock document: settings, the global baseline, and per-language baselines.
 
     `keys` stays the "reached every language" map so an older client reading this lock behaves
@@ -231,7 +231,21 @@ def build_lock(keys, settings, langs=None, glossary=None):
         doc["langs"] = {lang: dict(m) for lang, m in langs.items() if m}
     if glossary:
         doc["glossary"] = {lang: dict(m) for lang, m in glossary.items() if m}
+    if plural_incomplete:
+        doc["plural_incomplete"] = {lang: dict(m) for lang, m in plural_incomplete.items() if m}
     return doc
+
+
+def lock_plural_incomplete(lock):
+    """{lang: {plural set id: hash of its source forms}}: sets `--only-new` sent whole to have
+    their forms completed that the server did not complete (0.2.47). Not sent again for that
+    until their source changes. An older client ignores the field (and drops it on rewrite: the
+    next 0.2.47 run then tries those sets once more)."""
+    got = lock.get("plural_incomplete") if isinstance(lock, dict) else None
+    if not isinstance(got, dict):
+        return {}
+    return {lang: {s: h for s, h in m.items() if isinstance(h, str)}
+            for lang, m in got.items() if isinstance(m, dict)}
 
 
 def default_lock_path(source_path):
