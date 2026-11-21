@@ -2015,6 +2015,18 @@ def _show_qa(client, job, args, path):
                 print(f"    [{lang}] {o['key']}: {grew}  \"{o['tr'][:50]}\"", file=sys.stderr)
                 shown += 1
 
+    # A plural the server could not write in every form the language needs (critic round 3,
+    # B4): a .po entry written as before 0.2.47 (msgstr[2] repeats msgstr[1] — `check` cannot
+    # see words), a JSON set missing forms, a form left in the source text. Printed like every
+    # QA finding; the exit code stays as it was (the file is what 0.2.46 wrote).
+    plurals = [(lang, m) for lang, v in qa.items() for m in (v or {}).get("plurals") or []]
+    if plurals:
+        warn(f"{len(plurals)} plural(s) not written in every form of their own:")
+        for lang, m in plurals[:20]:
+            print(f"    [{lang}] {m}", file=sys.stderr)
+        if len(plurals) > 20:
+            print(f"    … and {len(plurals) - 20} more", file=sys.stderr)
+
     if args.verify:
         _show_meaning(meaning, review)
     if args.verify and back:
@@ -2027,7 +2039,7 @@ def _show_qa(client, job, args, path):
                                           warnings.get(lang) or {}, data.get("_source") or {},
                                           data.get(lang) or {})
 
-    if not ph and not over:
+    if not ph and not over and not plurals:
         ok("Translation QA: no placeholder loss, no overflow risks")
     # Returned so the caller can fold the results into the project memory without a second
     # round trip for the same payload.

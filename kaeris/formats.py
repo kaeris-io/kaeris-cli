@@ -270,8 +270,12 @@ def read_po(text, role="source", lang=""):
 # `msgfmt -c`, which lets a slot picked for fewer than 5 values of n go, and does not compare the
 # formula with the language (Czech few 2-4 passes msgfmt, not check).
 # The formula is evaluated as written (C syntax: ?: || && == != < > <= >= + - * / % ! and n).
-_PF_RE = re.compile(r"(?<![a-z])plural\s*=\s*([^;\n]+)")
-_PF_TOKEN_RE = re.compile(r"\s*([0-9]+|n|&&|\|\||[=!<>]=|[-+*/%<>!?:()])")
+# ASCII only, in py and npm alike (critic round 3): Python's \s and \d are Unicode, JavaScript's
+# \s is another Unicode set, so a BOM, NEL or an Arabic-Indic digit split the two ports. gettext
+# itself reads spaces and tabs only; anything else in a formula is not trusted (strict).
+_PF_WS = " \t\n\r\f\v"
+_PF_RE = re.compile(r"(?<![a-z])plural[ \t\n\r\f\v]*=[ \t\n\r\f\v]*([^;\n]+)")
+_PF_TOKEN_RE = re.compile(r"[ \t\n\r\f\v]*([0-9]+|n|&&|\|\||[=!<>]=|[-+*/%<>!?:()])")
 _PF_LEVELS = (("||",), ("&&",), ("==", "!="), ("<", ">", "<=", ">="), ("+", "-"), ("*", "/", "%"))
 _PF_OPS = {"||": lambda a, b: int(bool(a or b)), "&&": lambda a, b: int(bool(a and b)),
            "==": lambda a, b: int(a == b), "!=": lambda a, b: int(a != b),
@@ -283,7 +287,7 @@ _PF_OPS = {"||": lambda a, b: int(bool(a or b)), "&&": lambda a, b: int(bool(a a
 
 def _pf_tokens(expr):
     out, pos = [], 0
-    expr = expr.rstrip()
+    expr = expr.rstrip(_PF_WS)
     while pos < len(expr):
         m = _PF_TOKEN_RE.match(expr, pos)
         if not m:
@@ -380,8 +384,9 @@ def _pf_eval(tokens, n):
     return value
 
 
-_PF_N_RE = re.compile(r"nplurals\s*=\s*(\d+)")
-_PF_LANG_RE = re.compile(r"^\s*Language\s*:\s*([A-Za-z]{2,3}(?:[-_][A-Za-z0-9]+)*)", re.MULTILINE)
+_PF_N_RE = re.compile(r"nplurals[ \t\n\r\f\v]*=[ \t\n\r\f\v]*([0-9]+)")
+_PF_LANG_RE = re.compile(r"^[ \t\r\f\v]*Language[ \t\r\f\v]*:[ \t\r\f\v]*([A-Za-z]{2,3}(?:[-_][A-Za-z0-9]+)*)",
+                         re.MULTILINE)
 _PF_UPTO = 1000
 
 
@@ -459,7 +464,7 @@ def po_loose_slots(header, lang=""):
 
 def _po_plural_notes(out, records, header, lang):
     declared = None
-    m = re.search(r"nplurals\s*=\s*(\d+)", header or "")
+    m = _PF_N_RE.search(header or "")
     if m:
         declared = int(m.group(1))
     base_lang = (lang or "").replace("_", "-").split("-")[0].lower()

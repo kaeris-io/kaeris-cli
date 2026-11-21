@@ -235,7 +235,16 @@ async function showQa(client, job) {
       }
     }
   }
-  if (!ph && !over) ok("Translation QA: no placeholder loss, no overflow risks");
+  // A plural the server could not write in every form of its own (critic round 3, B4). Python
+  // twin: kaeris/cli.py _show_qa. Printed like every QA finding; the exit code stays.
+  const plurals = [];
+  for (const [lang, v] of Object.entries(qa)) for (const m of (v && v.plurals) || []) plurals.push([lang, m]);
+  if (plurals.length) {
+    warn(`${plurals.length} plural(s) not written in every form of their own:`);
+    for (const [lang, m] of plurals.slice(0, 20)) out(`    [${lang}] ${m}`);
+    if (plurals.length > 20) out(`    … and ${plurals.length - 20} more`);
+  }
+  if (!ph && !over && !plurals.length) ok("Translation QA: no placeholder loss, no overflow risks");
   return data;
 }
 

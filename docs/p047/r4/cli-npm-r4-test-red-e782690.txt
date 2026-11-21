@@ -1,14 +1,14 @@
-$ (cd npm) node --test test/translate.test.js test/po-slots.test.js   (kaeris-cli e782690 + these tests)
-✖ degenerate headers read as the Python port reads them (58.4649ms)
+$ (cd npm) node --test test/translate.test.js test/po-slots.test.js   (kaeris-cli e782690 code + the round 4 tests; npm test corrected after the first record: it asked for pl/ru, which the test server does not offer)
+✖ degenerate headers read as the Python port reads them (59.6931ms)
 ▶ translate: files land where the Python CLI puts them
 ▶ translate: refusals are one clear line and a non-zero exit
 ▶ translate: glossary file
 ▶ translate: help
 ▶ translate: words on the screen (pre-tag round 2)
 ▶ translate: the server's plural finding is printed
-  ✖ a .po entry written as before 0.2.47 is named, and no all-clear line (96.467ms)
-  ✖ a JSON set missing forms is named too (96.8668ms)
-✖ translate: the server's plural finding is printed (193.8577ms)
+  ✖ a .po entry written as before 0.2.47 is named, and no all-clear line (201.2702ms)
+  ✖ a JSON set missing forms is named too (217.7963ms)
+✖ translate: the server's plural finding is printed (419.5147ms)
 ℹ tests 35
 ℹ suites 6
 ℹ pass 32
@@ -16,12 +16,12 @@ $ (cd npm) node --test test/translate.test.js test/po-slots.test.js   (kaeris-cl
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 8708.5721
+ℹ duration_ms 9334.1306
 
 ✖ failing tests:
 
-test at npm\test\po-slots.test.js:66:1
-✖ degenerate headers read as the Python port reads them (58.4649ms)
+test at ..\..\..\..\..\..\AppData\Local\Temp\claude\a43205edf0b1eb40\903282ca-0cef-4a65-881b-d4ad1fba7558\scratchpad\r4\cli-red\npm\test\po-slots.test.js:66:1
+✖ degenerate headers read as the Python port reads them (59.6931ms)
   AssertionError [ERR_ASSERTION]: critic round 3: ar formula with NBSP for a space (gettext reads space and tab only)
   + actual - expected
   
@@ -32,7 +32,7 @@ test at npm\test\po-slots.test.js:66:1
   + ]
   - []
   
-      at TestContext.<anonymous> (file:///C:/Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121/npm/test/po-slots.test.js:70:12)
+      at TestContext.<anonymous> (file:///C:/Users/Inzagi/AppData/Local/Temp/claude/a43205edf0b1eb40/903282ca-0cef-4a65-881b-d4ad1fba7558/scratchpad/r4/cli-red/npm/test/po-slots.test.js:70:12)
       at Test.runInAsyncScope (node:async_hooks:227:14)
       at Test.run (node:internal/test_runner/test:1382:25)
       at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
@@ -47,14 +47,18 @@ test at npm\test\po-slots.test.js:66:1
     diff: 'simple'
   }
 
-test at npm\test\translate.test.js:509:3
-✖ a .po entry written as before 0.2.47 is named, and no all-clear line (96.467ms)
-  AssertionError [ERR_ASSERTION]: ✗ Unknown language code: pl, ru. Codes offered: en, de, fr, zh-Hant
+test at ..\..\..\..\..\..\AppData\Local\Temp\claude\a43205edf0b1eb40\903282ca-0cef-4a65-881b-d4ad1fba7558\scratchpad\r4\cli-red\npm\test\translate.test.js:509:3
+✖ a .po entry written as before 0.2.47 is named, and no all-clear line (201.2702ms)
+  AssertionError [ERR_ASSERTION]: de.po
+  → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  → Translating en.po → de, fr
+  → 100%  de
+  ✓ Wrote 1 file(s) to C:\Users\Inzagi\AppData\Local\Temp\kaeris-tr-OMkcg8
+  ✓ Translation QA: no placeholder loss, no overflow risks
+  → Run: test-model · Free · 1/1 languages · 3 strings · 1s
+       spend and settings are the job owner's — not shown here
   
-  
-  1 !== 0
-  
-      at TestContext.<anonymous> (file:///C:/Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121/npm/test/translate.test.js:517:12)
+      at TestContext.<anonymous> (file:///C:/Users/Inzagi/AppData/Local/Temp/claude/a43205edf0b1eb40/903282ca-0cef-4a65-881b-d4ad1fba7558/scratchpad/r4/cli-red/npm/test/translate.test.js:518:12)
       at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
       at async Test.run (node:internal/test_runner/test:1389:7)
       at async Promise.all (index 0)
@@ -62,17 +66,24 @@ test at npm\test\translate.test.js:509:3
       at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
     generatedMessage: false,
     code: 'ERR_ASSERTION',
-    actual: 1,
-    expected: 0,
-    operator: 'strictEqual',
+    actual: false,
+    expected: true,
+    operator: '==',
     diff: 'simple'
   }
 
-test at npm\test\translate.test.js:524:3
-✖ a JSON set missing forms is named too (96.8668ms)
-  AssertionError [ERR_ASSERTION]: ✗ Unknown language code: pl. Codes offered: en, de, fr, zh-Hant
+test at ..\..\..\..\..\..\AppData\Local\Temp\claude\a43205edf0b1eb40\903282ca-0cef-4a65-881b-d4ad1fba7558\scratchpad\r4\cli-red\npm\test\translate.test.js:524:3
+✖ a JSON set missing forms is named too (217.7963ms)
+  AssertionError [ERR_ASSERTION]: de.json
+  → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  → Translating en.json → de
+  → 100%  de
+  ✓ Wrote 1 file(s) to C:\Users\Inzagi\AppData\Local\Temp\kaeris-tr-ExwMIg
+  ✓ Translation QA: no placeholder loss, no overflow risks
+  → Run: test-model · Free · 1/1 languages · 3 strings · 1s
+       spend and settings are the job owner's — not shown here
   
-      at TestContext.<anonymous> (file:///C:/Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121/npm/test/translate.test.js:531:12)
+      at TestContext.<anonymous> (file:///C:/Users/Inzagi/AppData/Local/Temp/claude/a43205edf0b1eb40/903282ca-0cef-4a65-881b-d4ad1fba7558/scratchpad/r4/cli-red/npm/test/translate.test.js:531:12)
       at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
       at async Test.run (node:internal/test_runner/test:1389:7)
       at async Suite.processPendingSubtests (node:internal/test_runner/test:960:7) {

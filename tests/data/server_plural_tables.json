@@ -1,5 +1,5 @@
 {
- "about": "backend/translator.py plural tables (_PLURAL_RULES, _PLURAL_DEFAULT, _CLDR_REQUIRED, _NO_SINGULAR, _HAS_ONE); written by kaeris-cli tests/data/refresh_server_plural_tables.py",
+ "about": "backend/translator.py plural tables (_PLURAL_RULES, _PLURAL_DEFAULT, _CLDR_REQUIRED, _NO_SINGULAR, _HAS_ONE, _PO_SLOT_CATS); written by kaeris-cli tests/data/refresh_server_plural_tables.py",
  "PLURAL_RULES": {
   "ar": [
    6,
@@ -386,5 +386,76 @@
   "xog",
   "yi",
   "zu"
- ]
+ ],
+ "PO_SLOT_CATS": {
+  "ar": [
+   "zero",
+   "one",
+   "two",
+   "few",
+   "many",
+   "other"
+  ],
+  "cs": [
+   "one",
+   "few",
+   "other"
+  ],
+  "he": [
+   "one",
+   "two",
+   "other"
+  ],
+  "hr": [
+   "one",
+   "few",
+   "other"
+  ],
+  "lt": [
+   "one",
+   "few",
+   "other"
+  ],
+  "lv": [
+   "zero",
+   "one",
+   "other"
+  ],
+  "pl": [
+   "one",
+   "few",
+   "many"
+  ],
+  "ro": [
+   "one",
+   "few",
+   "other"
+  ],
+  "ru": [
+   "one",
+   "few",
+   "many"
+  ],
+  "sk": [
+   "one",
+   "few",
+   "other"
+  ],
+  "sl": [
+   "one",
+   "two",
+   "few",
+   "other"
+  ],
+  "sr": [
+   "one",
+   "few",
+   "other"
+  ],
+  "uk": [
+   "one",
+   "few",
+   "many"
+  ]
+ }
 }

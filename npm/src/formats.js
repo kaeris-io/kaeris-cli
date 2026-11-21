@@ -249,8 +249,12 @@ function readPo(text, role = "source", lang = "") {
 // `msgfmt -c`, which lets a slot picked for fewer than 5 values of n go, and does not compare the
 // formula with the language.
 // The formula is evaluated as written (C syntax: ?: || && == != < > <= >= + - * / % ! and n).
-const PF_RE = /(?<![a-z])plural\s*=\s*([^;\n]+)/;
-const PF_TOKEN_RE = /\s*([0-9]+|n|&&|\|\||[=!<>]=|[-+*/%<>!?:()])/y;
+// ASCII only, as the Python port (critic round 3): JavaScript's \s and Python's are different
+// Unicode sets, so a BOM, NEL or an Arabic-Indic digit split the two ports. gettext reads spaces
+// and tabs only; anything else in a formula is not trusted (strict).
+const PF_WS = " \t\n\r\f\v";
+const PF_RE = /(?<![a-z])plural[ \t\n\r\f\v]*=[ \t\n\r\f\v]*([^;\n]+)/;
+const PF_TOKEN_RE = /[ \t\n\r\f\v]*([0-9]+|n|&&|\|\||[=!<>]=|[-+*/%<>!?:()])/y;
 const PF_LEVELS = [["||"], ["&&"], ["==", "!="], ["<", ">", "<=", ">="], ["+", "-"], ["*", "/", "%"]];
 const PF_OPS = {
   "||": (a, b) => (a || b ? 1 : 0), "&&": (a, b) => (a && b ? 1 : 0),
@@ -263,7 +267,7 @@ const PF_OPS = {
 
 function pfTokens(expr) {
   const out = [];
-  const s = rstrip(expr);
+  const s = rstrip(expr, PF_WS);
   let pos = 0;
   while (pos < s.length) {
     PF_TOKEN_RE.lastIndex = pos;
@@ -345,8 +349,8 @@ function pfEval(tokens, n) {
   return value;
 }
 
-const PF_N_RE = /nplurals\s*=\s*(\d+)/;
-const PF_LANG_RE = /^\s*Language\s*:\s*([A-Za-z]{2,3}(?:[-_][A-Za-z0-9]+)*)/m;
+const PF_N_RE = /nplurals[ \t\n\r\f\v]*=[ \t\n\r\f\v]*([0-9]+)/;
+const PF_LANG_RE = /^[ \t\r\f\v]*Language[ \t\r\f\v]*:[ \t\r\f\v]*([A-Za-z]{2,3}(?:[-_][A-Za-z0-9]+)*)/m;
 const PF_UPTO = 1000;
 
 // [slot for n in 0..upto], or null when the formula does not parse or gives a slot outside
@@ -420,7 +424,7 @@ export function poLooseSlots(header, lang = "") {
   return singleNumberSlots(header) ?? new Set();
 }
 
-const NPLURALS_RE = rx("nplurals\\s*=\\s*(\\d+)");
+const NPLURALS_RE = PF_N_RE;      // ASCII, as kaeris/formats.py _po_plural_notes (critic round 3)
 
 function poPluralNotes(out, records, header, lang) {
   let declared = null;

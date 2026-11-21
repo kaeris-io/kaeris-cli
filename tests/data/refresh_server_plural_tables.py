@@ -21,13 +21,16 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 def tables(translator) -> dict:
     return {
         "about": "backend/translator.py plural tables (_PLURAL_RULES, _PLURAL_DEFAULT, "
-                 "_CLDR_REQUIRED, _NO_SINGULAR, _HAS_ONE); written by "
+                 "_CLDR_REQUIRED, _NO_SINGULAR, _HAS_ONE, _PO_SLOT_CATS); written by "
                  "kaeris-cli tests/data/refresh_server_plural_tables.py",
         "PLURAL_RULES": {k: [n, e] for k, (n, e) in sorted(translator._PLURAL_RULES.items())},
         "PLURAL_DEFAULT": list(translator._PLURAL_DEFAULT),
         "CLDR_REQUIRED": {k: sorted(v) for k, v in sorted(translator._CLDR_REQUIRED.items())},
         "NO_SINGULAR": sorted(translator._NO_SINGULAR),
         "HAS_ONE": sorted(translator._HAS_ONE),
+        # the order translate lays a target's .po slots out in (critic round 3: a reordered ro
+        # row passed every guard); the CLI has no copy, the snapshot pins it for the server
+        "PO_SLOT_CATS": {k: list(v) for k, v in sorted(translator._PO_SLOT_CATS.items())},
     }
 
 
