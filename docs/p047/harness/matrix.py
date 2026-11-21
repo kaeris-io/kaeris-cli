@@ -43,6 +43,16 @@ CASES = {
     "po": ("en.po", 'msgid ""\nmsgstr ""\n"Content-Type: text/plain; charset=UTF-8\\n"\n'
                     '"Plural-Forms: nplurals=2; plural=(n != 1);\\n"\n\n'
                     'msgid "%d file"\nmsgid_plural "%d files"\nmsgstr[0] "%d file"\nmsgstr[1] "%d files"\n'),
+    # POT-style (empty msgstr), msgctxt twins, a singular without the number, %s count.
+    "po-multi": ("en.po", 'msgid ""\nmsgstr ""\n"Content-Type: text/plain; charset=UTF-8\\n"\n'
+                          '"Plural-Forms: nplurals=2; plural=(n != 1);\\n"\n"Language: en\\n"\n\n'
+                          'msgid "Inbox"\nmsgstr ""\n\n'
+                          'msgctxt "mail"\nmsgid "One message"\nmsgid_plural "%d messages"\n'
+                          'msgstr[0] ""\nmsgstr[1] ""\n\n'
+                          'msgctxt "chat"\nmsgid "One message"\nmsgid_plural "%d messages"\n'
+                          'msgstr[0] ""\nmsgstr[1] ""\n\n'
+                          'msgid "%s file deleted"\nmsgid_plural "%s files deleted"\n'
+                          'msgstr[0] ""\nmsgstr[1] ""\n'),
     "arb": ("app_en.arb", json.dumps({"@@locale": "en",
                                       "files": "{count, plural, one {{count} file} other {{count} files}}",
                                       "@files": {"placeholders": {"count": {"type": "int"}}}})),
@@ -139,6 +149,10 @@ def main():
                         say(f"  | {l}")
                 if tool == "py" and case in INCREMENTAL and os.path.isfile(os.path.join(d, "pl.json")):
                     incremental(tools[tool], d, rel, cli_env, say, summary, case)
+                if case.startswith("po"):
+                    po_slots(d, tool, case, say, summary)
+                    if tool == "py":
+                        po_only_new(tools[tool], d, rel, cli_env, say, summary, case)
             say("")
         say("\n# SUMMARY tool case lang exit verdict")
         for row in summary:
@@ -189,6 +203,80 @@ def incremental(tool, d, rel, env, say, summary, case):
             for l in (pl or txt.splitlines()[-2:]):
                 say(f"  | {l}")
         say("  pl.json: " + open(os.path.join(d, "pl.json"), encoding="utf-8").read().replace("\n", " "))
+
+
+# Where the stub's `one` form (the singular, no category suffix) must land in each target's
+# msgstr[] order. The stub gives every other category its own word, so a copied slot shows.
+ONE_SLOT = {"pl": 0, "ru": 0, "ar": 1}
+
+
+def parse_po(path):
+    """[(entry, header_nplurals)] — entry: {msgctxt?, msgid, msgid_plural?, strs: {i: text}}."""
+    import re
+    text = open(path, encoding="utf-8").read()
+    m = re.search(r"Plural-Forms: nplurals=(\d+)", text)
+    entries, cur = [], None
+    for line in text.splitlines():
+        r = re.match(r'^(msgctxt|msgid_plural|msgid|msgstr(?:\[(\d+)\])?) "(.*)"$', line.strip())
+        if not r:
+            continue
+        kw = r.group(1)
+        if kw == "msgctxt" or (kw == "msgid" and (cur is None or "msgid" in cur)):
+            cur = {"strs": {}}
+            entries.append(cur)
+        if kw.startswith("msgstr"):
+            cur["strs"][int(r.group(2) or 0)] = r.group(3)
+        else:
+            cur[kw] = r.group(3)
+    return [e for e in entries if e.get("msgid")], int(m.group(1)) if m else None
+
+
+def po_slots(d, tool, case, say, summary):
+    """Every plural entry of every target: as many msgstr as the header's nplurals, each slot
+    its own form, the singular in the `one` slot, and Japanese's one slot = the plural form."""
+    sys.path.insert(0, HERE)
+    import stub_model
+    for lang in LANGS:
+        p = os.path.join(d, f"{lang}.po")
+        if not os.path.isfile(p):
+            summary.append((tool, f"{case}-slots", lang, "-", "RED"))
+            say(f"  [{lang}] no {lang}.po")
+            continue
+        entries, n = parse_po(p)
+        faults = []
+        for e in entries:
+            if "msgid_plural" not in e:
+                continue
+            strs = [e["strs"].get(i) for i in range(len(e["strs"]))]
+            tag = f"{e.get('msgctxt', '')}|{e['msgid']}"
+            if len(strs) != n:
+                faults.append(f"{tag}: {len(strs)} msgstr, header nplurals={n}")
+            if n and n > 1 and len(set(strs)) != len(strs):
+                faults.append(f"{tag}: slots repeat a form {strs}")
+            if lang in ONE_SLOT and len(strs) > ONE_SLOT[lang] and \
+                    strs[ONE_SLOT[lang]] != stub_model.plain(e["msgid"], lang):
+                faults.append(f"{tag}: msgstr[{ONE_SLOT[lang]}] is not the singular {strs}")
+            if n == 1 and strs and strs[0] != stub_model.plain(e["msgid_plural"], lang):
+                faults.append(f"{tag}: msgstr[0] is not the plural form {strs}")
+        verdict = "GREEN" if not faults else "RED"
+        summary.append((tool, f"{case}-slots", lang, "-", verdict))
+        say(f"  [{lang}] po slots nplurals={n}: {verdict}" + "".join(f"\n  |   {f}" for f in faults))
+
+
+def po_only_new(tool, d, rel, env, say, summary, case):
+    """--only-new on .po: the CLI translates the whole file (JSON/ARB only), and the result
+    must be the same file — no slot lost, none added."""
+    read = lambda: {l: open(os.path.join(d, f"{l}.po"), encoding="utf-8").read()
+                    for l in LANGS if os.path.isfile(os.path.join(d, f"{l}.po"))}
+    before = read()
+    code, txt = run(tool + ["translate", rel, "--langs", ",".join(LANGS), "--only-new"], d, env)
+    same = read() == before and len(before) == len(LANGS)
+    verdict = "GREEN" if code == 0 and same else "RED"
+    summary.append(("py", f"{case}+only-new", ",".join(LANGS), code, verdict))
+    say(f"$ kaeris translate {rel} --langs {','.join(LANGS)} --only-new  -> exit {code}  "
+        f"files identical to the full run: {same}  {verdict}")
+    say("  | " + "\n  | ".join(l for l in txt.splitlines() if "only-new" in l or "memory" in l.lower()))
+    po_slots(d, tool, case + "+only-new", say, summary)
 
 
 def trim(tgt, src):

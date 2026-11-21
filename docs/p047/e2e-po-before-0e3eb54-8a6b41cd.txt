@@ -1,0 +1,347 @@
+# e2e-po-before: stub pid 16916, api pid 8576
+# cli C:/Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121 @ 0e3eb54 docs(p047): e2e after on final heads (cli 243a9f2, server 9826f884): 100/100; server C:/Users/Inzagi/projects/kaeris/i18n_tool/.claude/worktrees/plural-translate-1121 @ 8a6b41cd docs(p047): full pytest 4 groups, 94114a89 vs 9826f884: 778 = 778 failing ids (Wi
+$ kaeris translate en.json --langs cy -> exit 1
+  | [stderr] ✗ Unknown language code: cy. Run 'kaeris languages' for the list (codes like de, ja, pt-PT, zh-Hant).
+
+=== [py] po: en.po
+$ kaeris translate en.po --langs pl,ru,ar,ja  -> exit 0
+$ kaeris check --source en.po --langs pl  -> exit 0  GREEN
+  | [stderr] ✓ pl: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ kaeris check --source en.po --langs ru  -> exit 0  GREEN
+  | [stderr] ✓ ru: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ kaeris check --source en.po --langs ar  -> exit 0  GREEN
+  | [stderr] ✓ ar: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ kaeris check --source en.po --langs ja  -> exit 0  GREEN
+  | [stderr] ✓ ja: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+  [pl] po slots nplurals=3: RED
+  |   |%d file: slots repeat a form ['%d elify', '%d selify', '%d selify']
+  [ru] po slots nplurals=3: RED
+  |   |%d file: slots repeat a form ['%d еилд', '%d еилдт', '%d еилдт']
+  [ar] po slots nplurals=6: RED
+  |   |%d file: slots repeat a form ['%d حذسج', '%d حذسجغ', '%d حذسجغ', '%d حذسجغ', '%d حذسجغ', '%d حذسجغ']
+  |   |%d file: msgstr[1] is not the singular ['%d حذسج', '%d حذسجغ', '%d حذسجغ', '%d حذسجغ', '%d حذسجغ', '%d حذسجغ']
+  [ja] po slots nplurals=1: RED
+  |   |%d file: msgstr[0] is not the plural form ['%d カケシオ']
+$ kaeris translate en.po --langs pl,ru,ar,ja --only-new  -> exit 0  files identical to the full run: True  GREEN
+  | ! --only-new supports JSON/ARB only (zero-dependency CLI); translating the whole .po file instead
+  [pl] po slots nplurals=3: RED
+  |   |%d file: slots repeat a form ['%d elify', '%d selify', '%d selify']
+  [ru] po slots nplurals=3: RED
+  |   |%d file: slots repeat a form ['%d еилд', '%d еилдт', '%d еилдт']
+  [ar] po slots nplurals=6: RED
+  |   |%d file: slots repeat a form ['%d حذسج', '%d حذسجغ', '%d حذسجغ', '%d حذسجغ', '%d حذسجغ', '%d حذسجغ']
+  |   |%d file: msgstr[1] is not the singular ['%d حذسج', '%d حذسجغ', '%d حذسجغ', '%d حذسجغ', '%d حذسجغ', '%d حذسجغ']
+  [ja] po slots nplurals=1: RED
+  |   |%d file: msgstr[0] is not the plural form ['%d カケシオ']
+
+=== [py] po-multi: en.po
+$ kaeris translate en.po --langs pl,ru,ar,ja  -> exit 0
+$ kaeris check --source en.po --langs pl  -> exit 0  GREEN
+  | [stderr] ✓ pl: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ kaeris check --source en.po --langs ru  -> exit 0  GREEN
+  | [stderr] ✓ ru: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ kaeris check --source en.po --langs ar  -> exit 0  GREEN
+  | [stderr] ✓ ar: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ kaeris check --source en.po --langs ja  -> exit 0  GREEN
+  | [stderr] ✓ ja: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+  [pl] po slots nplurals=3: RED
+  |   mail|One message: slots repeat a form ['enoy egassemy', '%d segassemy', '%d segassemy']
+  |   chat|One message: slots repeat a form ['enoy egassemy', '%d segassemy', '%d segassemy']
+  |   |%s file deleted: slots repeat a form ['%s elify deteledy', '%s selify deteledy', '%s selify deteledy']
+  [ru] po slots nplurals=3: RED
+  |   mail|One message: slots repeat a form ['онд мдттажд', '%d мдттаждт', '%d мдттаждт']
+  |   chat|One message: slots repeat a form ['онд мдттажд', '%d мдттаждт', '%d мдттаждт']
+  |   |%s file deleted: slots repeat a form ['%s еилд гдлдудг', '%s еилдт гдлдудг', '%s еилдт гдлдудг']
+  [ar] po slots nplurals=6: RED
+  |   mail|One message: slots repeat a form ['ضصج شجغغاخج', '%d شجغغاخجغ', '%d شجغغاخجغ', '%d شجغغاخجغ', '%d شجغغاخجغ', '%d شجغغاخجغ']
+  |   mail|One message: msgstr[1] is not the singular ['ضصج شجغغاخج', '%d شجغغاخجغ', '%d شجغغاخجغ', '%d شجغغاخجغ', '%d شجغغاخجغ', '%d شجغغاخجغ']
+  |   chat|One message: slots repeat a form ['ضصج شجغغاخج', '%d شجغغاخجغ', '%d شجغغاخجغ', '%d شجغغاخجغ', '%d شجغغاخجغ', '%d شجغغاخجغ']
+  |   chat|One message: msgstr[1] is not the singular ['ضصج شجغغاخج', '%d شجغغاخجغ', '%d شجغغاخجغ', '%d شجغغاخجغ', '%d شجغغاخجغ', '%d شجغغاخجغ']
+  |   |%s file deleted: slots repeat a form ['%s حذسج ثجسجفجث', '%s حذسجغ ثجسجفجث', '%s حذسجغ ثجسجفجث', '%s حذسجغ ثجسجفجث', '%s حذسجغ ثجسجفجث', '%s حذسجغ ثجسجفجث']
+  |   |%s file deleted: msgstr[1] is not the singular ['%s حذسج ثجسجفجث', '%s حذسجغ ثجسجفجث', '%s حذسجغ ثجسجفجث', '%s حذسجغ ثجسجفجث', '%s حذسجغ ثجسجفجث', '%s حذسجغ ثجسجفجث']
+  [ja] po slots nplurals=1: RED
+  |   mail|One message: msgstr[0] is not the plural form ['ソセオ スオテテアキオ']
+  |   chat|One message: msgstr[0] is not the plural form ['ソセオ スオテテアキオ']
+  |   |%s file deleted: msgstr[0] is not the plural form ['%s カケシオ エオシオトオエ']
+$ kaeris translate en.po --langs pl,ru,ar,ja --only-new  -> exit 0  files identical to the full run: True  GREEN
+  | ! --only-new supports JSON/ARB only (zero-dependency CLI); translating the whole .po file instead
+  [pl] po slots nplurals=3: RED
+  |   mail|One message: slots repeat a form ['enoy egassemy', '%d segassemy', '%d segassemy']
+  |   chat|One message: slots repeat a form ['enoy egassemy', '%d segassemy', '%d segassemy']
+  |   |%s file deleted: slots repeat a form ['%s elify deteledy', '%s selify deteledy', '%s selify deteledy']
+  [ru] po slots nplurals=3: RED
+  |   mail|One message: slots repeat a form ['онд мдттажд', '%d мдттаждт', '%d мдттаждт']
+  |   chat|One message: slots repeat a form ['онд мдттажд', '%d мдттаждт', '%d мдттаждт']
+  |   |%s file deleted: slots repeat a form ['%s еилд гдлдудг', '%s еилдт гдлдудг', '%s еилдт гдлдудг']
+  [ar] po slots nplurals=6: RED
+  |   mail|One message: slots repeat a form ['ضصج شجغغاخج', '%d شجغغاخجغ', '%d شجغغاخجغ', '%d شجغغاخجغ', '%d شجغغاخجغ', '%d شجغغاخجغ']
+  |   mail|One message: msgstr[1] is not the singular ['ضصج شجغغاخج', '%d شجغغاخجغ', '%d شجغغاخجغ', '%d شجغغاخجغ', '%d شجغغاخجغ', '%d شجغغاخجغ']
+  |   chat|One message: slots repeat a form ['ضصج شجغغاخج', '%d شجغغاخجغ', '%d شجغغاخجغ', '%d شجغغاخجغ', '%d شجغغاخجغ', '%d شجغغاخجغ']
+  |   chat|One message: msgstr[1] is not the singular ['ضصج شجغغاخج', '%d شجغغاخجغ', '%d شجغغاخجغ', '%d شجغغاخجغ', '%d شجغغاخجغ', '%d شجغغاخجغ']
+  |   |%s file deleted: slots repeat a form ['%s حذسج ثجسجفجث', '%s حذسجغ ثجسجفجث', '%s حذسجغ ثجسجفجث', '%s حذسجغ ثجسجفجث', '%s حذسجغ ثجسجفجث', '%s حذسجغ ثجسجفجث']
+  |   |%s file deleted: msgstr[1] is not the singular ['%s حذسج ثجسجفجث', '%s حذسجغ ثجسجفجث', '%s حذسجغ ثجسجفجث', '%s حذسجغ ثجسجفجث', '%s حذسجغ ثجسجفجث', '%s حذسجغ ثجسجفجث']
+  [ja] po slots nplurals=1: RED
+  |   mail|One message: msgstr[0] is not the plural form ['ソセオ スオテテアキオ']
+  |   chat|One message: msgstr[0] is not the plural form ['ソセオ スオテテアキオ']
+  |   |%s file deleted: msgstr[0] is not the plural form ['%s カケシオ エオシオトオエ']
+
+
+=== [npm] po: en.po
+$ kaeris translate en.po --langs pl,ru,ar,ja  -> exit 0
+$ kaeris check --source en.po --langs pl  -> exit 0  GREEN
+  | [stderr] ✓ pl: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ kaeris check --source en.po --langs ru  -> exit 0  GREEN
+  | [stderr] ✓ ru: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ kaeris check --source en.po --langs ar  -> exit 0  GREEN
+  | [stderr] ✓ ar: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ kaeris check --source en.po --langs ja  -> exit 0  GREEN
+  | [stderr] ✓ ja: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+  [pl] po slots nplurals=3: RED
+  |   |%d file: slots repeat a form ['%d elify', '%d selify', '%d selify']
+  [ru] po slots nplurals=3: RED
+  |   |%d file: slots repeat a form ['%d еилд', '%d еилдт', '%d еилдт']
+  [ar] po slots nplurals=6: RED
+  |   |%d file: slots repeat a form ['%d حذسج', '%d حذسجغ', '%d حذسجغ', '%d حذسجغ', '%d حذسجغ', '%d حذسجغ']
+  |   |%d file: msgstr[1] is not the singular ['%d حذسج', '%d حذسجغ', '%d حذسجغ', '%d حذسجغ', '%d حذسجغ', '%d حذسجغ']
+  [ja] po slots nplurals=1: RED
+  |   |%d file: msgstr[0] is not the plural form ['%d カケシオ']
+
+=== [npm] po-multi: en.po
+$ kaeris translate en.po --langs pl,ru,ar,ja  -> exit 0
+$ kaeris check --source en.po --langs pl  -> exit 0  GREEN
+  | [stderr] ✓ pl: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ kaeris check --source en.po --langs ru  -> exit 0  GREEN
+  | [stderr] ✓ ru: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ kaeris check --source en.po --langs ar  -> exit 0  GREEN
+  | [stderr] ✓ ar: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ kaeris check --source en.po --langs ja  -> exit 0  GREEN
+  | [stderr] ✓ ja: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+  [pl] po slots nplurals=3: RED
+  |   mail|One message: slots repeat a form ['enoy egassemy', '%d segassemy', '%d segassemy']
+  |   chat|One message: slots repeat a form ['enoy egassemy', '%d segassemy', '%d segassemy']
+  |   |%s file deleted: slots repeat a form ['%s elify deteledy', '%s selify deteledy', '%s selify deteledy']
+  [ru] po slots nplurals=3: RED
+  |   mail|One message: slots repeat a form ['онд мдттажд', '%d мдттаждт', '%d мдттаждт']
+  |   chat|One message: slots repeat a form ['онд мдттажд', '%d мдттаждт', '%d мдттаждт']
+  |   |%s file deleted: slots repeat a form ['%s еилд гдлдудг', '%s еилдт гдлдудг', '%s еилдт гдлдудг']
+  [ar] po slots nplurals=6: RED
+  |   mail|One message: slots repeat a form ['ضصج شجغغاخج', '%d شجغغاخجغ', '%d شجغغاخجغ', '%d شجغغاخجغ', '%d شجغغاخجغ', '%d شجغغاخجغ']
+  |   mail|One message: msgstr[1] is not the singular ['ضصج شجغغاخج', '%d شجغغاخجغ', '%d شجغغاخجغ', '%d شجغغاخجغ', '%d شجغغاخجغ', '%d شجغغاخجغ']
+  |   chat|One message: slots repeat a form ['ضصج شجغغاخج', '%d شجغغاخجغ', '%d شجغغاخجغ', '%d شجغغاخجغ', '%d شجغغاخجغ', '%d شجغغاخجغ']
+  |   chat|One message: msgstr[1] is not the singular ['ضصج شجغغاخج', '%d شجغغاخجغ', '%d شجغغاخجغ', '%d شجغغاخجغ', '%d شجغغاخجغ', '%d شجغغاخجغ']
+  |   |%s file deleted: slots repeat a form ['%s حذسج ثجسجفجث', '%s حذسجغ ثجسجفجث', '%s حذسجغ ثجسجفجث', '%s حذسجغ ثجسجفجث', '%s حذسجغ ثجسجفجث', '%s حذسجغ ثجسجفجث']
+  |   |%s file deleted: msgstr[1] is not the singular ['%s حذسج ثجسجفجث', '%s حذسجغ ثجسجفجث', '%s حذسجغ ثجسجفجث', '%s حذسجغ ثجسجفجث', '%s حذسجغ ثجسجفجث', '%s حذسجغ ثجسجفجث']
+  [ja] po slots nplurals=1: RED
+  |   mail|One message: msgstr[0] is not the plural form ['ソセオ スオテテアキオ']
+  |   chat|One message: msgstr[0] is not the plural form ['ソセオ スオテテアキオ']
+  |   |%s file deleted: msgstr[0] is not the plural form ['%s カケシオ エオシオトオエ']
+
+
+# SUMMARY tool case lang exit verdict
+  py po pl 0 GREEN
+  py po ru 0 GREEN
+  py po ar 0 GREEN
+  py po ja 0 GREEN
+  py po-slots pl - RED
+  py po-slots ru - RED
+  py po-slots ar - RED
+  py po-slots ja - RED
+  py po+only-new pl,ru,ar,ja 0 GREEN
+  ['C:\\Users\\Inzagi\\projects\\kaeris\\i18n_tool\\.venv\\Scripts\\python.exe', '-m', 'kaeris'] po+only-new-slots pl - RED
+  ['C:\\Users\\Inzagi\\projects\\kaeris\\i18n_tool\\.venv\\Scripts\\python.exe', '-m', 'kaeris'] po+only-new-slots ru - RED
+  ['C:\\Users\\Inzagi\\projects\\kaeris\\i18n_tool\\.venv\\Scripts\\python.exe', '-m', 'kaeris'] po+only-new-slots ar - RED
+  ['C:\\Users\\Inzagi\\projects\\kaeris\\i18n_tool\\.venv\\Scripts\\python.exe', '-m', 'kaeris'] po+only-new-slots ja - RED
+  py po-multi pl 0 GREEN
+  py po-multi ru 0 GREEN
+  py po-multi ar 0 GREEN
+  py po-multi ja 0 GREEN
+  py po-multi-slots pl - RED
+  py po-multi-slots ru - RED
+  py po-multi-slots ar - RED
+  py po-multi-slots ja - RED
+  py po-multi+only-new pl,ru,ar,ja 0 GREEN
+  ['C:\\Users\\Inzagi\\projects\\kaeris\\i18n_tool\\.venv\\Scripts\\python.exe', '-m', 'kaeris'] po-multi+only-new-slots pl - RED
+  ['C:\\Users\\Inzagi\\projects\\kaeris\\i18n_tool\\.venv\\Scripts\\python.exe', '-m', 'kaeris'] po-multi+only-new-slots ru - RED
+  ['C:\\Users\\Inzagi\\projects\\kaeris\\i18n_tool\\.venv\\Scripts\\python.exe', '-m', 'kaeris'] po-multi+only-new-slots ar - RED
+  ['C:\\Users\\Inzagi\\projects\\kaeris\\i18n_tool\\.venv\\Scripts\\python.exe', '-m', 'kaeris'] po-multi+only-new-slots ja - RED
+  npm po pl 0 GREEN
+  npm po ru 0 GREEN
+  npm po ar 0 GREEN
+  npm po ja 0 GREEN
+  npm po-slots pl - RED
+  npm po-slots ru - RED
+  npm po-slots ar - RED
+  npm po-slots ja - RED
+  npm po-multi pl 0 GREEN
+  npm po-multi ru 0 GREEN
+  npm po-multi ar 0 GREEN
+  npm po-multi ja 0 GREEN
+  npm po-multi-slots pl - RED
+  npm po-multi-slots ru - RED
+  npm po-multi-slots ar - RED
+  npm po-multi-slots ja - RED
+# 18/42 GREEN
+
+# OUTPUT FILES (py)
+--- po/ar.po
+# Generated by KAERIS i18n Tool
+# Language: ar
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5);\n"
+"Language: ar\n"
+
+msgid "%d file"
+msgid_plural "%d files"
+msgstr[0] "%d حذسج"
+msgstr[1] "%d حذسجغ"
+msgstr[2] "%d حذسجغ"
+msgstr[3] "%d حذسجغ"
+msgstr[4] "%d حذسجغ"
+msgstr[5] "%d حذسجغ"
+
+--- po/ja.po
+# Generated by KAERIS i18n Tool
+# Language: ja
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"Language: ja\n"
+
+msgid "%d file"
+msgid_plural "%d files"
+msgstr[0] "%d カケシオ"
+
+--- po/pl.po
+# Generated by KAERIS i18n Tool
+# Language: pl
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Language: pl\n"
+
+msgid "%d file"
+msgid_plural "%d files"
+msgstr[0] "%d elify"
+msgstr[1] "%d selify"
+msgstr[2] "%d selify"
+
+--- po-multi/ar.po
+# Generated by KAERIS i18n Tool
+# Language: ar
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5);\n"
+"Language: ar\n"
+
+msgid "Inbox"
+msgstr "ذصبضم"
+
+msgctxt "mail"
+msgid "One message"
+msgid_plural "%d messages"
+msgstr[0] "ضصج شجغغاخج"
+msgstr[1] "%d شجغغاخجغ"
+msgstr[2] "%d شجغغاخجغ"
+msgstr[3] "%d شجغغاخجغ"
+msgstr[4] "%d شجغغاخجغ"
+msgstr[5] "%d شجغغاخجغ"
+
+msgctxt "chat"
+msgid "One message"
+msgid_plural "%d messages"
+msgstr[0] "ضصج شجغغاخج"
+msgstr[1] "%d شجغغاخجغ"
+msgstr[2] "%d شجغغاخجغ"
+msgstr[3] "%d شجغغاخجغ"
+msgstr[4] "%d شجغغاخجغ"
+msgstr[5] "%d شجغغاخجغ"
+
+msgid "%s file deleted"
+msgid_plural "%s files deleted"
+msgstr[0] "%s حذسج ثجسجفجث"
+msgstr[1] "%s حذسجغ ثجسجفجث"
+msgstr[2] "%s حذسجغ ثجسجفجث"
+msgstr[3] "%s حذسجغ ثجسجفجث"
+msgstr[4] "%s حذسجغ ثجسجفجث"
+msgstr[5] "%s حذسجغ ثجسجفجث"
+
+--- po-multi/ja.po
+# Generated by KAERIS i18n Tool
+# Language: ja
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"Language: ja\n"
+
+msgid "Inbox"
+msgstr "ケセイソエ"
+
+msgctxt "mail"
+msgid "One message"
+msgid_plural "%d messages"
+msgstr[0] "ソセオ スオテテアキオ"
+
+msgctxt "chat"
+msgid "One message"
+msgid_plural "%d messages"
+msgstr[0] "ソセオ スオテテアキオ"
+
+msgid "%s file deleted"
+msgid_plural "%s files deleted"
+msgstr[0] "%s カケシオ エオシオトオエ"
+
+--- po-multi/pl.po
+# Generated by KAERIS i18n Tool
+# Language: pl
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Language: pl\n"
+
+msgid "Inbox"
+msgstr "xobniy"
+
+msgctxt "mail"
+msgid "One message"
+msgid_plural "%d messages"
+msgstr[0] "enoy egassemy"
+msgstr[1] "%d segassemy"
+msgstr[2] "%d segassemy"
+
+msgctxt "chat"
+msgid "One message"
+msgid_plural "%d messages"
+msgstr[0] "enoy egassemy"
+msgstr[1] "%d segassemy"
+msgstr[2] "%d segassemy"
+
+msgid "%s file deleted"
+msgid_plural "%s files deleted"
+msgstr[0] "%s elify deteledy"
+msgstr[1] "%s selify deteledy"
+msgstr[2] "%s selify deteledy"
+
+# stopped pids 8576 16916: api rc=1 stub rc=1
