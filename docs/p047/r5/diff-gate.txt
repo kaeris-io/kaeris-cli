@@ -1,0 +1,507 @@
+# diff_gate 2026-11-21 17:12; langs ['de', 'pl', 'ru', 'ar', 'lv', 'he', 'ja', 'zh', 'ko'] (+cy refused); modes normal,dropzero,drop:zero,drop:one,drop:two,drop:few,drop:many,hashall,missfold,echo:file,empty,fail500repeat; formats i18next,nested,rails,po-printf,po-python,po-brace,android,fluent,icu-json
+# intended differences (anything else is red):
+#   cldr-forms: a JSON/YAML plural set gets the forms its target language needs that the source lacks (pl/ru few+many, ar zero..many, lv zero, he two): new keys beside the set, the set's own forms written from the one folded answer. Guard: only keys of plural sets differ, no key is lost, check 0.2.46 and 0.2.47 report nothing the 0.2.46 file did not have
+#   po-slots: a .po plural entry laid out slot by slot in the target's Plural-Forms order (pl msgstr[2] is the many form; ar six own forms; ja/zh/ko one slot = the plural form where a lone %d lets check take it). Guard: header and every non-plural entry byte-identical, check 0.2.47 reports nothing new, check 0.2.46 nothing new but po-single-slot-046
+#   po-single-slot-046: Arabic/Hebrew msgstr[1]/[2] (a slot one number picks) without %d: check 0.2.46 calls it a lost placeholder, 0.2.47 reads it (release notes, 'The reverse is not true')
+#   onlynew-complete: --only-new by this CLI on a target 0.2.46 wrote: a set that lacks a form its language needs is sent once, whole, and charged; written with every form (cldr-forms guard on the file). The next run must charge nothing
+# pids 26572 25368 25180 25820 24476 25080
+# server nn (341cab93) up, plural_forms='cldr'
+# server on (341cab93) up, plural_forms='cldr'
+# server op (94114a89) up, plural_forms=None
+# cli new = C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121 (438d9cf)
+# cli 046 = C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\903282ca-0cef-4a65-881b-d4ad1fba7558\scratchpad\r5\cli046 (d5535f0)
+## mode normal
+  [intended] cell normal        i18next   nn~op pl <cldr-forms>
+  [intended] cell normal        i18next   nn~op ru <cldr-forms>
+  [intended] cell normal        i18next   nn~op ar <cldr-forms>
+  [intended] cell normal        i18next   nn~op lv <cldr-forms>
+  [intended] cell normal        i18next   nn~op he <cldr-forms>
+  [intended] cell normal        i18next/on1   nn~op pl <cldr-forms>
+  [intended] cell normal        i18next/on1   nn~op ru <cldr-forms>
+  [intended] cell normal        i18next/on1   nn~op ar <cldr-forms>
+  [intended] cell normal        i18next/on1   nn~op lv <cldr-forms>
+  [intended] cell normal        i18next/on1   nn~op he <cldr-forms>
+  [intended] run normal        i18next/up1   nn~op <onlynew-complete>: exit 0 vs 0, charged 1242 vs 0
+  [intended] cell normal        i18next/up1   nn~op pl <cldr-forms>
+  [intended] cell normal        i18next/up1   nn~op ru <cldr-forms>
+  [intended] cell normal        i18next/up1   nn~op ar <cldr-forms>
+  [intended] cell normal        i18next/up1   nn~op lv <cldr-forms>
+  [intended] cell normal        i18next/up1   nn~op he <cldr-forms>
+  [intended] cell normal        nested    nn~op pl <cldr-forms>
+  [intended] cell normal        nested    nn~op ru <cldr-forms>
+  [intended] cell normal        nested    nn~op ar <cldr-forms>
+  [intended] cell normal        nested    nn~op lv <cldr-forms>
+  [intended] cell normal        nested    nn~op he <cldr-forms>
+  [intended] cell normal        nested/on1    nn~op pl <cldr-forms>
+  [intended] cell normal        nested/on1    nn~op ru <cldr-forms>
+  [intended] cell normal        nested/on1    nn~op ar <cldr-forms>
+  [intended] cell normal        nested/on1    nn~op lv <cldr-forms>
+  [intended] cell normal        nested/on1    nn~op he <cldr-forms>
+  [intended] run normal        nested/up1    nn~op <onlynew-complete>: exit 0 vs 0, charged 670 vs 0
+  [intended] cell normal        nested/up1    nn~op pl <cldr-forms>
+  [intended] cell normal        nested/up1    nn~op ru <cldr-forms>
+  [intended] cell normal        nested/up1    nn~op ar <cldr-forms>
+  [intended] cell normal        nested/up1    nn~op lv <cldr-forms>
+  [intended] cell normal        nested/up1    nn~op he <cldr-forms>
+  [intended] cell normal        rails     nn~op pl <cldr-forms>
+  [intended] cell normal        rails     nn~op ru <cldr-forms>
+  [intended] cell normal        rails     nn~op ar <cldr-forms>
+  [intended] cell normal        rails     nn~op lv <cldr-forms>
+  [intended] cell normal        rails     nn~op he <cldr-forms>
+  [intended] cell normal        po-printf nn~op pl <po-slots>
+  [intended] cell normal        po-printf nn~op ru <po-slots>
+  [intended] cell normal        po-printf nn~op ar <po-slots+po-single-slot-046>
+  [intended] cell normal        po-printf nn~op lv <po-slots>
+  [intended] cell normal        po-printf nn~op he <po-slots>
+  [intended] cell normal        po-printf nn~op ja <po-slots>
+  [intended] cell normal        po-printf nn~op zh <po-slots>
+  [intended] cell normal        po-printf nn~op ko <po-slots>
+  [intended] cell normal        po-python nn~op pl <po-slots>
+  [intended] cell normal        po-python nn~op ru <po-slots>
+  [intended] cell normal        po-python nn~op ar <po-slots>
+  [intended] cell normal        po-python nn~op lv <po-slots>
+  [intended] cell normal        po-python nn~op he <po-slots>
+  [intended] cell normal        po-python nn~op ja <po-slots>
+  [intended] cell normal        po-python nn~op zh <po-slots>
+  [intended] cell normal        po-python nn~op ko <po-slots>
+  [intended] cell normal        po-brace  nn~op pl <po-slots>
+  [intended] cell normal        po-brace  nn~op ru <po-slots>
+  [intended] cell normal        po-brace  nn~op ar <po-slots>
+  [intended] cell normal        po-brace  nn~op lv <po-slots>
+  [intended] cell normal        po-brace  nn~op he <po-slots>
+  [intended] cell normal        po-brace  nn~op ja <po-slots>
+  [intended] cell normal        po-brace  nn~op zh <po-slots>
+  [intended] cell normal        po-brace  nn~op ko <po-slots>
+## mode dropzero
+  [intended] cell dropzero      i18next   nn~op pl <cldr-forms>
+  [intended] cell dropzero      i18next   nn~op ru <cldr-forms>
+  [intended] cell dropzero      i18next   nn~op ar <cldr-forms>
+  [intended] cell dropzero      i18next   nn~op lv <cldr-forms>
+  [intended] cell dropzero      i18next   nn~op he <cldr-forms>
+  [intended] cell dropzero      i18next/on1   nn~op pl <cldr-forms>
+  [intended] cell dropzero      i18next/on1   nn~op ru <cldr-forms>
+  [intended] cell dropzero      i18next/on1   nn~op ar <cldr-forms>
+  [intended] cell dropzero      i18next/on1   nn~op lv <cldr-forms>
+  [intended] cell dropzero      i18next/on1   nn~op he <cldr-forms>
+  [intended] run dropzero      i18next/up1   nn~op <onlynew-complete>: exit 0 vs 0, charged 1242 vs 0
+  [intended] cell dropzero      i18next/up1   nn~op pl <cldr-forms>
+  [intended] cell dropzero      i18next/up1   nn~op ru <cldr-forms>
+  [intended] cell dropzero      i18next/up1   nn~op ar <cldr-forms>
+  [intended] cell dropzero      i18next/up1   nn~op lv <cldr-forms>
+  [intended] cell dropzero      i18next/up1   nn~op he <cldr-forms>
+  [intended] cell dropzero      nested    nn~op pl <cldr-forms>
+  [intended] cell dropzero      nested    nn~op ru <cldr-forms>
+  [intended] cell dropzero      nested    nn~op ar <cldr-forms>
+  [intended] cell dropzero      nested    nn~op lv <cldr-forms>
+  [intended] cell dropzero      nested    nn~op he <cldr-forms>
+  [intended] cell dropzero      nested/on1    nn~op pl <cldr-forms>
+  [intended] cell dropzero      nested/on1    nn~op ru <cldr-forms>
+  [intended] cell dropzero      nested/on1    nn~op ar <cldr-forms>
+  [intended] cell dropzero      nested/on1    nn~op lv <cldr-forms>
+  [intended] cell dropzero      nested/on1    nn~op he <cldr-forms>
+  [intended] run dropzero      nested/up1    nn~op <onlynew-complete>: exit 0 vs 0, charged 670 vs 0
+  [intended] cell dropzero      nested/up1    nn~op pl <cldr-forms>
+  [intended] cell dropzero      nested/up1    nn~op ru <cldr-forms>
+  [intended] cell dropzero      nested/up1    nn~op ar <cldr-forms>
+  [intended] cell dropzero      nested/up1    nn~op lv <cldr-forms>
+  [intended] cell dropzero      nested/up1    nn~op he <cldr-forms>
+  [intended] cell dropzero      rails     nn~op pl <cldr-forms>
+  [intended] cell dropzero      rails     nn~op ru <cldr-forms>
+  [intended] cell dropzero      rails     nn~op ar <cldr-forms>
+  [intended] cell dropzero      rails     nn~op lv <cldr-forms>
+  [intended] cell dropzero      rails     nn~op he <cldr-forms>
+  [intended] cell dropzero      po-printf nn~op pl <po-slots>
+  [intended] cell dropzero      po-printf nn~op ru <po-slots>
+  [intended] cell dropzero      po-printf nn~op ar <po-slots+po-single-slot-046>
+  [intended] cell dropzero      po-printf nn~op lv <po-slots>
+  [intended] cell dropzero      po-printf nn~op he <po-slots>
+  [intended] cell dropzero      po-printf nn~op ja <po-slots>
+  [intended] cell dropzero      po-printf nn~op zh <po-slots>
+  [intended] cell dropzero      po-printf nn~op ko <po-slots>
+  [intended] cell dropzero      po-python nn~op pl <po-slots>
+  [intended] cell dropzero      po-python nn~op ru <po-slots>
+  [intended] cell dropzero      po-python nn~op ar <po-slots>
+  [intended] cell dropzero      po-python nn~op lv <po-slots>
+  [intended] cell dropzero      po-python nn~op he <po-slots>
+  [intended] cell dropzero      po-python nn~op ja <po-slots>
+  [intended] cell dropzero      po-python nn~op zh <po-slots>
+  [intended] cell dropzero      po-python nn~op ko <po-slots>
+  [intended] cell dropzero      po-brace  nn~op pl <po-slots>
+  [intended] cell dropzero      po-brace  nn~op ru <po-slots>
+  [intended] cell dropzero      po-brace  nn~op ar <po-slots>
+  [intended] cell dropzero      po-brace  nn~op lv <po-slots>
+  [intended] cell dropzero      po-brace  nn~op he <po-slots>
+  [intended] cell dropzero      po-brace  nn~op ja <po-slots>
+  [intended] cell dropzero      po-brace  nn~op zh <po-slots>
+  [intended] cell dropzero      po-brace  nn~op ko <po-slots>
+## mode drop:zero
+  [intended] cell drop:zero     i18next   nn~op pl <cldr-forms>
+  [intended] cell drop:zero     i18next   nn~op ru <cldr-forms>
+  [intended] cell drop:zero     i18next   nn~op ar <cldr-forms>
+  [intended] cell drop:zero     i18next   nn~op he <cldr-forms>
+  [intended] cell drop:zero     i18next/on1   nn~op pl <cldr-forms>
+  [intended] cell drop:zero     i18next/on1   nn~op ru <cldr-forms>
+  [intended] cell drop:zero     i18next/on1   nn~op ar <cldr-forms>
+  [intended] cell drop:zero     i18next/on1   nn~op he <cldr-forms>
+  [intended] run drop:zero     i18next/up1   nn~op <onlynew-complete>: exit 0 vs 0, charged 1242 vs 0
+  [intended] cell drop:zero     i18next/up1   nn~op pl <cldr-forms>
+  [intended] cell drop:zero     i18next/up1   nn~op ru <cldr-forms>
+  [intended] cell drop:zero     i18next/up1   nn~op ar <cldr-forms>
+  [intended] cell drop:zero     i18next/up1   nn~op he <cldr-forms>
+  [intended] cell drop:zero     nested    nn~op pl <cldr-forms>
+  [intended] cell drop:zero     nested    nn~op ru <cldr-forms>
+  [intended] cell drop:zero     nested    nn~op ar <cldr-forms>
+  [intended] cell drop:zero     nested    nn~op he <cldr-forms>
+  [intended] cell drop:zero     nested/on1    nn~op pl <cldr-forms>
+  [intended] cell drop:zero     nested/on1    nn~op ru <cldr-forms>
+  [intended] cell drop:zero     nested/on1    nn~op ar <cldr-forms>
+  [intended] cell drop:zero     nested/on1    nn~op he <cldr-forms>
+  [intended] run drop:zero     nested/up1    nn~op <onlynew-complete>: exit 0 vs 0, charged 670 vs 0
+  [intended] cell drop:zero     nested/up1    nn~op pl <cldr-forms>
+  [intended] cell drop:zero     nested/up1    nn~op ru <cldr-forms>
+  [intended] cell drop:zero     nested/up1    nn~op ar <cldr-forms>
+  [intended] cell drop:zero     nested/up1    nn~op he <cldr-forms>
+  [intended] cell drop:zero     rails     nn~op pl <cldr-forms>
+  [intended] cell drop:zero     rails     nn~op ru <cldr-forms>
+  [intended] cell drop:zero     rails     nn~op ar <cldr-forms>
+  [intended] cell drop:zero     rails     nn~op he <cldr-forms>
+  [intended] cell drop:zero     po-printf nn~op pl <po-slots>
+  [intended] cell drop:zero     po-printf nn~op ru <po-slots>
+  [intended] cell drop:zero     po-printf nn~op he <po-slots>
+  [intended] cell drop:zero     po-printf nn~op ja <po-slots>
+  [intended] cell drop:zero     po-printf nn~op zh <po-slots>
+  [intended] cell drop:zero     po-printf nn~op ko <po-slots>
+  [intended] cell drop:zero     po-python nn~op pl <po-slots>
+  [intended] cell drop:zero     po-python nn~op ru <po-slots>
+  [intended] cell drop:zero     po-python nn~op he <po-slots>
+  [intended] cell drop:zero     po-python nn~op ja <po-slots>
+  [intended] cell drop:zero     po-python nn~op zh <po-slots>
+  [intended] cell drop:zero     po-python nn~op ko <po-slots>
+  [intended] cell drop:zero     po-brace  nn~op pl <po-slots>
+  [intended] cell drop:zero     po-brace  nn~op ru <po-slots>
+  [intended] cell drop:zero     po-brace  nn~op he <po-slots>
+  [intended] cell drop:zero     po-brace  nn~op ja <po-slots>
+  [intended] cell drop:zero     po-brace  nn~op zh <po-slots>
+  [intended] cell drop:zero     po-brace  nn~op ko <po-slots>
+## mode drop:one
+  [intended] run drop:one      i18next/up1   nn~op <onlynew-complete>: exit 0 vs 0, charged 1242 vs 0
+  [intended] run drop:one      nested/up1    nn~op <onlynew-complete>: exit 0 vs 0, charged 670 vs 0
+  [intended] cell drop:one      po-printf nn~op ja <po-slots>
+  [intended] cell drop:one      po-printf nn~op zh <po-slots>
+  [intended] cell drop:one      po-printf nn~op ko <po-slots>
+  [intended] cell drop:one      po-python nn~op ja <po-slots>
+  [intended] cell drop:one      po-python nn~op zh <po-slots>
+  [intended] cell drop:one      po-python nn~op ko <po-slots>
+  [intended] cell drop:one      po-brace  nn~op ja <po-slots>
+  [intended] cell drop:one      po-brace  nn~op zh <po-slots>
+  [intended] cell drop:one      po-brace  nn~op ko <po-slots>
+## mode drop:two
+  [intended] cell drop:two      i18next   nn~op pl <cldr-forms>
+  [intended] cell drop:two      i18next   nn~op ru <cldr-forms>
+  [intended] cell drop:two      i18next   nn~op lv <cldr-forms>
+  [intended] cell drop:two      i18next/on1   nn~op pl <cldr-forms>
+  [intended] cell drop:two      i18next/on1   nn~op ru <cldr-forms>
+  [intended] cell drop:two      i18next/on1   nn~op lv <cldr-forms>
+  [intended] run drop:two      i18next/up1   nn~op <onlynew-complete>: exit 0 vs 0, charged 1242 vs 0
+  [intended] cell drop:two      i18next/up1   nn~op pl <cldr-forms>
+  [intended] cell drop:two      i18next/up1   nn~op ru <cldr-forms>
+  [intended] cell drop:two      i18next/up1   nn~op lv <cldr-forms>
+  [intended] cell drop:two      nested    nn~op pl <cldr-forms>
+  [intended] cell drop:two      nested    nn~op ru <cldr-forms>
+  [intended] cell drop:two      nested    nn~op lv <cldr-forms>
+  [intended] cell drop:two      nested/on1    nn~op pl <cldr-forms>
+  [intended] cell drop:two      nested/on1    nn~op ru <cldr-forms>
+  [intended] cell drop:two      nested/on1    nn~op lv <cldr-forms>
+  [intended] run drop:two      nested/up1    nn~op <onlynew-complete>: exit 0 vs 0, charged 670 vs 0
+  [intended] cell drop:two      nested/up1    nn~op pl <cldr-forms>
+  [intended] cell drop:two      nested/up1    nn~op ru <cldr-forms>
+  [intended] cell drop:two      nested/up1    nn~op lv <cldr-forms>
+  [intended] cell drop:two      rails     nn~op pl <cldr-forms>
+  [intended] cell drop:two      rails     nn~op ru <cldr-forms>
+  [intended] cell drop:two      rails     nn~op lv <cldr-forms>
+  [intended] cell drop:two      po-printf nn~op pl <po-slots>
+  [intended] cell drop:two      po-printf nn~op ru <po-slots>
+  [intended] cell drop:two      po-printf nn~op lv <po-slots>
+  [intended] cell drop:two      po-printf nn~op ja <po-slots>
+  [intended] cell drop:two      po-printf nn~op zh <po-slots>
+  [intended] cell drop:two      po-printf nn~op ko <po-slots>
+  [intended] cell drop:two      po-python nn~op pl <po-slots>
+  [intended] cell drop:two      po-python nn~op ru <po-slots>
+  [intended] cell drop:two      po-python nn~op lv <po-slots>
+  [intended] cell drop:two      po-python nn~op ja <po-slots>
+  [intended] cell drop:two      po-python nn~op zh <po-slots>
+  [intended] cell drop:two      po-python nn~op ko <po-slots>
+  [intended] cell drop:two      po-brace  nn~op pl <po-slots>
+  [intended] cell drop:two      po-brace  nn~op ru <po-slots>
+  [intended] cell drop:two      po-brace  nn~op lv <po-slots>
+  [intended] cell drop:two      po-brace  nn~op ja <po-slots>
+  [intended] cell drop:two      po-brace  nn~op zh <po-slots>
+  [intended] cell drop:two      po-brace  nn~op ko <po-slots>
+## mode drop:few
+  [intended] cell drop:few      i18next   nn~op lv <cldr-forms>
+  [intended] cell drop:few      i18next   nn~op he <cldr-forms>
+  [intended] cell drop:few      i18next/on1   nn~op lv <cldr-forms>
+  [intended] cell drop:few      i18next/on1   nn~op he <cldr-forms>
+  [intended] run drop:few      i18next/up1   nn~op <onlynew-complete>: exit 0 vs 0, charged 1242 vs 0
+  [intended] cell drop:few      i18next/up1   nn~op lv <cldr-forms>
+  [intended] cell drop:few      i18next/up1   nn~op he <cldr-forms>
+  [intended] cell drop:few      nested    nn~op lv <cldr-forms>
+  [intended] cell drop:few      nested    nn~op he <cldr-forms>
+  [intended] cell drop:few      nested/on1    nn~op lv <cldr-forms>
+  [intended] cell drop:few      nested/on1    nn~op he <cldr-forms>
+  [intended] run drop:few      nested/up1    nn~op <onlynew-complete>: exit 0 vs 0, charged 670 vs 0
+  [intended] cell drop:few      nested/up1    nn~op lv <cldr-forms>
+  [intended] cell drop:few      nested/up1    nn~op he <cldr-forms>
+  [intended] cell drop:few      rails     nn~op lv <cldr-forms>
+  [intended] cell drop:few      rails     nn~op he <cldr-forms>
+  [intended] cell drop:few      po-printf nn~op lv <po-slots>
+  [intended] cell drop:few      po-printf nn~op he <po-slots>
+  [intended] cell drop:few      po-printf nn~op ja <po-slots>
+  [intended] cell drop:few      po-printf nn~op zh <po-slots>
+  [intended] cell drop:few      po-printf nn~op ko <po-slots>
+  [intended] cell drop:few      po-python nn~op lv <po-slots>
+  [intended] cell drop:few      po-python nn~op he <po-slots>
+  [intended] cell drop:few      po-python nn~op ja <po-slots>
+  [intended] cell drop:few      po-python nn~op zh <po-slots>
+  [intended] cell drop:few      po-python nn~op ko <po-slots>
+  [intended] cell drop:few      po-brace  nn~op lv <po-slots>
+  [intended] cell drop:few      po-brace  nn~op he <po-slots>
+  [intended] cell drop:few      po-brace  nn~op ja <po-slots>
+  [intended] cell drop:few      po-brace  nn~op zh <po-slots>
+  [intended] cell drop:few      po-brace  nn~op ko <po-slots>
+## mode drop:many
+  [intended] cell drop:many     i18next   nn~op lv <cldr-forms>
+  [intended] cell drop:many     i18next   nn~op he <cldr-forms>
+  [intended] cell drop:many     i18next/on1   nn~op lv <cldr-forms>
+  [intended] cell drop:many     i18next/on1   nn~op he <cldr-forms>
+  [intended] run drop:many     i18next/up1   nn~op <onlynew-complete>: exit 0 vs 0, charged 1242 vs 0
+  [intended] cell drop:many     i18next/up1   nn~op lv <cldr-forms>
+  [intended] cell drop:many     i18next/up1   nn~op he <cldr-forms>
+  [intended] cell drop:many     nested    nn~op lv <cldr-forms>
+  [intended] cell drop:many     nested    nn~op he <cldr-forms>
+  [intended] cell drop:many     nested/on1    nn~op lv <cldr-forms>
+  [intended] cell drop:many     nested/on1    nn~op he <cldr-forms>
+  [intended] run drop:many     nested/up1    nn~op <onlynew-complete>: exit 0 vs 0, charged 670 vs 0
+  [intended] cell drop:many     nested/up1    nn~op lv <cldr-forms>
+  [intended] cell drop:many     nested/up1    nn~op he <cldr-forms>
+  [intended] cell drop:many     rails     nn~op lv <cldr-forms>
+  [intended] cell drop:many     rails     nn~op he <cldr-forms>
+  [intended] cell drop:many     po-printf nn~op lv <po-slots>
+  [intended] cell drop:many     po-printf nn~op he <po-slots>
+  [intended] cell drop:many     po-printf nn~op ja <po-slots>
+  [intended] cell drop:many     po-printf nn~op zh <po-slots>
+  [intended] cell drop:many     po-printf nn~op ko <po-slots>
+  [intended] cell drop:many     po-python nn~op lv <po-slots>
+  [intended] cell drop:many     po-python nn~op he <po-slots>
+  [intended] cell drop:many     po-python nn~op ja <po-slots>
+  [intended] cell drop:many     po-python nn~op zh <po-slots>
+  [intended] cell drop:many     po-python nn~op ko <po-slots>
+  [intended] cell drop:many     po-brace  nn~op lv <po-slots>
+  [intended] cell drop:many     po-brace  nn~op he <po-slots>
+  [intended] cell drop:many     po-brace  nn~op ja <po-slots>
+  [intended] cell drop:many     po-brace  nn~op zh <po-slots>
+  [intended] cell drop:many     po-brace  nn~op ko <po-slots>
+## mode hashall
+  [intended] cell hashall       i18next   nn~op pl <cldr-forms>
+  [intended] cell hashall       i18next   nn~op ru <cldr-forms>
+  [intended] cell hashall       i18next   nn~op ar <cldr-forms>
+  [intended] cell hashall       i18next   nn~op lv <cldr-forms>
+  [intended] cell hashall       i18next   nn~op he <cldr-forms>
+  [intended] cell hashall       i18next/on1   nn~op pl <cldr-forms>
+  [intended] cell hashall       i18next/on1   nn~op ru <cldr-forms>
+  [intended] cell hashall       i18next/on1   nn~op ar <cldr-forms>
+  [intended] cell hashall       i18next/on1   nn~op lv <cldr-forms>
+  [intended] cell hashall       i18next/on1   nn~op he <cldr-forms>
+  [intended] run hashall       i18next/up1   nn~op <onlynew-complete>: exit 0 vs 0, charged 1242 vs 0
+  [intended] cell hashall       i18next/up1   nn~op pl <cldr-forms>
+  [intended] cell hashall       i18next/up1   nn~op ru <cldr-forms>
+  [intended] cell hashall       i18next/up1   nn~op ar <cldr-forms>
+  [intended] cell hashall       i18next/up1   nn~op lv <cldr-forms>
+  [intended] cell hashall       i18next/up1   nn~op he <cldr-forms>
+  [intended] cell hashall       nested    nn~op pl <cldr-forms>
+  [intended] cell hashall       nested    nn~op ru <cldr-forms>
+  [intended] cell hashall       nested    nn~op ar <cldr-forms>
+  [intended] cell hashall       nested    nn~op lv <cldr-forms>
+  [intended] cell hashall       nested    nn~op he <cldr-forms>
+  [intended] cell hashall       nested/on1    nn~op pl <cldr-forms>
+  [intended] cell hashall       nested/on1    nn~op ru <cldr-forms>
+  [intended] cell hashall       nested/on1    nn~op ar <cldr-forms>
+  [intended] cell hashall       nested/on1    nn~op lv <cldr-forms>
+  [intended] cell hashall       nested/on1    nn~op he <cldr-forms>
+  [intended] run hashall       nested/up1    nn~op <onlynew-complete>: exit 0 vs 0, charged 670 vs 0
+  [intended] cell hashall       nested/up1    nn~op pl <cldr-forms>
+  [intended] cell hashall       nested/up1    nn~op ru <cldr-forms>
+  [intended] cell hashall       nested/up1    nn~op ar <cldr-forms>
+  [intended] cell hashall       nested/up1    nn~op lv <cldr-forms>
+  [intended] cell hashall       nested/up1    nn~op he <cldr-forms>
+  [intended] cell hashall       rails     nn~op pl <cldr-forms>
+  [intended] cell hashall       rails     nn~op ru <cldr-forms>
+  [intended] cell hashall       rails     nn~op ar <cldr-forms>
+  [intended] cell hashall       rails     nn~op lv <cldr-forms>
+  [intended] cell hashall       rails     nn~op he <cldr-forms>
+  [intended] cell hashall       po-printf nn~op pl <po-slots>
+  [intended] cell hashall       po-printf nn~op ru <po-slots>
+  [intended] cell hashall       po-printf nn~op ar <po-slots+po-single-slot-046>
+  [intended] cell hashall       po-printf nn~op lv <po-slots>
+  [intended] cell hashall       po-printf nn~op he <po-slots>
+  [intended] cell hashall       po-printf nn~op ja <po-slots>
+  [intended] cell hashall       po-printf nn~op zh <po-slots>
+  [intended] cell hashall       po-printf nn~op ko <po-slots>
+  [intended] cell hashall       po-python nn~op pl <po-slots>
+  [intended] cell hashall       po-python nn~op ru <po-slots>
+  [intended] cell hashall       po-python nn~op ar <po-slots>
+  [intended] cell hashall       po-python nn~op lv <po-slots>
+  [intended] cell hashall       po-python nn~op he <po-slots>
+  [intended] cell hashall       po-python nn~op ja <po-slots>
+  [intended] cell hashall       po-python nn~op zh <po-slots>
+  [intended] cell hashall       po-python nn~op ko <po-slots>
+  [intended] cell hashall       po-brace  nn~op pl <po-slots>
+  [intended] cell hashall       po-brace  nn~op ru <po-slots>
+  [intended] cell hashall       po-brace  nn~op ar <po-slots>
+  [intended] cell hashall       po-brace  nn~op lv <po-slots>
+  [intended] cell hashall       po-brace  nn~op he <po-slots>
+  [intended] cell hashall       po-brace  nn~op ja <po-slots>
+  [intended] cell hashall       po-brace  nn~op zh <po-slots>
+  [intended] cell hashall       po-brace  nn~op ko <po-slots>
+## mode missfold
+  [intended] run missfold      i18next/up1   nn~op <onlynew-complete>: exit 0 vs 0, charged 1242 vs 0
+  [intended] run missfold      nested/up1    nn~op <onlynew-complete>: exit 0 vs 0, charged 670 vs 0
+  [intended] cell missfold      po-printf nn~op ja <po-slots>
+  [intended] cell missfold      po-printf nn~op zh <po-slots>
+  [intended] cell missfold      po-printf nn~op ko <po-slots>
+  [intended] cell missfold      po-python nn~op ja <po-slots>
+  [intended] cell missfold      po-python nn~op zh <po-slots>
+  [intended] cell missfold      po-python nn~op ko <po-slots>
+  [intended] cell missfold      po-brace  nn~op ja <po-slots>
+  [intended] cell missfold      po-brace  nn~op zh <po-slots>
+  [intended] cell missfold      po-brace  nn~op ko <po-slots>
+## mode echo:file
+  [intended] cell echo:file     i18next   nn~op pl <cldr-forms>
+  [intended] cell echo:file     i18next   nn~op ru <cldr-forms>
+  [intended] cell echo:file     i18next   nn~op ar <cldr-forms>
+  [intended] cell echo:file     i18next   nn~op lv <cldr-forms>
+  [intended] cell echo:file     i18next   nn~op he <cldr-forms>
+  [intended] cell echo:file     i18next/on1   nn~op pl <cldr-forms>
+  [intended] cell echo:file     i18next/on1   nn~op ru <cldr-forms>
+  [intended] cell echo:file     i18next/on1   nn~op ar <cldr-forms>
+  [intended] cell echo:file     i18next/on1   nn~op lv <cldr-forms>
+  [intended] cell echo:file     i18next/on1   nn~op he <cldr-forms>
+  [intended] run echo:file     i18next/up1   nn~op <onlynew-complete>: exit 0 vs 0, charged 1242 vs 0
+  [intended] cell echo:file     i18next/up1   nn~op pl <cldr-forms>
+  [intended] cell echo:file     i18next/up1   nn~op ru <cldr-forms>
+  [intended] cell echo:file     i18next/up1   nn~op ar <cldr-forms>
+  [intended] cell echo:file     i18next/up1   nn~op lv <cldr-forms>
+  [intended] cell echo:file     i18next/up1   nn~op he <cldr-forms>
+  [intended] cell echo:file     nested    nn~op pl <cldr-forms>
+  [intended] cell echo:file     nested    nn~op ru <cldr-forms>
+  [intended] cell echo:file     nested    nn~op ar <cldr-forms>
+  [intended] cell echo:file     nested    nn~op lv <cldr-forms>
+  [intended] cell echo:file     nested    nn~op he <cldr-forms>
+  [intended] cell echo:file     nested/on1    nn~op pl <cldr-forms>
+  [intended] cell echo:file     nested/on1    nn~op ru <cldr-forms>
+  [intended] cell echo:file     nested/on1    nn~op ar <cldr-forms>
+  [intended] cell echo:file     nested/on1    nn~op lv <cldr-forms>
+  [intended] cell echo:file     nested/on1    nn~op he <cldr-forms>
+  [intended] run echo:file     nested/up1    nn~op <onlynew-complete>: exit 0 vs 0, charged 670 vs 0
+  [intended] cell echo:file     nested/up1    nn~op pl <cldr-forms>
+  [intended] cell echo:file     nested/up1    nn~op ru <cldr-forms>
+  [intended] cell echo:file     nested/up1    nn~op ar <cldr-forms>
+  [intended] cell echo:file     nested/up1    nn~op lv <cldr-forms>
+  [intended] cell echo:file     nested/up1    nn~op he <cldr-forms>
+  [intended] cell echo:file     rails     nn~op pl <cldr-forms>
+  [intended] cell echo:file     rails     nn~op ru <cldr-forms>
+  [intended] cell echo:file     rails     nn~op ar <cldr-forms>
+  [intended] cell echo:file     rails     nn~op lv <cldr-forms>
+  [intended] cell echo:file     rails     nn~op he <cldr-forms>
+  [intended] cell echo:file     po-printf nn~op pl <po-slots>
+  [intended] cell echo:file     po-printf nn~op ru <po-slots>
+  [intended] cell echo:file     po-printf nn~op ar <po-slots+po-single-slot-046>
+  [intended] cell echo:file     po-printf nn~op lv <po-slots>
+  [intended] cell echo:file     po-printf nn~op he <po-slots>
+  [intended] cell echo:file     po-printf nn~op ja <po-slots>
+  [intended] cell echo:file     po-printf nn~op zh <po-slots>
+  [intended] cell echo:file     po-printf nn~op ko <po-slots>
+  [intended] cell echo:file     po-python nn~op pl <po-slots>
+  [intended] cell echo:file     po-python nn~op ru <po-slots>
+  [intended] cell echo:file     po-python nn~op ar <po-slots>
+  [intended] cell echo:file     po-python nn~op lv <po-slots>
+  [intended] cell echo:file     po-python nn~op he <po-slots>
+  [intended] cell echo:file     po-python nn~op ja <po-slots>
+  [intended] cell echo:file     po-python nn~op zh <po-slots>
+  [intended] cell echo:file     po-python nn~op ko <po-slots>
+  [intended] cell echo:file     po-brace  nn~op pl <po-slots>
+  [intended] cell echo:file     po-brace  nn~op ru <po-slots>
+  [intended] cell echo:file     po-brace  nn~op ar <po-slots>
+  [intended] cell echo:file     po-brace  nn~op lv <po-slots>
+  [intended] cell echo:file     po-brace  nn~op he <po-slots>
+  [intended] cell echo:file     po-brace  nn~op ja <po-slots>
+  [intended] cell echo:file     po-brace  nn~op zh <po-slots>
+  [intended] cell echo:file     po-brace  nn~op ko <po-slots>
+## mode empty
+## mode fail500repeat
+  [intended] cell fail500repeat i18next   nn~op pl <cldr-forms>
+  [intended] cell fail500repeat i18next   nn~op ru <cldr-forms>
+  [intended] cell fail500repeat i18next   nn~op ar <cldr-forms>
+  [intended] cell fail500repeat i18next   nn~op lv <cldr-forms>
+  [intended] cell fail500repeat i18next   nn~op he <cldr-forms>
+  [intended] cell fail500repeat i18next/on1   nn~op pl <cldr-forms>
+  [intended] cell fail500repeat i18next/on1   nn~op ru <cldr-forms>
+  [intended] cell fail500repeat i18next/on1   nn~op ar <cldr-forms>
+  [intended] cell fail500repeat i18next/on1   nn~op lv <cldr-forms>
+  [intended] cell fail500repeat i18next/on1   nn~op he <cldr-forms>
+  [intended] run fail500repeat i18next/up1   nn~op <onlynew-complete>: exit 0 vs 0, charged 1242 vs 0
+  [intended] cell fail500repeat i18next/up1   nn~op pl <cldr-forms>
+  [intended] cell fail500repeat i18next/up1   nn~op ru <cldr-forms>
+  [intended] cell fail500repeat i18next/up1   nn~op ar <cldr-forms>
+  [intended] cell fail500repeat i18next/up1   nn~op lv <cldr-forms>
+  [intended] cell fail500repeat i18next/up1   nn~op he <cldr-forms>
+  [intended] cell fail500repeat nested    nn~op pl <cldr-forms>
+  [intended] cell fail500repeat nested    nn~op ru <cldr-forms>
+  [intended] cell fail500repeat nested    nn~op ar <cldr-forms>
+  [intended] cell fail500repeat nested    nn~op lv <cldr-forms>
+  [intended] cell fail500repeat nested    nn~op he <cldr-forms>
+  [intended] cell fail500repeat nested/on1    nn~op pl <cldr-forms>
+  [intended] cell fail500repeat nested/on1    nn~op ru <cldr-forms>
+  [intended] cell fail500repeat nested/on1    nn~op ar <cldr-forms>
+  [intended] cell fail500repeat nested/on1    nn~op lv <cldr-forms>
+  [intended] cell fail500repeat nested/on1    nn~op he <cldr-forms>
+  [intended] run fail500repeat nested/up1    nn~op <onlynew-complete>: exit 0 vs 0, charged 670 vs 0
+  [intended] cell fail500repeat nested/up1    nn~op pl <cldr-forms>
+  [intended] cell fail500repeat nested/up1    nn~op ru <cldr-forms>
+  [intended] cell fail500repeat nested/up1    nn~op ar <cldr-forms>
+  [intended] cell fail500repeat nested/up1    nn~op lv <cldr-forms>
+  [intended] cell fail500repeat nested/up1    nn~op he <cldr-forms>
+  [intended] cell fail500repeat rails     nn~op pl <cldr-forms>
+  [intended] cell fail500repeat rails     nn~op ru <cldr-forms>
+  [intended] cell fail500repeat rails     nn~op ar <cldr-forms>
+  [intended] cell fail500repeat rails     nn~op lv <cldr-forms>
+  [intended] cell fail500repeat rails     nn~op he <cldr-forms>
+  [intended] cell fail500repeat po-printf nn~op pl <po-slots>
+  [intended] cell fail500repeat po-printf nn~op ru <po-slots>
+  [intended] cell fail500repeat po-printf nn~op ar <po-slots+po-single-slot-046>
+  [intended] cell fail500repeat po-printf nn~op lv <po-slots>
+  [intended] cell fail500repeat po-printf nn~op he <po-slots>
+  [intended] cell fail500repeat po-printf nn~op ja <po-slots>
+  [intended] cell fail500repeat po-printf nn~op zh <po-slots>
+  [intended] cell fail500repeat po-printf nn~op ko <po-slots>
+  [intended] cell fail500repeat po-python nn~op pl <po-slots>
+  [intended] cell fail500repeat po-python nn~op ru <po-slots>
+  [intended] cell fail500repeat po-python nn~op ar <po-slots>
+  [intended] cell fail500repeat po-python nn~op lv <po-slots>
+  [intended] cell fail500repeat po-python nn~op he <po-slots>
+  [intended] cell fail500repeat po-python nn~op ja <po-slots>
+  [intended] cell fail500repeat po-python nn~op zh <po-slots>
+  [intended] cell fail500repeat po-python nn~op ko <po-slots>
+  [intended] cell fail500repeat po-brace  nn~op pl <po-slots>
+  [intended] cell fail500repeat po-brace  nn~op ru <po-slots>
+  [intended] cell fail500repeat po-brace  nn~op ar <po-slots>
+  [intended] cell fail500repeat po-brace  nn~op lv <po-slots>
+  [intended] cell fail500repeat po-brace  nn~op he <po-slots>
+  [intended] cell fail500repeat po-brace  nn~op ja <po-slots>
+  [intended] cell fail500repeat po-brace  nn~op zh <po-slots>
+  [intended] cell fail500repeat po-brace  nn~op ko <po-slots>
+# stopped pids 26572 25368 25180 25820 24476 25080: rc [1, 1, 1, 1, 1, 1]
+
+# intended by tag: {"cldr-forms": 252, "onlynew-complete": 22, "po-slots": 199, "po-slots+po-single-slot-046": 5}
+# old client -> new server: 1449 comparisons, 0 differences
+TOTAL 2916 cells + 486 runs, 478 intended, 0 unintended (5005s)

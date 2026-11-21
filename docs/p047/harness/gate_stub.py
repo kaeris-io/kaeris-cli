@@ -13,6 +13,9 @@ every request, flags comma separated:
   fail500after1   HTTP 500 for every request of a language after its first one in this cell
                   (the gate writes `cell:<n>` into the mode, which resets the count): a retry,
                   a plural's second try, a repair all fail
+  fail500repeat   HTTP 500 for a request this stub has already answered in this cell (same
+                  language, same keys and texts): a retry of the same request fails, a new request
+                  (a plural's second try with its own keys, the other languages) does not
   fail500key:<s>  HTTP 500 for a request holding a key that ends with <s>
 
 Each server of the gate has its own stub (own counters). STUB_LOG: every cargo, one JSON line.
@@ -28,6 +31,7 @@ MODE_FILE = os.environ["MODE_FILE"]
 LOG = os.environ.get("STUB_LOG")
 LOCK = threading.Lock()
 SEEN = {}          # (cell, lang) -> requests so far (fail500after1)
+ASKED = set()      # (cell, lang, request) already answered (fail500repeat)
 CATS = {"pl": ["one", "few", "many", "other"], "ru": ["one", "few", "many", "other"],
         "uk": ["one", "few", "many", "other"], "cs": ["one", "few", "many", "other"],
         "ar": ["zero", "one", "two", "few", "many", "other"],
@@ -137,9 +141,13 @@ class H(BaseHTTPRequestHandler):
             with LOCK:
                 seen = SEEN.setdefault((cell, lang), 0)
                 SEEN[(cell, lang)] = seen + 1
+                req = (cell, lang, json.dumps(cargo, sort_keys=True, ensure_ascii=False))
+                repeat = req in ASKED
+                ASKED.add(req)
             fail = (any(f.startswith("fail500key:") and any(k.endswith(f[11:]) for k in cargo) for f in md)
                     or ("fail500fold" in md and any(", plural," in str(v) for v in cargo.values()))
-                    or ("fail500after1" in md and seen >= 1))
+                    or ("fail500after1" in md and seen >= 1)
+                    or ("fail500repeat" in md and repeat))
             if fail:
                 self.send_response(500); self.send_header("Content-Length", "0"); self.end_headers()
                 return

@@ -1,0 +1,96 @@
+# pids 22472 4280 20056
+# server new up, plural_forms='cldr'
+# server prod up, plural_forms=None
+## stub mode = hash
+$ [py new -> new] kaeris translate en.json --langs de --no-only-new --no-tm  -> exit 0
+  | de.json
+  | 
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | → Translating en.json → de
+  | → 100%  de
+  | ✓ Wrote 1 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\903282ca-0cef-4a65-881b-d4ad1fba7558\scratchpad\r5\critic3\runs\s7-hash-en_json
+  | ✓ Translation QA: no placeholder loss, no overflow risks
+  | → Run: openai/gpt-6-luna · Free · 1/1 languages · 4 strings · 0.0s
+  |      114 charged
+--- hash de.json
+{
+  "msg_one": "enoy egassemy morfy {{name}}",
+  "msg_other": "{{count}} segassemy morfy {{name}}",
+  "in_one": "{{count}} metiy niy {{folder}}",
+  "in_other": "{{count}} smetiy niy {{folder}}"
+}
+$ [py new -> new] kaeris check --source en.json --langs de  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ de: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+## stub mode = normal
+$ [py new -> new] kaeris translate en.json --langs de --no-only-new --no-tm  -> exit 0
+  | de.json
+  | 
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | → Translating en.json → de
+  | → 100%  de
+  | ✓ Wrote 1 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\903282ca-0cef-4a65-881b-d4ad1fba7558\scratchpad\r5\critic3\runs\s7-normal-en_json
+  | ✓ Translation QA: no placeholder loss, no overflow risks
+  | → Run: openai/gpt-6-luna · Free · 1/1 languages · 4 strings · 0.0s
+  |      114 charged
+--- normal de.json
+{
+  "msg_one": "enoy egassemy morfy {{name}}",
+  "msg_other": "{{count}} segassemy morfy {{name}}",
+  "in_one": "{{count}} metiy niy {{folder}}",
+  "in_other": "{{count}} smetiy niy {{folder}}"
+}
+$ [py new -> new] kaeris check --source en.json --langs de  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ de: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+## stub mode = hash
+$ [py new -> new] kaeris translate en.yml --langs de --no-only-new --no-tm  -> exit 0
+  | de.yml
+  | 
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | → Translating en.yml → de
+  | → 100%  de
+  | ✓ Wrote 1 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\903282ca-0cef-4a65-881b-d4ad1fba7558\scratchpad\r5\critic3\runs\s7-hash-en_yml
+  | ✓ Translation QA: no placeholder loss, no overflow risks
+  | → Run: openai/gpt-6-luna · Free · 1/1 languages · 3 strings · 0.0s
+  |      59 charged
+--- hash de.yml
+de:
+  inbox:
+    one: enoy egassemy morfy %{name}
+    other: '%{count} segassemy morfy %{name}'
+  title: xobniy
+
+$ [py new -> new] kaeris check --source en.yml --langs de  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ de: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+## stub mode = normal
+$ [py new -> new] kaeris translate en.yml --langs de --no-only-new --no-tm  -> exit 0
+  | de.yml
+  | 
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | → Translating en.yml → de
+  | → 100%  de
+  | ✓ Wrote 1 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\903282ca-0cef-4a65-881b-d4ad1fba7558\scratchpad\r5\critic3\runs\s7-normal-en_yml
+  | ✓ Translation QA: no placeholder loss, no overflow risks
+  | → Run: openai/gpt-6-luna · Free · 1/1 languages · 3 strings · 0.0s
+  |      59 charged
+--- normal de.yml
+de:
+  inbox:
+    one: enoy egassemy morfy %{name}
+    other: '%{count} segassemy morfy %{name}'
+  title: xobniy
+
+$ [py new -> new] kaeris check --source en.yml --langs de  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ de: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+# stopped pids 22472 4280 20056: rc [1, 1, 1]

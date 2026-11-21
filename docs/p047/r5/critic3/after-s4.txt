@@ -1,0 +1,70 @@
+client from C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+# pids 3992 15320 15848
+# server new up, plural_forms='cldr'
+# server prod up, plural_forms=None
+## stub mode = drop:many
+--- drop:many en.po ['pl', 'ru']: status keys ['current_lang', 'error', 'failed_langs', 'progress', 'retryable', 'status', 'total']
+    _qa: {"pl": {"plurals": ["'%d file': the answer had no many form; written as before 0.2.47: msgstr[0] (one) holds the singular, msgstr[2] (many) repeats msgstr[1] (few)"]}, "ru": {"plurals": ["'%d file': the answer had no many form; written as before 0.2.47: msgstr[0] (one) holds the singular, msgstr[2] (many) repeats msgstr[1] (few)"]}}
+    _warnings: {}
+    receipt qa: {}
+## stub mode = dropzero,missalone:zero
+--- dropzero,missalone:zero en.json ['de', 'pl']: status keys ['current_lang', 'error', 'failed_langs', 'progress', 'retryable', 'status', 'total']
+    _qa: {}
+    _warnings: {"de": {"cart_zero": ["may be untranslated — identical to the source text"]}, "pl": {"cart_zero": ["may be untranslated — identical to the source text"]}}
+    receipt qa: {}
+## stub mode = drop:few
+--- drop:few en.json ['pl']: status keys ['current_lang', 'error', 'failed_langs', 'progress', 'retryable', 'status', 'total']
+    _qa: {"pl": {"plurals": ["'cart': plural is missing the few/many form(s) pl requires"]}}
+    _warnings: {}
+    receipt qa: {}
+## stub mode = drop:many
+$ [py new -> new] kaeris translate en.po --langs pl,ru --no-only-new --no-tm  -> exit 0
+  | pl.po
+  | ru.po
+  | 
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | → Translating en.po → pl, ru
+  | → 100%  ru
+  | → 100%  ru
+  | ✓ Wrote 2 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\903282ca-0cef-4a65-881b-d4ad1fba7558\scratchpad\r5\critic3\runs\s4-drop_manyen.po
+  | ! 2 plural(s) not written in every form of their own:
+  |     [pl] '%d file': the answer had no many form; written as before 0.2.47: msgstr[0] (one) holds the singular, msgstr[2] (many) repeats msgstr[1] (few)
+  |     [ru] '%d file': the answer had no many form; written as before 0.2.47: msgstr[0] (one) holds the singular, msgstr[2] (many) repeats msgstr[1] (few)
+  | → Run: openai/gpt-6-luna · Free · 2/2 languages · 2 strings · 0.0s
+  |      30 charged
+$ [npm new -> new] kaeris translate en.po --langs pl,ru --no-only-new --no-tm  -> exit 2
+  | [stderr] ✗ --no-tm is not in the npm package yet: run without it, or use the Python package (pipx install kaeris), which has it
+## stub mode = dropzero,missalone:zero
+$ [py new -> new] kaeris translate en.json --langs de,pl --no-only-new --no-tm  -> exit 0
+  | de.json
+  | pl.json
+  | 
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | → Translating en.json → de, pl
+  | → 100%  pl
+  | ✓ Wrote 2 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\903282ca-0cef-4a65-881b-d4ad1fba7558\scratchpad\r5\critic3\runs\s4-dropzero+missalone_zeroen.json
+  | ! 2 translation(s) check the meaning before you ship:
+  |     [de] cart_zero: may be untranslated — identical to the source text
+  |     [pl] cart_zero: may be untranslated — identical to the source text
+  | → Run: openai/gpt-6-luna · Free · 2/2 languages · 10 strings · 0.0s
+  |      254 charged
+$ [npm new -> new] kaeris translate en.json --langs de,pl --no-only-new --no-tm  -> exit 2
+  | [stderr] ✗ --no-tm is not in the npm package yet: run without it, or use the Python package (pipx install kaeris), which has it
+## stub mode = drop:few
+$ [py new -> new] kaeris translate en.json --langs pl --no-only-new --no-tm  -> exit 0
+  | pl.json
+  | 
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | → Translating en.json → pl
+  | → 100%  pl
+  | ✓ Wrote 1 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\903282ca-0cef-4a65-881b-d4ad1fba7558\scratchpad\r5\critic3\runs\s4-drop_fewen.json
+  | ! 1 plural(s) not written in every form of their own:
+  |     [pl] 'cart': plural is missing the few/many form(s) pl requires
+  | → Run: openai/gpt-6-luna · Free · 1/1 languages · 10 strings · 0.0s
+  |      127 charged
+$ [npm new -> new] kaeris translate en.json --langs pl --no-only-new --no-tm  -> exit 2
+  | [stderr] ✗ --no-tm is not in the npm package yet: run without it, or use the Python package (pipx install kaeris), which has it
+# stopped pids 3992 15320 15848: rc [1, 1, 1]

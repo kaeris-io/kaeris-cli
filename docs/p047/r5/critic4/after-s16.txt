@@ -1,0 +1,24 @@
+# pids 20608 16980 22036
+# server new up, plural_forms='cldr'
+# server prod up, plural_forms=None
+## stub mode = drop:many
+drop:many [046->prod] run1: exit 0 ['105 charged'] calls=1 cargo=[["{{count}} item in your cart", "{{count}} items in your cart", "{{count, number}} file", "{{count, number}} files", "Inbox"]]
+drop:many [046->prod] run2: exit 0 ['✓ pl: up to date (5 keys)', '✓ Everything already up to date — nothing to translate'] calls=0 cargo=[]
+drop:many [046->prod] run3: exit 0 ['✓ pl: up to date (5 keys)', '✓ Everything already up to date — nothing to translate'] calls=0 cargo=[]
+   check pl 1; pl.json keys ['c_one', 'c_other', 'cart_one', 'cart_other', 'title']
+## stub mode = drop:many
+drop:many [new->new] run1: exit 0 ['105 charged'] calls=2 cargo=[["{count, plural, one {{{count}} item in your cart} other {{{count}} items in your cart}}", "{count, plural, one {{{count, number}} file} other {{{count, number}} files}}", "Inbox"], ["{{count}} item in your cart", "{{count}} items in your
+drop:many [new->new] run2: exit 0 ['✓ pl: up to date (5 keys)', '✓ Everything already up to date — nothing to translate'] calls=0 cargo=[]
+drop:many [new->new] run3: exit 0 ['✓ pl: up to date (5 keys)', '✓ Everything already up to date — nothing to translate'] calls=0 cargo=[]
+   check pl 1; pl.json keys ['c_one', 'c_other', 'cart_one', 'cart_other', 'title']
+## stub mode = hashall
+hashall [046->prod] run1: exit 0 ['105 charged'] calls=1 cargo=[["{{count}} item in your cart", "{{count}} items in your cart", "{{count, number}} file", "{{count, number}} files", "Inbox"]]
+hashall [046->prod] run2: exit 0 ['✓ pl: up to date (5 keys)', '✓ Everything already up to date — nothing to translate'] calls=0 cargo=[]
+hashall [046->prod] run3: exit 0 ['✓ pl: up to date (5 keys)', '✓ Everything already up to date — nothing to translate'] calls=0 cargo=[]
+   check pl 1; pl.json keys ['c_one', 'c_other', 'cart_one', 'cart_other', 'title']
+## stub mode = hashall
+hashall [new->new] run1: exit 0 ['105 charged'] calls=2 cargo=[["{count, plural, one {{{count}} item in your cart} other {{{count}} items in your cart}}", "{count, plural, one {{{count, number}} file} other {{{count, number}} files}}", "Inbox"], ["{{count, number}} file", "{{count, number}} files"]]
+hashall [new->new] run2: exit 0 ['✓ pl: up to date (7 keys)', '✓ Everything already up to date — nothing to translate'] calls=0 cargo=[]
+hashall [new->new] run3: exit 0 ['✓ pl: up to date (7 keys)', '✓ Everything already up to date — nothing to translate'] calls=0 cargo=[]
+   check pl 1; pl.json keys ['c_one', 'c_other', 'cart_few', 'cart_many', 'cart_one', 'cart_other', 'title']
+# stopped pids 20608 16980 22036: rc [1, 1, 1]

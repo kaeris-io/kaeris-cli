@@ -1,0 +1,118 @@
+# pids 9004 11508 19224
+# server new up, plural_forms='cldr'
+# server prod up, plural_forms=None
+## stub mode = echo:km
+== echo json run1 [046 -> prod] translate en.json --langs de,pl --no-only-new -> exit 0
+   | ✓ Wrote 2 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\903282ca-0cef-4a65-881b-d4ad1fba7558\scratchpad\r5\runs\s13-echo-046
+   | ✓ Translation QA: no placeholder loss, no overflow risks
+   | → Project memory: +10 · 5 strings, 10 translations in kaeris-tm.json
+   | → Run: openai/gpt-6-luna · Free · 2/2 languages · 7 strings · 0.0s
+   | 242 charged
+   cargo pl: ["{{count}} km", "{{count}} km", "Your cart is empty", "{{count}} item in your cart", "{{count}} items in your cart", "Inbox", "Hello there, friend"]
+   cargo de: ["{{count}} km", "{{count}} km", "Your cart is empty", "{{count}} item in your cart", "{{count}} items in your cart", "Inbox", "Hello there, friend"]
+== echo json run2 [046 -> prod] translate en.json --langs de,pl --no-only-new -> exit 0
+   | → Project memory: 10 string/language pair(s) reused, not re-translated
+   | ✓ Wrote 2 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\903282ca-0cef-4a65-881b-d4ad1fba7558\scratchpad\r5\runs\s13-echo-046
+   | ✓ Translation QA: no placeholder loss, no overflow risks
+   | → Run: openai/gpt-6-luna · Free · 2/2 languages · 7 strings · 0.0s
+   | 48 charged · 226 reused free
+   cargo pl: ["{{count}} km", "{{count}} km"]
+   cargo de: ["{{count}} km", "{{count}} km"]
+   de.json: {   "cart_zero": "ruoyy tracy siy ytpmey",   "cart_one": "{{count}} metiy niy ruoyy tracy",   "cart_other": "{{count}} smetiy niy ruoyy tracy",   "title": "xobniy",   "hello": "ollehy erehty, dneirfy",   "dist_one": "{{count}} km",   "dist_other": "{{count}} km" }
+   check de 0
+   check pl 1
+== echo po [046 -> prod] translate en.po --langs de,pl -> exit 0
+   | ✓ Wrote 2 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\903282ca-0cef-4a65-881b-d4ad1fba7558\scratchpad\r5\runs\s13-echopo-046
+   | ✓ Translation QA: no placeholder loss, no overflow risks
+   | → Run: openai/gpt-6-luna · Free · 2/2 languages · 5 strings · 0.0s
+   | 60 charged
+   cargo de: ["%d km", "%d km", "%d file", "%d files", "Inbox"]
+   cargo pl: ["%d km", "%d km", "%d file", "%d files", "Inbox"]
+   pl.po: msgstr[0] "%d km" | msgstr[1] "%d km" | msgstr[2] "%d km" | msgstr[0] "%d elify" | msgstr[1] "%d selify" | msgstr[2] "%d selify"
+== echo json run1 [new -> new] translate en.json --langs de,pl --no-only-new -> exit 0
+   | ✓ Wrote 2 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\903282ca-0cef-4a65-881b-d4ad1fba7558\scratchpad\r5\runs\s13-echo-new
+   | ! 1 plural(s) not written in every form of their own:
+   | [pl] 'dist': plural is missing the few/many form(s) pl requires
+   | → Project memory: +10 · 5 strings, 10 translations in kaeris-tm.json
+   | → Run: openai/gpt-6-luna · Free · 2/2 languages · 7 strings · 0.1s
+   | 242 charged
+   cargo pl: ["{count, plural, one {{{count}} km} other {{{count}} km}}", "{count, plural, =0 {Your cart is empty} one {{{count}} item in your cart} other {{{count}} items in your cart}}", "Inbox", "Hello there, friend"]
+   cargo de: ["{count, plural, one {{{count}} km} other {{{count}} km}}", "{count, plural, =0 {Your cart is empty} one {{{count}} item in your cart} other {{{count}} items in your cart}}", "Inbox", "Hello there, friend"]
+   cargo pl: ["{{count}} km", "{{count}} km"]
+   cargo de: ["{{count}} km", "{{count}} km"]
+   cargo pl: ["{{count}} km", "{{count}} km"]
+   cargo de: ["{{count}} km", "{{count}} km"]
+== echo json run2 [new -> new] translate en.json --langs de,pl --no-only-new -> exit 0
+   | → Project memory: 7 string/language pair(s) reused, not re-translated
+   | ✓ Wrote 2 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\903282ca-0cef-4a65-881b-d4ad1fba7558\scratchpad\r5\runs\s13-echo-new
+   | ! 1 plural(s) not written in every form of their own:
+   | [pl] 'dist': plural is missing the few/many form(s) pl requires
+   | → Run: openai/gpt-6-luna · Free · 2/2 languages · 7 strings · 0.0s
+   | 121 charged · 141 reused free
+   cargo de: ["{count, plural, one {{{count}} km} other {{{count}} km}}"]
+   cargo pl: ["{count, plural, one {{{count}} km} other {{{count}} km}}", "{count, plural, =0 {Your cart is empty} one {{{count}} item in your cart} other {{{count}} items in your cart}}"]
+   cargo pl: ["{{count}} km", "{{count}} km"]
+   cargo de: ["{{count}} km", "{{count}} km"]
+   cargo pl: ["{{count}} km", "{{count}} km"]
+   cargo de: ["{{count}} km", "{{count}} km"]
+   de.json: {   "cart_zero": "ruoyy tracy siy ytpmey",   "cart_one": "{{count}} metiy niy ruoyy tracy",   "cart_other": "{{count}} smetiy niy ruoyy tracy",   "title": "xobniy",   "hello": "ollehy erehty, dneirfy",   "dist_one": "{{count}} km",   "dist_other": "{{count}} km" }
+   check de 0
+   check pl 1
+== echo po [new -> new] translate en.po --langs de,pl -> exit 0
+   | ✓ Wrote 2 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\903282ca-0cef-4a65-881b-d4ad1fba7558\scratchpad\r5\runs\s13-echopo-new
+   | ! 1 plural(s) not written in every form of their own:
+   | [pl] '%d km': the model left the plural out; written as before 0.2.47: msgstr[0] (one) holds the singular, msgstr[2] (many) repeats msgstr[1] (few)
+   | → Run: openai/gpt-6-luna · Free · 2/2 languages · 5 strings · 0.0s
+   | 60 charged
+   cargo de: ["{count, plural, one {%d km} other {%d km}}", "{count, plural, one {%d file} other {%d files}}", "Inbox"]
+   cargo pl: ["{count, plural, one {%d km} other {%d km}}", "{count, plural, one {%d file} other {%d files}}", "Inbox"]
+   cargo de: ["%d km", "%d km"]
+   cargo pl: ["%d km", "%d km"]
+   cargo de: ["%d km", "%d km"]
+   cargo pl: ["%d km", "%d km"]
+   pl.po: msgstr[0] "%d km" | msgstr[1] "%d km" | msgstr[2] "%d km" | msgstr[0] "%d elify" | msgstr[1] "%d selify fe" | msgstr[2] "%d selify ma"
+## stub mode = fail500key:_zero
+== 500 on _zero [046 -> prod] translate en.json --langs de,pl --no-only-new --no-tm -> exit 3
+   | ✓ Wrote 0 file(s):
+   | ! 8 translation(s) check the meaning before you ship:
+   | [de] cart_zero: may be untranslated — identical to the source text
+   | [de] cart_one: may be untranslated — identical to the source text
+   | [de] cart_other: may be untranslated — identical to the source text
+   | [de] hello: may be untranslated — identical to the source text
+   | [pl] cart_zero: may be untranslated — identical to the source text
+   | [pl] cart_one: may be untranslated — identical to the source text
+   | [pl] cart_other: may be untranslated — identical to the source text
+   | [pl] hello: may be untranslated — identical to the source text
+   | → Run: openai/gpt-6-luna · Free · 0/2 languages · 7 strings · 0.0s
+   | 242 charged
+   | ! not delivered: de, pl
+   | ! 2 language(s) fell back to source text (not translated): de, pl
+   cargo pl: ["{{count}} km", "{{count}} km", "Your cart is empty", "{{count}} item in your cart", "{{count}} items in your cart", "Inbox", "Hello there, friend"]
+   cargo de: ["{{count}} km", "{{count}} km", "Your cart is empty", "{{count}} item in your cart", "{{count}} items in your cart", "Inbox", "Hello there, friend"]
+   cargo pl: ["{{count}} km", "{{count}} km", "Your cart is empty", "{{count}} item in your cart", "{{count}} items in your cart", "Inbox", "Hello there, friend"]
+   cargo de: ["{{count}} km", "{{count}} km", "Your cart is empty", "{{count}} item in your cart", "{{count}} items in your cart", "Inbox", "Hello there, friend"]
+   de.json: <none>
+## stub mode = dropzero,fail500key:_zero
+== 500 on _zero [new -> new] translate en.json --langs de,pl --no-only-new --no-tm -> exit 0
+   | ✓ Wrote 2 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\903282ca-0cef-4a65-881b-d4ad1fba7558\scratchpad\r5\runs\s13-500-new
+   | ! 2 translation(s) check the meaning before you ship:
+   | [de] cart_zero: may be untranslated — identical to the source text
+   | [pl] cart_zero: may be untranslated — identical to the source text
+   | ! 2 plural(s) not written in every form of their own:
+   | [de] 'cart': the zero form(s) could not be translated on their own; the source text may stand there
+   | [pl] 'cart': the zero form(s) could not be translated on their own; the source text may stand there
+   | → Run: openai/gpt-6-luna · Free · 2/2 languages · 7 strings · 0.0s
+   | 242 charged
+   cargo de: ["{count, plural, one {{{count}} km} other {{{count}} km}}", "{count, plural, =0 {Your cart is empty} one {{{count}} item in your cart} other {{{count}} items in your cart}}", "Inbox", "Hello there, friend"]
+   cargo pl: ["{count, plural, one {{{count}} km} other {{{count}} km}}", "{count, plural, =0 {Your cart is empty} one {{{count}} item in your cart} other {{{count}} items in your cart}}", "Inbox", "Hello there, friend"]
+   cargo de: ["Your cart is empty"]
+   cargo pl: ["Your cart is empty"]
+   de.json: {   "dist_one": "{{count}} mky",   "dist_other": "{{count}} mky",   "cart_zero": "Your cart is empty",   "cart_one": "{{count}} metiy niy ruoyy tracy",   "cart_other": "{{count}} smetiy niy ruoyy tracy",   "title": "xobniy",   "hello": "ollehy erehty, dneirfy" }
+## stub mode = fail500fold
+== 500 on the fold [new -> new] translate en.json --langs de,pl --no-only-new --no-tm -> exit 1
+   | ✗ The translation provider is not responding. Nothing was translated and nothing was charged — please try again in a minute.
+   cargo de: ["{count, plural, one {{{count}} km} other {{{count}} km}}", "{count, plural, =0 {Your cart is empty} one {{{count}} item in your cart} other {{{count}} items in your cart}}", "Inbox", "Hello there, friend"]
+   cargo pl: ["{count, plural, one {{{count}} km} other {{{count}} km}}", "{count, plural, =0 {Your cart is empty} one {{{count}} item in your cart} other {{{count}} items in your cart}}", "Inbox", "Hello there, friend"]
+   de.json: <none>
+   pl.json: <none>
+# stopped pids 9004 11508 19224: rc [1, 1, 1]

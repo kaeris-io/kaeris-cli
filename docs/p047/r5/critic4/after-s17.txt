@@ -1,0 +1,21 @@
+# pids 9668 11952 11820
+# server new up, plural_forms='cldr'
+# server prod up, plural_forms=None
+## stub mode = normal
+en.json [046->prod] run1: exit 0 ['165 charged', '[pl] g_one: missing {gender}; invented placeholder {him} (not in source); invented placeholder {them} (not in source); ICU plural/select construct dropped or broken (1 in source, 0 in translation)', '[pl] g_other: missing {gender}; invented placeholder {him} (not in source); invented placeholder {them} (not in source); ICU plural/select construct dropped or broken (1 in source, 0 in translation)'] cargo=[["{{count}} smile :-}", "{{count}} smiles :-}", "{{count}} item for {gender, select, male {him} other {them}}", "{{count}} items for {gender, select, male {him} other {them}}", "Inbox"]]
+en.json [046->prod] run2: exit 0 ['✓ pl: up to date (5 keys)', '✓ Everything already up to date — nothing to translate'] cargo=[]
+en.json [046->prod] run3: exit 0 ['✓ pl: up to date (5 keys)', '✓ Everything already up to date — nothing to translate'] cargo=[]
+   check pl 1
+en.json [new->new] run1: exit 0 ['[stderr] using C:\\Users\\Inzagi\\projects\\kaeris\\cli\\.claude\\worktrees\\plural-translate-1121\\kaeris\\__init__.py 0.2.47', '165 charged', '[pl] g_one: missing {gender}; invented placeholder {him} (not in source); invented placeholder {them} (not in source); ICU plural/select construct dropped or broken (1 in source, 0 in translation)', '[pl] g_other: missing {gender}; invented placeholder {him} (not in source); invented placeholder {them} (not in source); ICU plural/select construct dropped or broken (1 in source, 0 in translation)', '! pl: the server did not add every form pl needs to 2 plural set(s) (g, smile); not sent again until its source changes — `kaeris check` names the forms'] cargo=[["{{count}} smile :-}", "{{count}} smiles :-}", "{{count}} item for {gender, select, male {him} other {them}}", "{{count}} items for {gender, select, male {him} other {them}}", "Inbox"]]
+en.json [new->new] run2: exit 0 ['[stderr] using C:\\Users\\Inzagi\\projects\\kaeris\\cli\\.claude\\worktrees\\plural-translate-1121\\kaeris\\__init__.py 0.2.47', '✓ pl: up to date (5 keys)', '✓ Everything already up to date — nothing to translate'] cargo=[]
+en.json [new->new] run3: exit 0 ['[stderr] using C:\\Users\\Inzagi\\projects\\kaeris\\cli\\.claude\\worktrees\\plural-translate-1121\\kaeris\\__init__.py 0.2.47', '✓ pl: up to date (5 keys)', '✓ Everything already up to date — nothing to translate'] cargo=[]
+   check pl 1
+en.yml [046->prod] run1: exit 0 ['42 charged'] cargo=[["%{count} smile :-}", "%{count} smiles :-}", "Inbox"]]
+en.yml [046->prod] run2: exit 0 ['42 charged'] cargo=[["%{count} smile :-}", "%{count} smiles :-}", "Inbox"]]
+en.yml [046->prod] run3: exit 0 ['42 charged'] cargo=[["%{count} smile :-}", "%{count} smiles :-}", "Inbox"]]
+   check pl 0
+en.yml [new->new] run1: exit 0 ['[stderr] using C:\\Users\\Inzagi\\projects\\kaeris\\cli\\.claude\\worktrees\\plural-translate-1121\\kaeris\\__init__.py 0.2.47', '42 charged'] cargo=[["%{count} smile :-}", "%{count} smiles :-}", "Inbox"]]
+en.yml [new->new] run2: exit 0 ['[stderr] using C:\\Users\\Inzagi\\projects\\kaeris\\cli\\.claude\\worktrees\\plural-translate-1121\\kaeris\\__init__.py 0.2.47', '42 charged'] cargo=[["%{count} smile :-}", "%{count} smiles :-}", "Inbox"]]
+en.yml [new->new] run3: exit 0 ['[stderr] using C:\\Users\\Inzagi\\projects\\kaeris\\cli\\.claude\\worktrees\\plural-translate-1121\\kaeris\\__init__.py 0.2.47', '42 charged'] cargo=[["%{count} smile :-}", "%{count} smiles :-}", "Inbox"]]
+   check pl 0
+# stopped pids 9668 11952 11820: rc [1, 1, 1]

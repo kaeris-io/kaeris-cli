@@ -1,0 +1,2373 @@
+# pids 22036 21852 10120
+# server new up, plural_forms='cldr'
+# server prod up, plural_forms=None
+
+######## PROD 0.2.46 en.json
+## stub mode = normal
+$ [py 046 -> prod] kaeris translate en.json --langs de,pl,ru,ar,lv,he --no-only-new --no-tm  -> exit 0
+  | de.json
+  | pl.json
+  | ru.json
+  | ar.json
+  | lv.json
+  | he.json
+  | 
+  | [stderr] using C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\903282ca-0cef-4a65-881b-d4ad1fba7558\scratchpad\r5\critic3\..\cli046\kaeris\__init__.py 0.2.46
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | → Translating en.json → de, pl, ru, ar, lv, he
+  | →  83%  he
+  | → 100%  he
+  | ✓ Wrote 6 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\903282ca-0cef-4a65-881b-d4ad1fba7558\scratchpad\r5\critic3\runs\s1-prod-json-normal
+  | ✓ Translation QA: no placeholder loss, no overflow risks
+  | → Run: openai/gpt-6-luna · Free · 6/6 languages · 7 strings · 0.0s
+  |      780 charged
+--- cargo: [["ar", {"cart_zero": "Your cart is empty ({{count}})", "cart_one": "{{count}} item in your cart", "cart_other": "{{count}} items in your cart", "box.zero": "Nothing here", "box.one": "{{count}} box", "box.other": "{{count}} boxes", "title": "Inbox"}], ["ru", {"cart_zero": "Your cart is empty ({{count}})", "cart_one": "{{count}} item in your cart", "cart_other": "{{count}} items in your cart", "box.zero": "Nothing here", "box.one": "{{count}} box", "box.other": "{{count}} boxes", "title": "Inbox"}], ["he", {"cart_zero": "Your cart is empty ({{count}})", "cart_one": "{{count}} item in your cart", "cart_other": "{{count}} items in your cart", "box.zero": "Nothing here", "box.one": "{{count}} box", "box.other": "{{count}} boxes", "title": "Inbox"}], ["lv", {"cart_zero": "Your cart is empty ({{count}})", "cart_one": "{{count}} item in your cart", "cart_other": "{{count}} items in your cart", "box.zero": "Nothing here", "box.one": "{{count}} box", "box.other": "{{count}} boxes", "title": "Inbox"}], ["pl", {"cart_zero": "Your cart is empty ({{count}})", "cart_one": "{{count}} item in your cart", "cart_other": "{{count}} items in your cart", "box.zero": "Nothing here", "box.one": "{{count}} box", "box.other": "{{count}} boxes", "title": "Inbox"}], ["de", {"cart_zero": "Your cart is empty ({{count}})", "cart_one": "{{count}} item in your cart", "cart_other": "{{count}} items in your cart", "box.zero": "Nothing here", "box.one": "{{count}} box", "box.other": "{{count}} boxes", "title": "Inbox"}]]
+--- de.json
+{
+  "cart_zero": "ruoyy tracy siy ytpmey ({{count}})",
+  "cart_one": "{{count}} metiy niy ruoyy tracy",
+  "cart_other": "{{count}} smetiy niy ruoyy tracy",
+  "box": {
+    "zero": "gnihtony erehy",
+    "one": "{{count}} xoby",
+    "other": "{{count}} sexoby"
+  },
+  "title": "xobniy"
+}
+$ [py 046 -> prod] kaeris check --source en.json --langs de  -> exit 0
+  | [stderr] using C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\903282ca-0cef-4a65-881b-d4ad1fba7558\scratchpad\r5\critic3\..\cli046\kaeris\__init__.py 0.2.46
+  | ✓ de: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm 046 -> prod] kaeris check --source en.json --langs de  -> exit 0
+  | [stderr] ✓ de: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+--- pl.json
+{
+  "cart_zero": "ruoyy tracy siy ytpmey ({{count}})",
+  "cart_one": "{{count}} metiy niy ruoyy tracy",
+  "cart_other": "{{count}} smetiy niy ruoyy tracy",
+  "box": {
+    "zero": "gnihtony erehy",
+    "one": "{{count}} xoby",
+    "other": "{{count}} sexoby"
+  },
+  "title": "xobniy"
+}
+$ [py 046 -> prod] kaeris check --source en.json --langs pl  -> exit 1
+  | [stderr] using C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\903282ca-0cef-4a65-881b-d4ad1fba7558\scratchpad\r5\critic3\..\cli046\kaeris\__init__.py 0.2.46
+  | ✗ pl: 2 translation fault(s):
+  |     plural form missing: cart_few — pl needs the one/few/many/other forms of 'cart'
+  |     plural form missing: cart_many — pl needs the one/few/many/other forms of 'cart'
+  | ! pl: 2 warning(s):
+  |     : plural form missing: box.few — pl needs the one/few/many/other forms of 'box'
+  |     : plural form missing: box.many — pl needs the one/few/many/other forms of 'box'
+  | ✗ 2 translation faults
+$ [npm 046 -> prod] kaeris check --source en.json --langs pl  -> exit 1
+  | [stderr] ✗ pl: 2 translation fault(s):
+  |     plural form missing: cart_few — pl needs the one/few/many/other forms of 'cart'
+  |     plural form missing: cart_many — pl needs the one/few/many/other forms of 'cart'
+  | ! pl: 2 warning(s):
+  |     : plural form missing: box.few — pl needs the one/few/many/other forms of 'box'
+  |     : plural form missing: box.many — pl needs the one/few/many/other forms of 'box'
+  | ✗ 2 translation faults
+--- ru.json
+{
+  "cart_zero": "шофс васу ит дмпуш ({{count}})",
+  "cart_one": "{{count}} иудм ин шофс васу",
+  "cart_other": "{{count}} иудмт ин шофс васу",
+  "box": {
+    "zero": "ноузинж здсд",
+    "one": "{{count}} боч",
+    "other": "{{count}} бочдт"
+  },
+  "title": "инбоч"
+}
+$ [py 046 -> prod] kaeris check --source en.json --langs ru  -> exit 1
+  | [stderr] using C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\903282ca-0cef-4a65-881b-d4ad1fba7558\scratchpad\r5\critic3\..\cli046\kaeris\__init__.py 0.2.46
+  | ✗ ru: 2 translation fault(s):
+  |     plural form missing: cart_few — ru needs the one/few/many/other forms of 'cart'
+  |     plural form missing: cart_many — ru needs the one/few/many/other forms of 'cart'
+  | ! ru: 2 warning(s):
+  |     : plural form missing: box.few — ru needs the one/few/many/other forms of 'box'
+  |     : plural form missing: box.many — ru needs the one/few/many/other forms of 'box'
+  | ✗ 2 translation faults
+$ [npm 046 -> prod] kaeris check --source en.json --langs ru  -> exit 1
+  | [stderr] ✗ ru: 2 translation fault(s):
+  |     plural form missing: cart_few — ru needs the one/few/many/other forms of 'cart'
+  |     plural form missing: cart_many — ru needs the one/few/many/other forms of 'cart'
+  | ! ru: 2 warning(s):
+  |     : plural form missing: box.few — ru needs the one/few/many/other forms of 'box'
+  |     : plural form missing: box.many — ru needs the one/few/many/other forms of 'box'
+  | ✗ 2 translation faults
+--- ar.json
+{
+  "cart_zero": "نضقع تاعف ذغ جشطفن ({{count}})",
+  "cart_one": "{{count}} ذفجش ذص نضقع تاعف",
+  "cart_other": "{{count}} ذفجشغ ذص نضقع تاعف",
+  "box": {
+    "zero": "صضفدذصخ دجعج",
+    "one": "{{count}} بضم",
+    "other": "{{count}} بضمجغ"
+  },
+  "title": "ذصبضم"
+}
+$ [py 046 -> prod] kaeris check --source en.json --langs ar  -> exit 1
+  | [stderr] using C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\903282ca-0cef-4a65-881b-d4ad1fba7558\scratchpad\r5\critic3\..\cli046\kaeris\__init__.py 0.2.46
+  | ✗ ar: 3 translation fault(s):
+  |     plural form missing: cart_few — ar needs the zero/one/two/few/many/other forms of 'cart'
+  |     plural form missing: cart_many — ar needs the zero/one/two/few/many/other forms of 'cart'
+  |     plural form missing: cart_two — ar needs the zero/one/two/few/many/other forms of 'cart'
+  | ! ar: 3 warning(s):
+  |     : plural form missing: box.few — ar needs the zero/one/two/few/many/other forms of 'box'
+  |     : plural form missing: box.many — ar needs the zero/one/two/few/many/other forms of 'box'
+  |     : plural form missing: box.two — ar needs the zero/one/two/few/many/other forms of 'box'
+  | ✗ 3 translation faults
+$ [npm 046 -> prod] kaeris check --source en.json --langs ar  -> exit 1
+  | [stderr] ✗ ar: 3 translation fault(s):
+  |     plural form missing: cart_few — ar needs the zero/one/two/few/many/other forms of 'cart'
+  |     plural form missing: cart_many — ar needs the zero/one/two/few/many/other forms of 'cart'
+  |     plural form missing: cart_two — ar needs the zero/one/two/few/many/other forms of 'cart'
+  | ! ar: 3 warning(s):
+  |     : plural form missing: box.few — ar needs the zero/one/two/few/many/other forms of 'box'
+  |     : plural form missing: box.many — ar needs the zero/one/two/few/many/other forms of 'box'
+  |     : plural form missing: box.two — ar needs the zero/one/two/few/many/other forms of 'box'
+  | ✗ 3 translation faults
+--- lv.json
+{
+  "cart_zero": "ruoyy tracy siy ytpmey ({{count}})",
+  "cart_one": "{{count}} metiy niy ruoyy tracy",
+  "cart_other": "{{count}} smetiy niy ruoyy tracy",
+  "box": {
+    "zero": "gnihtony erehy",
+    "one": "{{count}} xoby",
+    "other": "{{count}} sexoby"
+  },
+  "title": "xobniy"
+}
+$ [py 046 -> prod] kaeris check --source en.json --langs lv  -> exit 0
+  | [stderr] using C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\903282ca-0cef-4a65-881b-d4ad1fba7558\scratchpad\r5\critic3\..\cli046\kaeris\__init__.py 0.2.46
+  | ✓ lv: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm 046 -> prod] kaeris check --source en.json --langs lv  -> exit 0
+  | [stderr] ✓ lv: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+--- he.json
+{
+  "cart_zero": "גסשצ גאצר טק המערג ({{count}})",
+  "cart_one": "{{count}} טרהמ טנ גסשצ גאצר",
+  "cart_other": "{{count}} טרהמק טנ גסשצ גאצר",
+  "box": {
+    "zero": "נסרחטנז חהצה",
+    "one": "{{count}} בסב",
+    "other": "{{count}} בסבהק"
+  },
+  "title": "טנבסב"
+}
+$ [py 046 -> prod] kaeris check --source en.json --langs he  -> exit 1
+  | [stderr] using C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\903282ca-0cef-4a65-881b-d4ad1fba7558\scratchpad\r5\critic3\..\cli046\kaeris\__init__.py 0.2.46
+  | ✗ he: 1 translation fault(s):
+  |     plural form missing: cart_two — he needs the one/two/other forms of 'cart'
+  | ! he: 1 warning(s):
+  |     : plural form missing: box.two — he needs the one/two/other forms of 'box'
+  | ✗ 1 translation fault
+$ [npm 046 -> prod] kaeris check --source en.json --langs he  -> exit 1
+  | [stderr] ✗ he: 1 translation fault(s):
+  |     plural form missing: cart_two — he needs the one/two/other forms of 'cart'
+  | ! he: 1 warning(s):
+  |     : plural form missing: box.two — he needs the one/two/other forms of 'box'
+  | ✗ 1 translation fault
+
+######## NEW en.json mode=normal
+## stub mode = normal
+$ [py new -> new] kaeris translate en.json --langs de,pl,ru,ar,lv,he --no-only-new --no-tm  -> exit 0
+  | de.json
+  | pl.json
+  | ru.json
+  | ar.json
+  | lv.json
+  | he.json
+  | 
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | → Translating en.json → de, pl, ru, ar, lv, he
+  | → 100%  he
+  | ✓ Wrote 6 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\903282ca-0cef-4a65-881b-d4ad1fba7558\scratchpad\r5\critic3\runs\s1-new-json-normal
+  | ✓ Translation QA: no placeholder loss, no overflow risks
+  | → Run: openai/gpt-6-luna · Free · 6/6 languages · 7 strings · 0.0s
+  |      780 charged
+--- cargo: [["lv", {"cart_\u001efold\u001e": "{count, plural, =0 {Your cart is empty ({{count}})} one {{{count}} item in your cart} other {{{count}} items in your cart}}", "box.\u001efold\u001e": "{count, plural, =0 {Nothing here} one {{{count}} box} other {{{count}} boxes}}", "title": "Inbox"}], ["ar", {"cart_\u001efold\u001e": "{count, plural, =0 {Your cart is empty ({{count}})} one {{{count}} item in your cart} other {{{count}} items in your cart}}", "box.\u001efold\u001e": "{count, plural, =0 {Nothing here} one {{{count}} box} other {{{count}} boxes}}", "title": "Inbox"}], ["ru", {"cart_\u001efold\u001e": "{count, plural, =0 {Your cart is empty ({{count}})} one {{{count}} item in your cart} other {{{count}} items in your cart}}", "box.\u001efold\u001e": "{count, plural, =0 {Nothing here} one {{{count}} box} other {{{count}} boxes}}", "title": "Inbox"}], ["pl", {"cart_\u001efold\u001e": "{count, plural, =0 {Your cart is empty ({{count}})} one {{{count}} item in your cart} other {{{count}} items in your cart}}", "box.\u001efold\u001e": "{count, plural, =0 {Nothing here} one {{{count}} box} other {{{count}} boxes}}", "title": "Inbox"}], ["he", {"cart_\u001efold\u001e": "{count, plural, =0 {Your cart is empty ({{count}})} one {{{count}} item in your cart} other {{{count}} items in your cart}}", "box.\u001efold\u001e": "{count, plural, =0 {Nothing here} one {{{count}} box} other {{{count}} boxes}}", "title": "Inbox"}], ["de", {"cart_\u001efold\u001e": "{count, plural, =0 {Your cart is empty ({{count}})} one {{{count}} item in your cart} other {{{count}} items in your cart}}", "box.\u001efold\u001e": "{count, plural, =0 {Nothing here} one {{{count}} box} other {{{count}} boxes}}", "title": "Inbox"}]]
+--- de.json
+{
+  "cart_zero": "ruoyy tracy siy ytpmey ({{count}})",
+  "cart_one": "{{count}} metiy niy ruoyy tracy",
+  "cart_other": "{{count}} smetiy niy ruoyy tracy",
+  "box": {
+    "zero": "gnihtony erehy",
+    "one": "{{count}} xoby",
+    "other": "{{count}} sexoby"
+  },
+  "title": "xobniy"
+}
+$ [py new -> new] kaeris check --source en.json --langs de  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ de: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.json --langs de  -> exit 0
+  | [stderr] ✓ de: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+--- pl.json
+{
+  "cart_zero": "ruoyy tracy siy ytpmey ({{count}})",
+  "cart_one": "{{count}} metiy niy ruoyy tracy",
+  "cart_few": "{{count}} smetiy niy ruoyy tracy fe",
+  "cart_many": "{{count}} smetiy niy ruoyy tracy ma",
+  "cart_other": "{{count}} smetiy niy ruoyy tracy",
+  "box": {
+    "zero": "gnihtony erehy",
+    "one": "{{count}} xoby",
+    "few": "{{count}} sexoby fe",
+    "many": "{{count}} sexoby ma",
+    "other": "{{count}} sexoby"
+  },
+  "title": "xobniy"
+}
+$ [py new -> new] kaeris check --source en.json --langs pl  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ pl: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.json --langs pl  -> exit 0
+  | [stderr] ✓ pl: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+--- ru.json
+{
+  "cart_zero": "шофс васу ит дмпуш ({{count}})",
+  "cart_one": "{{count}} иудм ин шофс васу",
+  "cart_few": "{{count}} иудмт ин шофс васу fe",
+  "cart_many": "{{count}} иудмт ин шофс васу ma",
+  "cart_other": "{{count}} иудмт ин шофс васу",
+  "box": {
+    "zero": "ноузинж здсд",
+    "one": "{{count}} боч",
+    "few": "{{count}} бочдт fe",
+    "many": "{{count}} бочдт ma",
+    "other": "{{count}} бочдт"
+  },
+  "title": "инбоч"
+}
+$ [py new -> new] kaeris check --source en.json --langs ru  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ ru: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.json --langs ru  -> exit 0
+  | [stderr] ✓ ru: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+--- ar.json
+{
+  "cart_zero": "نضقع تاعف ذغ جشطفن ({{count}})",
+  "cart_one": "{{count}} ذفجش ذص نضقع تاعف",
+  "cart_two": "{{count}} ذفجشغ ذص نضقع تاعف tw",
+  "cart_few": "{{count}} ذفجشغ ذص نضقع تاعف fe",
+  "cart_many": "{{count}} ذفجشغ ذص نضقع تاعف ma",
+  "cart_other": "{{count}} ذفجشغ ذص نضقع تاعف",
+  "box": {
+    "zero": "صضفدذصخ دجعج",
+    "one": "{{count}} بضم",
+    "two": "{{count}} بضمجغ tw",
+    "few": "{{count}} بضمجغ fe",
+    "many": "{{count}} بضمجغ ma",
+    "other": "{{count}} بضمجغ"
+  },
+  "title": "ذصبضم"
+}
+$ [py new -> new] kaeris check --source en.json --langs ar  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ ar: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.json --langs ar  -> exit 0
+  | [stderr] ✓ ar: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+--- lv.json
+{
+  "cart_zero": "ruoyy tracy siy ytpmey ({{count}})",
+  "cart_one": "{{count}} metiy niy ruoyy tracy",
+  "cart_other": "{{count}} smetiy niy ruoyy tracy",
+  "box": {
+    "zero": "gnihtony erehy",
+    "one": "{{count}} xoby",
+    "other": "{{count}} sexoby"
+  },
+  "title": "xobniy"
+}
+$ [py new -> new] kaeris check --source en.json --langs lv  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ lv: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.json --langs lv  -> exit 0
+  | [stderr] ✓ lv: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+--- he.json
+{
+  "cart_zero": "גסשצ גאצר טק המערג ({{count}})",
+  "cart_one": "{{count}} טרהמ טנ גסשצ גאצר",
+  "cart_two": "{{count}} טרהמק טנ גסשצ גאצר tw",
+  "cart_other": "{{count}} טרהמק טנ גסשצ גאצר",
+  "box": {
+    "zero": "נסרחטנז חהצה",
+    "one": "{{count}} בסב",
+    "two": "{{count}} בסבהק tw",
+    "other": "{{count}} בסבהק"
+  },
+  "title": "טנבסב"
+}
+$ [py new -> new] kaeris check --source en.json --langs he  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ he: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.json --langs he  -> exit 0
+  | [stderr] ✓ he: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+
+######## NEW en.json mode=dropzero
+## stub mode = dropzero
+$ [py new -> new] kaeris translate en.json --langs de,pl,ru,ar,lv,he --no-only-new --no-tm  -> exit 0
+  | de.json
+  | pl.json
+  | ru.json
+  | ar.json
+  | lv.json
+  | he.json
+  | 
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | → Translating en.json → de, pl, ru, ar, lv, he
+  | →  33%  he
+  | → 100%  he
+  | ✓ Wrote 6 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\903282ca-0cef-4a65-881b-d4ad1fba7558\scratchpad\r5\critic3\runs\s1-new-json-dropzero
+  | ✓ Translation QA: no placeholder loss, no overflow risks
+  | → Run: openai/gpt-6-luna · Free · 6/6 languages · 7 strings · 0.1s
+  |      780 charged
+--- cargo: [["de", {"cart_\u001efold\u001e": "{count, plural, =0 {Your cart is empty ({{count}})} one {{{count}} item in your cart} other {{{count}} items in your cart}}", "box.\u001efold\u001e": "{count, plural, =0 {Nothing here} one {{{count}} box} other {{{count}} boxes}}", "title": "Inbox"}], ["he", {"cart_\u001efold\u001e": "{count, plural, =0 {Your cart is empty ({{count}})} one {{{count}} item in your cart} other {{{count}} items in your cart}}", "box.\u001efold\u001e": "{count, plural, =0 {Nothing here} one {{{count}} box} other {{{count}} boxes}}", "title": "Inbox"}], ["ar", {"cart_\u001efold\u001e": "{count, plural, =0 {Your cart is empty ({{count}})} one {{{count}} item in your cart} other {{{count}} items in your cart}}", "box.\u001efold\u001e": "{count, plural, =0 {Nothing here} one {{{count}} box} other {{{count}} boxes}}", "title": "Inbox"}], ["ru", {"cart_\u001efold\u001e": "{count, plural, =0 {Your cart is empty ({{count}})} one {{{count}} item in your cart} other {{{count}} items in your cart}}", "box.\u001efold\u001e": "{count, plural, =0 {Nothing here} one {{{count}} box} other {{{count}} boxes}}", "title": "Inbox"}], ["lv", {"cart_\u001efold\u001e": "{count, plural, =0 {Your cart is empty ({{count}})} one {{{count}} item in your cart} other {{{count}} items in your cart}}", "box.\u001efold\u001e": "{count, plural, =0 {Nothing here} one {{{count}} box} other {{{count}} boxes}}", "title": "Inbox"}], ["pl", {"cart_\u001efold\u001e": "{count, plural, =0 {Your cart is empty ({{count}})} one {{{count}} item in your cart} other {{{count}} items in your cart}}", "box.\u001efold\u001e": "{count, plural, =0 {Nothing here} one {{{count}} box} other {{{count}} boxes}}", "title": "Inbox"}], ["de", {"cart_zero": "Your cart is empty ({{count}})", "box.zero": "Nothing here"}], ["lv", {"cart_zero": "Your cart is empty ({{count}})", "box.zero": "Nothing here"}], ["pl", {"cart_zero": "Your cart is empty ({{count}})", "box.zero": "Nothing here"}], ["ru", {"cart_zero": "Your cart is empty ({{count}})", "box.zero": "Nothing here"}], ["he", {"cart_zero": "Your cart is empty ({{count}})", "box.zero": "Nothing here"}], ["ar", {"cart_zero": "Your cart is empty ({{count}})", "box.zero": "Nothing here"}]]
+--- de.json
+{
+  "cart_zero": "ruoyy tracy siy ytpmey ({{count}})",
+  "cart_one": "{{count}} metiy niy ruoyy tracy",
+  "cart_other": "{{count}} smetiy niy ruoyy tracy",
+  "box": {
+    "zero": "gnihtony erehy",
+    "one": "{{count}} xoby",
+    "other": "{{count}} sexoby"
+  },
+  "title": "xobniy"
+}
+$ [py new -> new] kaeris check --source en.json --langs de  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ de: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.json --langs de  -> exit 0
+  | [stderr] ✓ de: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+--- pl.json
+{
+  "cart_zero": "ruoyy tracy siy ytpmey ({{count}})",
+  "cart_one": "{{count}} metiy niy ruoyy tracy",
+  "cart_few": "{{count}} smetiy niy ruoyy tracy fe",
+  "cart_many": "{{count}} smetiy niy ruoyy tracy ma",
+  "cart_other": "{{count}} smetiy niy ruoyy tracy",
+  "box": {
+    "zero": "gnihtony erehy",
+    "one": "{{count}} xoby",
+    "few": "{{count}} sexoby fe",
+    "many": "{{count}} sexoby ma",
+    "other": "{{count}} sexoby"
+  },
+  "title": "xobniy"
+}
+$ [py new -> new] kaeris check --source en.json --langs pl  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ pl: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.json --langs pl  -> exit 0
+  | [stderr] ✓ pl: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+--- ru.json
+{
+  "cart_zero": "шофс васу ит дмпуш ({{count}})",
+  "cart_one": "{{count}} иудм ин шофс васу",
+  "cart_few": "{{count}} иудмт ин шофс васу fe",
+  "cart_many": "{{count}} иудмт ин шофс васу ma",
+  "cart_other": "{{count}} иудмт ин шофс васу",
+  "box": {
+    "zero": "ноузинж здсд",
+    "one": "{{count}} боч",
+    "few": "{{count}} бочдт fe",
+    "many": "{{count}} бочдт ma",
+    "other": "{{count}} бочдт"
+  },
+  "title": "инбоч"
+}
+$ [py new -> new] kaeris check --source en.json --langs ru  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ ru: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.json --langs ru  -> exit 0
+  | [stderr] ✓ ru: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+--- ar.json
+{
+  "cart_zero": "نضقع تاعف ذغ جشطفن ({{count}})",
+  "cart_one": "{{count}} ذفجش ذص نضقع تاعف",
+  "cart_two": "{{count}} ذفجشغ ذص نضقع تاعف tw",
+  "cart_few": "{{count}} ذفجشغ ذص نضقع تاعف fe",
+  "cart_many": "{{count}} ذفجشغ ذص نضقع تاعف ma",
+  "cart_other": "{{count}} ذفجشغ ذص نضقع تاعف",
+  "box": {
+    "zero": "صضفدذصخ دجعج",
+    "one": "{{count}} بضم",
+    "two": "{{count}} بضمجغ tw",
+    "few": "{{count}} بضمجغ fe",
+    "many": "{{count}} بضمجغ ma",
+    "other": "{{count}} بضمجغ"
+  },
+  "title": "ذصبضم"
+}
+$ [py new -> new] kaeris check --source en.json --langs ar  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ ar: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.json --langs ar  -> exit 0
+  | [stderr] ✓ ar: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+--- lv.json
+{
+  "cart_zero": "ruoyy tracy siy ytpmey ({{count}})",
+  "cart_one": "{{count}} metiy niy ruoyy tracy",
+  "cart_other": "{{count}} smetiy niy ruoyy tracy",
+  "box": {
+    "zero": "gnihtony erehy",
+    "one": "{{count}} xoby",
+    "other": "{{count}} sexoby"
+  },
+  "title": "xobniy"
+}
+$ [py new -> new] kaeris check --source en.json --langs lv  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ lv: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.json --langs lv  -> exit 0
+  | [stderr] ✓ lv: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+--- he.json
+{
+  "cart_zero": "גסשצ גאצר טק המערג ({{count}})",
+  "cart_one": "{{count}} טרהמ טנ גסשצ גאצר",
+  "cart_two": "{{count}} טרהמק טנ גסשצ גאצר tw",
+  "cart_other": "{{count}} טרהמק טנ גסשצ גאצר",
+  "box": {
+    "zero": "נסרחטנז חהצה",
+    "one": "{{count}} בסב",
+    "two": "{{count}} בסבהק tw",
+    "other": "{{count}} בסבהק"
+  },
+  "title": "טנבסב"
+}
+$ [py new -> new] kaeris check --source en.json --langs he  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ he: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.json --langs he  -> exit 0
+  | [stderr] ✓ he: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+
+######## NEW en.json mode=cldrzero
+## stub mode = cldrzero
+$ [py new -> new] kaeris translate en.json --langs de,pl,ru,ar,lv,he --no-only-new --no-tm  -> exit 0
+  | de.json
+  | pl.json
+  | ru.json
+  | ar.json
+  | lv.json
+  | he.json
+  | 
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | → Translating en.json → de, pl, ru, ar, lv, he
+  | → 100%  he
+  | ✓ Wrote 6 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\903282ca-0cef-4a65-881b-d4ad1fba7558\scratchpad\r5\critic3\runs\s1-new-json-cldrzero
+  | ✓ Translation QA: no placeholder loss, no overflow risks
+  | → Run: openai/gpt-6-luna · Free · 6/6 languages · 7 strings · 0.1s
+  |      780 charged
+--- cargo: [["de", {"cart_\u001efold\u001e": "{count, plural, =0 {Your cart is empty ({{count}})} one {{{count}} item in your cart} other {{{count}} items in your cart}}", "box.\u001efold\u001e": "{count, plural, =0 {Nothing here} one {{{count}} box} other {{{count}} boxes}}", "title": "Inbox"}], ["ar", {"cart_\u001efold\u001e": "{count, plural, =0 {Your cart is empty ({{count}})} one {{{count}} item in your cart} other {{{count}} items in your cart}}", "box.\u001efold\u001e": "{count, plural, =0 {Nothing here} one {{{count}} box} other {{{count}} boxes}}", "title": "Inbox"}], ["lv", {"cart_\u001efold\u001e": "{count, plural, =0 {Your cart is empty ({{count}})} one {{{count}} item in your cart} other {{{count}} items in your cart}}", "box.\u001efold\u001e": "{count, plural, =0 {Nothing here} one {{{count}} box} other {{{count}} boxes}}", "title": "Inbox"}], ["he", {"cart_\u001efold\u001e": "{count, plural, =0 {Your cart is empty ({{count}})} one {{{count}} item in your cart} other {{{count}} items in your cart}}", "box.\u001efold\u001e": "{count, plural, =0 {Nothing here} one {{{count}} box} other {{{count}} boxes}}", "title": "Inbox"}], ["ru", {"cart_\u001efold\u001e": "{count, plural, =0 {Your cart is empty ({{count}})} one {{{count}} item in your cart} other {{{count}} items in your cart}}", "box.\u001efold\u001e": "{count, plural, =0 {Nothing here} one {{{count}} box} other {{{count}} boxes}}", "title": "Inbox"}], ["pl", {"cart_\u001efold\u001e": "{count, plural, =0 {Your cart is empty ({{count}})} one {{{count}} item in your cart} other {{{count}} items in your cart}}", "box.\u001efold\u001e": "{count, plural, =0 {Nothing here} one {{{count}} box} other {{{count}} boxes}}", "title": "Inbox"}], ["ru", {"cart_zero": "Your cart is empty ({{count}})", "box.zero": "Nothing here"}], ["he", {"cart_zero": "Your cart is empty ({{count}})", "box.zero": "Nothing here"}], ["ar", {"cart_zero": "Your cart is empty ({{count}})", "box.zero": "Nothing here"}], ["lv", {"cart_zero": "Your cart is empty ({{count}})", "box.zero": "Nothing here"}], ["pl", {"cart_zero": "Your cart is empty ({{count}})", "box.zero": "Nothing here"}], ["de", {"cart_zero": "Your cart is empty ({{count}})", "box.zero": "Nothing here"}]]
+--- de.json
+{
+  "cart_zero": "ruoyy tracy siy ytpmey ({{count}})",
+  "cart_one": "{{count}} metiy niy ruoyy tracy",
+  "cart_other": "{{count}} smetiy niy ruoyy tracy",
+  "box": {
+    "zero": "gnihtony erehy",
+    "one": "{{count}} xoby",
+    "other": "{{count}} sexoby"
+  },
+  "title": "xobniy"
+}
+$ [py new -> new] kaeris check --source en.json --langs de  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ de: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.json --langs de  -> exit 0
+  | [stderr] ✓ de: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+--- pl.json
+{
+  "cart_zero": "ruoyy tracy siy ytpmey ({{count}})",
+  "cart_one": "{{count}} metiy niy ruoyy tracy",
+  "cart_few": "{{count}} smetiy niy ruoyy tracy fe",
+  "cart_many": "{{count}} smetiy niy ruoyy tracy ma",
+  "cart_other": "{{count}} smetiy niy ruoyy tracy",
+  "box": {
+    "zero": "gnihtony erehy",
+    "one": "{{count}} xoby",
+    "few": "{{count}} sexoby fe",
+    "many": "{{count}} sexoby ma",
+    "other": "{{count}} sexoby"
+  },
+  "title": "xobniy"
+}
+$ [py new -> new] kaeris check --source en.json --langs pl  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ pl: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.json --langs pl  -> exit 0
+  | [stderr] ✓ pl: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+--- ru.json
+{
+  "cart_zero": "шофс васу ит дмпуш ({{count}})",
+  "cart_one": "{{count}} иудм ин шофс васу",
+  "cart_few": "{{count}} иудмт ин шофс васу fe",
+  "cart_many": "{{count}} иудмт ин шофс васу ma",
+  "cart_other": "{{count}} иудмт ин шофс васу",
+  "box": {
+    "zero": "ноузинж здсд",
+    "one": "{{count}} боч",
+    "few": "{{count}} бочдт fe",
+    "many": "{{count}} бочдт ma",
+    "other": "{{count}} бочдт"
+  },
+  "title": "инбоч"
+}
+$ [py new -> new] kaeris check --source en.json --langs ru  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ ru: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.json --langs ru  -> exit 0
+  | [stderr] ✓ ru: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+--- ar.json
+{
+  "cart_zero": "نضقع تاعف ذغ جشطفن ({{count}})",
+  "cart_one": "{{count}} ذفجش ذص نضقع تاعف",
+  "cart_two": "{{count}} ذفجشغ ذص نضقع تاعف tw",
+  "cart_few": "{{count}} ذفجشغ ذص نضقع تاعف fe",
+  "cart_many": "{{count}} ذفجشغ ذص نضقع تاعف ma",
+  "cart_other": "{{count}} ذفجشغ ذص نضقع تاعف",
+  "box": {
+    "zero": "صضفدذصخ دجعج",
+    "one": "{{count}} بضم",
+    "two": "{{count}} بضمجغ tw",
+    "few": "{{count}} بضمجغ fe",
+    "many": "{{count}} بضمجغ ma",
+    "other": "{{count}} بضمجغ"
+  },
+  "title": "ذصبضم"
+}
+$ [py new -> new] kaeris check --source en.json --langs ar  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ ar: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.json --langs ar  -> exit 0
+  | [stderr] ✓ ar: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+--- lv.json
+{
+  "cart_zero": "ruoyy tracy siy ytpmey ({{count}})",
+  "cart_one": "{{count}} metiy niy ruoyy tracy",
+  "cart_other": "{{count}} smetiy niy ruoyy tracy",
+  "box": {
+    "zero": "gnihtony erehy",
+    "one": "{{count}} xoby",
+    "other": "{{count}} sexoby"
+  },
+  "title": "xobniy"
+}
+$ [py new -> new] kaeris check --source en.json --langs lv  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ lv: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.json --langs lv  -> exit 0
+  | [stderr] ✓ lv: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+--- he.json
+{
+  "cart_zero": "גסשצ גאצר טק המערג ({{count}})",
+  "cart_one": "{{count}} טרהמ טנ גסשצ גאצר",
+  "cart_two": "{{count}} טרהמק טנ גסשצ גאצר tw",
+  "cart_other": "{{count}} טרהמק טנ גסשצ גאצר",
+  "box": {
+    "zero": "נסרחטנז חהצה",
+    "one": "{{count}} בסב",
+    "two": "{{count}} בסבהק tw",
+    "other": "{{count}} בסבהק"
+  },
+  "title": "טנבסב"
+}
+$ [py new -> new] kaeris check --source en.json --langs he  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ he: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.json --langs he  -> exit 0
+  | [stderr] ✓ he: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+
+######## NEW en.json mode=extrazero
+## stub mode = extrazero
+$ [py new -> new] kaeris translate en.json --langs de,pl,ru,ar,lv,he --no-only-new --no-tm  -> exit 0
+  | de.json
+  | pl.json
+  | ru.json
+  | ar.json
+  | lv.json
+  | he.json
+  | 
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | → Translating en.json → de, pl, ru, ar, lv, he
+  | → 100%  he
+  | ✓ Wrote 6 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\903282ca-0cef-4a65-881b-d4ad1fba7558\scratchpad\r5\critic3\runs\s1-new-json-extrazero
+  | ✓ Translation QA: no placeholder loss, no overflow risks
+  | → Run: openai/gpt-6-luna · Free · 6/6 languages · 7 strings · 0.0s
+  |      780 charged
+--- cargo: [["pl", {"cart_\u001efold\u001e": "{count, plural, =0 {Your cart is empty ({{count}})} one {{{count}} item in your cart} other {{{count}} items in your cart}}", "box.\u001efold\u001e": "{count, plural, =0 {Nothing here} one {{{count}} box} other {{{count}} boxes}}", "title": "Inbox"}], ["ar", {"cart_\u001efold\u001e": "{count, plural, =0 {Your cart is empty ({{count}})} one {{{count}} item in your cart} other {{{count}} items in your cart}}", "box.\u001efold\u001e": "{count, plural, =0 {Nothing here} one {{{count}} box} other {{{count}} boxes}}", "title": "Inbox"}], ["lv", {"cart_\u001efold\u001e": "{count, plural, =0 {Your cart is empty ({{count}})} one {{{count}} item in your cart} other {{{count}} items in your cart}}", "box.\u001efold\u001e": "{count, plural, =0 {Nothing here} one {{{count}} box} other {{{count}} boxes}}", "title": "Inbox"}], ["de", {"cart_\u001efold\u001e": "{count, plural, =0 {Your cart is empty ({{count}})} one {{{count}} item in your cart} other {{{count}} items in your cart}}", "box.\u001efold\u001e": "{count, plural, =0 {Nothing here} one {{{count}} box} other {{{count}} boxes}}", "title": "Inbox"}], ["ru", {"cart_\u001efold\u001e": "{count, plural, =0 {Your cart is empty ({{count}})} one {{{count}} item in your cart} other {{{count}} items in your cart}}", "box.\u001efold\u001e": "{count, plural, =0 {Nothing here} one {{{count}} box} other {{{count}} boxes}}", "title": "Inbox"}], ["he", {"cart_\u001efold\u001e": "{count, plural, =0 {Your cart is empty ({{count}})} one {{{count}} item in your cart} other {{{count}} items in your cart}}", "box.\u001efold\u001e": "{count, plural, =0 {Nothing here} one {{{count}} box} other {{{count}} boxes}}", "title": "Inbox"}]]
+--- de.json
+{
+  "cart_zero": "ruoyy tracy siy ytpmey ({{count}})",
+  "cart_one": "{{count}} metiy niy ruoyy tracy",
+  "cart_other": "{{count}} smetiy niy ruoyy tracy",
+  "box": {
+    "zero": "gnihtony erehy",
+    "one": "{{count}} xoby",
+    "other": "{{count}} sexoby"
+  },
+  "title": "xobniy"
+}
+$ [py new -> new] kaeris check --source en.json --langs de  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ de: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.json --langs de  -> exit 0
+  | [stderr] ✓ de: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+--- pl.json
+{
+  "cart_zero": "ruoyy tracy siy ytpmey ({{count}})",
+  "cart_one": "{{count}} metiy niy ruoyy tracy",
+  "cart_few": "{{count}} smetiy niy ruoyy tracy fe",
+  "cart_many": "{{count}} smetiy niy ruoyy tracy ma",
+  "cart_other": "{{count}} smetiy niy ruoyy tracy",
+  "box": {
+    "zero": "gnihtony erehy",
+    "one": "{{count}} xoby",
+    "few": "{{count}} sexoby fe",
+    "many": "{{count}} sexoby ma",
+    "other": "{{count}} sexoby"
+  },
+  "title": "xobniy"
+}
+$ [py new -> new] kaeris check --source en.json --langs pl  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ pl: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.json --langs pl  -> exit 0
+  | [stderr] ✓ pl: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+--- ru.json
+{
+  "cart_zero": "шофс васу ит дмпуш ({{count}})",
+  "cart_one": "{{count}} иудм ин шофс васу",
+  "cart_few": "{{count}} иудмт ин шофс васу fe",
+  "cart_many": "{{count}} иудмт ин шофс васу ma",
+  "cart_other": "{{count}} иудмт ин шофс васу",
+  "box": {
+    "zero": "ноузинж здсд",
+    "one": "{{count}} боч",
+    "few": "{{count}} бочдт fe",
+    "many": "{{count}} бочдт ma",
+    "other": "{{count}} бочдт"
+  },
+  "title": "инбоч"
+}
+$ [py new -> new] kaeris check --source en.json --langs ru  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ ru: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.json --langs ru  -> exit 0
+  | [stderr] ✓ ru: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+--- ar.json
+{
+  "cart_zero": "نضقع تاعف ذغ جشطفن ({{count}})",
+  "cart_one": "{{count}} ذفجش ذص نضقع تاعف",
+  "cart_two": "{{count}} ذفجشغ ذص نضقع تاعف tw",
+  "cart_few": "{{count}} ذفجشغ ذص نضقع تاعف fe",
+  "cart_many": "{{count}} ذفجشغ ذص نضقع تاعف ma",
+  "cart_other": "{{count}} ذفجشغ ذص نضقع تاعف",
+  "box": {
+    "zero": "صضفدذصخ دجعج",
+    "one": "{{count}} بضم",
+    "two": "{{count}} بضمجغ tw",
+    "few": "{{count}} بضمجغ fe",
+    "many": "{{count}} بضمجغ ma",
+    "other": "{{count}} بضمجغ"
+  },
+  "title": "ذصبضم"
+}
+$ [py new -> new] kaeris check --source en.json --langs ar  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ ar: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.json --langs ar  -> exit 0
+  | [stderr] ✓ ar: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+--- lv.json
+{
+  "cart_zero": "ruoyy tracy siy ytpmey ({{count}})",
+  "cart_one": "{{count}} metiy niy ruoyy tracy",
+  "cart_other": "{{count}} smetiy niy ruoyy tracy",
+  "box": {
+    "zero": "gnihtony erehy",
+    "one": "{{count}} xoby",
+    "other": "{{count}} sexoby"
+  },
+  "title": "xobniy"
+}
+$ [py new -> new] kaeris check --source en.json --langs lv  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ lv: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.json --langs lv  -> exit 0
+  | [stderr] ✓ lv: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+--- he.json
+{
+  "cart_zero": "גסשצ גאצר טק המערג ({{count}})",
+  "cart_one": "{{count}} טרהמ טנ גסשצ גאצר",
+  "cart_two": "{{count}} טרהמק טנ גסשצ גאצר tw",
+  "cart_other": "{{count}} טרהמק טנ גסשצ גאצר",
+  "box": {
+    "zero": "נסרחטנז חהצה",
+    "one": "{{count}} בסב",
+    "two": "{{count}} בסבהק tw",
+    "other": "{{count}} בסבהק"
+  },
+  "title": "טנבסב"
+}
+$ [py new -> new] kaeris check --source en.json --langs he  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ he: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.json --langs he  -> exit 0
+  | [stderr] ✓ he: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+
+######## NEW en.json mode=drop:few
+## stub mode = drop:few
+$ [py new -> new] kaeris translate en.json --langs de,pl,ru,ar,lv,he --no-only-new --no-tm  -> exit 0
+  | de.json
+  | pl.json
+  | ru.json
+  | ar.json
+  | lv.json
+  | he.json
+  | 
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | → Translating en.json → de, pl, ru, ar, lv, he
+  | → 100%  ar
+  | ✓ Wrote 6 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\903282ca-0cef-4a65-881b-d4ad1fba7558\scratchpad\r5\critic3\runs\s1-new-json-drop_few
+  | ! 6 plural(s) not written in every form of their own:
+  |     [pl] 'cart': plural is missing the few/many form(s) pl requires
+  |     [pl] 'box': plural is missing the few/many form(s) pl requires
+  |     [ru] 'cart': plural is missing the few/many form(s) ru requires
+  |     [ru] 'box': plural is missing the few/many form(s) ru requires
+  |     [ar] 'cart': plural is missing the few/many/two form(s) ar requires
+  |     [ar] 'box': plural is missing the few/many/two form(s) ar requires
+  | → Run: openai/gpt-6-luna · Free · 6/6 languages · 7 strings · 0.1s
+  |      780 charged
+--- cargo: [["he", {"cart_\u001efold\u001e": "{count, plural, =0 {Your cart is empty ({{count}})} one {{{count}} item in your cart} other {{{count}} items in your cart}}", "box.\u001efold\u001e": "{count, plural, =0 {Nothing here} one {{{count}} box} other {{{count}} boxes}}", "title": "Inbox"}], ["ru", {"cart_\u001efold\u001e": "{count, plural, =0 {Your cart is empty ({{count}})} one {{{count}} item in your cart} other {{{count}} items in your cart}}", "box.\u001efold\u001e": "{count, plural, =0 {Nothing here} one {{{count}} box} other {{{count}} boxes}}", "title": "Inbox"}], ["ar", {"cart_\u001efold\u001e": "{count, plural, =0 {Your cart is empty ({{count}})} one {{{count}} item in your cart} other {{{count}} items in your cart}}", "box.\u001efold\u001e": "{count, plural, =0 {Nothing here} one {{{count}} box} other {{{count}} boxes}}", "title": "Inbox"}], ["de", {"cart_\u001efold\u001e": "{count, plural, =0 {Your cart is empty ({{count}})} one {{{count}} item in your cart} other {{{count}} items in your cart}}", "box.\u001efold\u001e": "{count, plural, =0 {Nothing here} one {{{count}} box} other {{{count}} boxes}}", "title": "Inbox"}], ["lv", {"cart_\u001efold\u001e": "{count, plural, =0 {Your cart is empty ({{count}})} one {{{count}} item in your cart} other {{{count}} items in your cart}}", "box.\u001efold\u001e": "{count, plural, =0 {Nothing here} one {{{count}} box} other {{{count}} boxes}}", "title": "Inbox"}], ["pl", {"cart_\u001efold\u001e": "{count, plural, =0 {Your cart is empty ({{count}})} one {{{count}} item in your cart} other {{{count}} items in your cart}}", "box.\u001efold\u001e": "{count, plural, =0 {Nothing here} one {{{count}} box} other {{{count}} boxes}}", "title": "Inbox"}], ["pl", {"cart_zero": "Your cart is empty ({{count}})", "cart_one": "{{count}} item in your cart", "cart_other": "{{count}} items in your cart", "box.zero": "Nothing here", "box.one": "{{count}} box", "box.other": "{{count}} boxes"}], ["ru", {"cart_zero": "Your cart is empty ({{count}})", "cart_one": "{{count}} item in your cart", "cart_other": "{{count}} items in your cart", "box.zero": "Nothing here", "box.one": "{{count}} box", "box.other": "{{count}} boxes"}], ["ar", {"cart_zero": "Your cart is empty ({{count}})", "cart_one": "{{count}} item in your cart", "cart_other": "{{count}} items in your cart", "box.zero": "Nothing here", "box.one": "{{count}} box", "box.other": "{{count}} boxes"}]]
+--- de.json
+{
+  "cart_zero": "ruoyy tracy siy ytpmey ({{count}})",
+  "cart_one": "{{count}} metiy niy ruoyy tracy",
+  "cart_other": "{{count}} smetiy niy ruoyy tracy",
+  "box": {
+    "zero": "gnihtony erehy",
+    "one": "{{count}} xoby",
+    "other": "{{count}} sexoby"
+  },
+  "title": "xobniy"
+}
+$ [py new -> new] kaeris check --source en.json --langs de  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ de: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.json --langs de  -> exit 0
+  | [stderr] ✓ de: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+--- pl.json
+{
+  "cart_zero": "ruoyy tracy siy ytpmey ({{count}})",
+  "cart_one": "{{count}} metiy niy ruoyy tracy",
+  "cart_other": "{{count}} smetiy niy ruoyy tracy",
+  "box": {
+    "zero": "gnihtony erehy",
+    "one": "{{count}} xoby",
+    "other": "{{count}} sexoby"
+  },
+  "title": "xobniy"
+}
+$ [py new -> new] kaeris check --source en.json --langs pl  -> exit 1
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✗ pl: 2 translation fault(s):
+  |     plural form missing: cart_few — pl needs the one/few/many/other forms of 'cart'
+  |     plural form missing: cart_many — pl needs the one/few/many/other forms of 'cart'
+  | ! pl: 2 warning(s):
+  |     : plural form missing: box.few — pl needs the one/few/many/other forms of 'box'
+  |     : plural form missing: box.many — pl needs the one/few/many/other forms of 'box'
+  | ✗ 2 translation faults
+$ [npm new -> new] kaeris check --source en.json --langs pl  -> exit 1
+  | [stderr] ✗ pl: 2 translation fault(s):
+  |     plural form missing: cart_few — pl needs the one/few/many/other forms of 'cart'
+  |     plural form missing: cart_many — pl needs the one/few/many/other forms of 'cart'
+  | ! pl: 2 warning(s):
+  |     : plural form missing: box.few — pl needs the one/few/many/other forms of 'box'
+  |     : plural form missing: box.many — pl needs the one/few/many/other forms of 'box'
+  | ✗ 2 translation faults
+--- ru.json
+{
+  "cart_zero": "шофс васу ит дмпуш ({{count}})",
+  "cart_one": "{{count}} иудм ин шофс васу",
+  "cart_other": "{{count}} иудмт ин шофс васу",
+  "box": {
+    "zero": "ноузинж здсд",
+    "one": "{{count}} боч",
+    "other": "{{count}} бочдт"
+  },
+  "title": "инбоч"
+}
+$ [py new -> new] kaeris check --source en.json --langs ru  -> exit 1
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✗ ru: 2 translation fault(s):
+  |     plural form missing: cart_few — ru needs the one/few/many/other forms of 'cart'
+  |     plural form missing: cart_many — ru needs the one/few/many/other forms of 'cart'
+  | ! ru: 2 warning(s):
+  |     : plural form missing: box.few — ru needs the one/few/many/other forms of 'box'
+  |     : plural form missing: box.many — ru needs the one/few/many/other forms of 'box'
+  | ✗ 2 translation faults
+$ [npm new -> new] kaeris check --source en.json --langs ru  -> exit 1
+  | [stderr] ✗ ru: 2 translation fault(s):
+  |     plural form missing: cart_few — ru needs the one/few/many/other forms of 'cart'
+  |     plural form missing: cart_many — ru needs the one/few/many/other forms of 'cart'
+  | ! ru: 2 warning(s):
+  |     : plural form missing: box.few — ru needs the one/few/many/other forms of 'box'
+  |     : plural form missing: box.many — ru needs the one/few/many/other forms of 'box'
+  | ✗ 2 translation faults
+--- ar.json
+{
+  "cart_zero": "نضقع تاعف ذغ جشطفن ({{count}})",
+  "cart_one": "{{count}} ذفجش ذص نضقع تاعف",
+  "cart_other": "{{count}} ذفجشغ ذص نضقع تاعف",
+  "box": {
+    "zero": "صضفدذصخ دجعج",
+    "one": "{{count}} بضم",
+    "other": "{{count}} بضمجغ"
+  },
+  "title": "ذصبضم"
+}
+$ [py new -> new] kaeris check --source en.json --langs ar  -> exit 1
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✗ ar: 3 translation fault(s):
+  |     plural form missing: cart_few — ar needs the zero/one/two/few/many/other forms of 'cart'
+  |     plural form missing: cart_many — ar needs the zero/one/two/few/many/other forms of 'cart'
+  |     plural form missing: cart_two — ar needs the zero/one/two/few/many/other forms of 'cart'
+  | ! ar: 3 warning(s):
+  |     : plural form missing: box.few — ar needs the zero/one/two/few/many/other forms of 'box'
+  |     : plural form missing: box.many — ar needs the zero/one/two/few/many/other forms of 'box'
+  |     : plural form missing: box.two — ar needs the zero/one/two/few/many/other forms of 'box'
+  | ✗ 3 translation faults
+$ [npm new -> new] kaeris check --source en.json --langs ar  -> exit 1
+  | [stderr] ✗ ar: 3 translation fault(s):
+  |     plural form missing: cart_few — ar needs the zero/one/two/few/many/other forms of 'cart'
+  |     plural form missing: cart_many — ar needs the zero/one/two/few/many/other forms of 'cart'
+  |     plural form missing: cart_two — ar needs the zero/one/two/few/many/other forms of 'cart'
+  | ! ar: 3 warning(s):
+  |     : plural form missing: box.few — ar needs the zero/one/two/few/many/other forms of 'box'
+  |     : plural form missing: box.many — ar needs the zero/one/two/few/many/other forms of 'box'
+  |     : plural form missing: box.two — ar needs the zero/one/two/few/many/other forms of 'box'
+  | ✗ 3 translation faults
+--- lv.json
+{
+  "cart_zero": "ruoyy tracy siy ytpmey ({{count}})",
+  "cart_one": "{{count}} metiy niy ruoyy tracy",
+  "cart_other": "{{count}} smetiy niy ruoyy tracy",
+  "box": {
+    "zero": "gnihtony erehy",
+    "one": "{{count}} xoby",
+    "other": "{{count}} sexoby"
+  },
+  "title": "xobniy"
+}
+$ [py new -> new] kaeris check --source en.json --langs lv  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ lv: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.json --langs lv  -> exit 0
+  | [stderr] ✓ lv: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+--- he.json
+{
+  "cart_zero": "גסשצ גאצר טק המערג ({{count}})",
+  "cart_one": "{{count}} טרהמ טנ גסשצ גאצר",
+  "cart_two": "{{count}} טרהמק טנ גסשצ גאצר tw",
+  "cart_other": "{{count}} טרהמק טנ גסשצ גאצר",
+  "box": {
+    "zero": "נסרחטנז חהצה",
+    "one": "{{count}} בסב",
+    "two": "{{count}} בסבהק tw",
+    "other": "{{count}} בסבהק"
+  },
+  "title": "טנבסב"
+}
+$ [py new -> new] kaeris check --source en.json --langs he  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ he: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.json --langs he  -> exit 0
+  | [stderr] ✓ he: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+
+######## NEW en.json mode=missfold
+## stub mode = missfold
+$ [py new -> new] kaeris translate en.json --langs de,pl,ru,ar,lv,he --no-only-new --no-tm  -> exit 0
+  | de.json
+  | pl.json
+  | ru.json
+  | ar.json
+  | lv.json
+  | he.json
+  | 
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | → Translating en.json → de, pl, ru, ar, lv, he
+  | → 100%  he
+  | ✓ Wrote 6 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\903282ca-0cef-4a65-881b-d4ad1fba7558\scratchpad\r5\critic3\runs\s1-new-json-missfold
+  | ! 8 plural(s) not written in every form of their own:
+  |     [pl] 'cart': plural is missing the few/many form(s) pl requires
+  |     [pl] 'box': plural is missing the few/many form(s) pl requires
+  |     [ru] 'cart': plural is missing the few/many form(s) ru requires
+  |     [ru] 'box': plural is missing the few/many form(s) ru requires
+  |     [ar] 'cart': plural is missing the few/many/two form(s) ar requires
+  |     [ar] 'box': plural is missing the few/many/two form(s) ar requires
+  |     [he] 'cart': plural is missing the two form(s) he requires
+  |     [he] 'box': plural is missing the two form(s) he requires
+  | → Run: openai/gpt-6-luna · Free · 6/6 languages · 7 strings · 0.1s
+  |      780 charged
+--- cargo: [["he", {"cart_\u001efold\u001e": "{count, plural, =0 {Your cart is empty ({{count}})} one {{{count}} item in your cart} other {{{count}} items in your cart}}", "box.\u001efold\u001e": "{count, plural, =0 {Nothing here} one {{{count}} box} other {{{count}} boxes}}", "title": "Inbox"}], ["ru", {"cart_\u001efold\u001e": "{count, plural, =0 {Your cart is empty ({{count}})} one {{{count}} item in your cart} other {{{count}} items in your cart}}", "box.\u001efold\u001e": "{count, plural, =0 {Nothing here} one {{{count}} box} other {{{count}} boxes}}", "title": "Inbox"}], ["ar", {"cart_\u001efold\u001e": "{count, plural, =0 {Your cart is empty ({{count}})} one {{{count}} item in your cart} other {{{count}} items in your cart}}", "box.\u001efold\u001e": "{count, plural, =0 {Nothing here} one {{{count}} box} other {{{count}} boxes}}", "title": "Inbox"}], ["lv", {"cart_\u001efold\u001e": "{count, plural, =0 {Your cart is empty ({{count}})} one {{{count}} item in your cart} other {{{count}} items in your cart}}", "box.\u001efold\u001e": "{count, plural, =0 {Nothing here} one {{{count}} box} other {{{count}} boxes}}", "title": "Inbox"}], ["pl", {"cart_\u001efold\u001e": "{count, plural, =0 {Your cart is empty ({{count}})} one {{{count}} item in your cart} other {{{count}} items in your cart}}", "box.\u001efold\u001e": "{count, plural, =0 {Nothing here} one {{{count}} box} other {{{count}} boxes}}", "title": "Inbox"}], ["de", {"cart_\u001efold\u001e": "{count, plural, =0 {Your cart is empty ({{count}})} one {{{count}} item in your cart} other {{{count}} items in your cart}}", "box.\u001efold\u001e": "{count, plural, =0 {Nothing here} one {{{count}} box} other {{{count}} boxes}}", "title": "Inbox"}], ["lv", {"cart_zero": "Your cart is empty ({{count}})", "cart_one": "{{count}} item in your cart", "cart_other": "{{count}} items in your cart", "box.zero": "Nothing here", "box.one": "{{count}} box", "box.other": "{{count}} boxes"}], ["pl", {"cart_zero": "Your cart is empty ({{count}})", "cart_one": "{{count}} item in your cart", "cart_other": "{{count}} items in your cart", "box.zero": "Nothing here", "box.one": "{{count}} box", "box.other": "{{count}} boxes"}], ["he", {"cart_zero": "Your cart is empty ({{count}})", "cart_one": "{{count}} item in your cart", "cart_other": "{{count}} items in your cart", "box.zero": "Nothing here", "box.one": "{{count}} box", "box.other": "{{count}} boxes"}], ["ru", {"cart_zero": "Your cart is empty ({{count}})", "cart_one": "{{count}} item in your cart", "cart_other": "{{count}} items in your cart", "box.zero": "Nothing here", "box.one": "{{count}} box", "box.other": "{{count}} boxes"}], ["de", {"cart_zero": "Your cart is empty ({{count}})", "cart_one": "{{count}} item in your cart", "cart_other": "{{count}} items in your cart", "box.zero": "Nothing here", "box.one": "{{count}} box", "box.other": "{{count}} boxes"}], ["ar", {"cart_zero": "Your cart is empty ({{count}})", "cart_one": "{{count}} item in your cart", "cart_other": "
+--- de.json
+{
+  "cart_zero": "ruoyy tracy siy ytpmey ({{count}})",
+  "cart_one": "{{count}} metiy niy ruoyy tracy",
+  "cart_other": "{{count}} smetiy niy ruoyy tracy",
+  "box": {
+    "zero": "gnihtony erehy",
+    "one": "{{count}} xoby",
+    "other": "{{count}} sexoby"
+  },
+  "title": "xobniy"
+}
+$ [py new -> new] kaeris check --source en.json --langs de  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ de: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.json --langs de  -> exit 0
+  | [stderr] ✓ de: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+--- pl.json
+{
+  "cart_zero": "ruoyy tracy siy ytpmey ({{count}})",
+  "cart_one": "{{count}} metiy niy ruoyy tracy",
+  "cart_other": "{{count}} smetiy niy ruoyy tracy",
+  "box": {
+    "zero": "gnihtony erehy",
+    "one": "{{count}} xoby",
+    "other": "{{count}} sexoby"
+  },
+  "title": "xobniy"
+}
+$ [py new -> new] kaeris check --source en.json --langs pl  -> exit 1
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✗ pl: 2 translation fault(s):
+  |     plural form missing: cart_few — pl needs the one/few/many/other forms of 'cart'
+  |     plural form missing: cart_many — pl needs the one/few/many/other forms of 'cart'
+  | ! pl: 2 warning(s):
+  |     : plural form missing: box.few — pl needs the one/few/many/other forms of 'box'
+  |     : plural form missing: box.many — pl needs the one/few/many/other forms of 'box'
+  | ✗ 2 translation faults
+$ [npm new -> new] kaeris check --source en.json --langs pl  -> exit 1
+  | [stderr] ✗ pl: 2 translation fault(s):
+  |     plural form missing: cart_few — pl needs the one/few/many/other forms of 'cart'
+  |     plural form missing: cart_many — pl needs the one/few/many/other forms of 'cart'
+  | ! pl: 2 warning(s):
+  |     : plural form missing: box.few — pl needs the one/few/many/other forms of 'box'
+  |     : plural form missing: box.many — pl needs the one/few/many/other forms of 'box'
+  | ✗ 2 translation faults
+--- ru.json
+{
+  "cart_zero": "шофс васу ит дмпуш ({{count}})",
+  "cart_one": "{{count}} иудм ин шофс васу",
+  "cart_other": "{{count}} иудмт ин шофс васу",
+  "box": {
+    "zero": "ноузинж здсд",
+    "one": "{{count}} боч",
+    "other": "{{count}} бочдт"
+  },
+  "title": "инбоч"
+}
+$ [py new -> new] kaeris check --source en.json --langs ru  -> exit 1
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✗ ru: 2 translation fault(s):
+  |     plural form missing: cart_few — ru needs the one/few/many/other forms of 'cart'
+  |     plural form missing: cart_many — ru needs the one/few/many/other forms of 'cart'
+  | ! ru: 2 warning(s):
+  |     : plural form missing: box.few — ru needs the one/few/many/other forms of 'box'
+  |     : plural form missing: box.many — ru needs the one/few/many/other forms of 'box'
+  | ✗ 2 translation faults
+$ [npm new -> new] kaeris check --source en.json --langs ru  -> exit 1
+  | [stderr] ✗ ru: 2 translation fault(s):
+  |     plural form missing: cart_few — ru needs the one/few/many/other forms of 'cart'
+  |     plural form missing: cart_many — ru needs the one/few/many/other forms of 'cart'
+  | ! ru: 2 warning(s):
+  |     : plural form missing: box.few — ru needs the one/few/many/other forms of 'box'
+  |     : plural form missing: box.many — ru needs the one/few/many/other forms of 'box'
+  | ✗ 2 translation faults
+--- ar.json
+{
+  "cart_zero": "نضقع تاعف ذغ جشطفن ({{count}})",
+  "cart_one": "{{count}} ذفجش ذص نضقع تاعف",
+  "cart_other": "{{count}} ذفجشغ ذص نضقع تاعف",
+  "box": {
+    "zero": "صضفدذصخ دجعج",
+    "one": "{{count}} بضم",
+    "other": "{{count}} بضمجغ"
+  },
+  "title": "ذصبضم"
+}
+$ [py new -> new] kaeris check --source en.json --langs ar  -> exit 1
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✗ ar: 3 translation fault(s):
+  |     plural form missing: cart_few — ar needs the zero/one/two/few/many/other forms of 'cart'
+  |     plural form missing: cart_many — ar needs the zero/one/two/few/many/other forms of 'cart'
+  |     plural form missing: cart_two — ar needs the zero/one/two/few/many/other forms of 'cart'
+  | ! ar: 3 warning(s):
+  |     : plural form missing: box.few — ar needs the zero/one/two/few/many/other forms of 'box'
+  |     : plural form missing: box.many — ar needs the zero/one/two/few/many/other forms of 'box'
+  |     : plural form missing: box.two — ar needs the zero/one/two/few/many/other forms of 'box'
+  | ✗ 3 translation faults
+$ [npm new -> new] kaeris check --source en.json --langs ar  -> exit 1
+  | [stderr] ✗ ar: 3 translation fault(s):
+  |     plural form missing: cart_few — ar needs the zero/one/two/few/many/other forms of 'cart'
+  |     plural form missing: cart_many — ar needs the zero/one/two/few/many/other forms of 'cart'
+  |     plural form missing: cart_two — ar needs the zero/one/two/few/many/other forms of 'cart'
+  | ! ar: 3 warning(s):
+  |     : plural form missing: box.few — ar needs the zero/one/two/few/many/other forms of 'box'
+  |     : plural form missing: box.many — ar needs the zero/one/two/few/many/other forms of 'box'
+  |     : plural form missing: box.two — ar needs the zero/one/two/few/many/other forms of 'box'
+  | ✗ 3 translation faults
+--- lv.json
+{
+  "cart_zero": "ruoyy tracy siy ytpmey ({{count}})",
+  "cart_one": "{{count}} metiy niy ruoyy tracy",
+  "cart_other": "{{count}} smetiy niy ruoyy tracy",
+  "box": {
+    "zero": "gnihtony erehy",
+    "one": "{{count}} xoby",
+    "other": "{{count}} sexoby"
+  },
+  "title": "xobniy"
+}
+$ [py new -> new] kaeris check --source en.json --langs lv  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ lv: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.json --langs lv  -> exit 0
+  | [stderr] ✓ lv: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+--- he.json
+{
+  "cart_zero": "גסשצ גאצר טק המערג ({{count}})",
+  "cart_one": "{{count}} טרהמ טנ גסשצ גאצר",
+  "cart_other": "{{count}} טרהמק טנ גסשצ גאצר",
+  "box": {
+    "zero": "נסרחטנז חהצה",
+    "one": "{{count}} בסב",
+    "other": "{{count}} בסבהק"
+  },
+  "title": "טנבסב"
+}
+$ [py new -> new] kaeris check --source en.json --langs he  -> exit 1
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✗ he: 1 translation fault(s):
+  |     plural form missing: cart_two — he needs the one/two/other forms of 'cart'
+  | ! he: 1 warning(s):
+  |     : plural form missing: box.two — he needs the one/two/other forms of 'box'
+  | ✗ 1 translation fault
+$ [npm new -> new] kaeris check --source en.json --langs he  -> exit 1
+  | [stderr] ✗ he: 1 translation fault(s):
+  |     plural form missing: cart_two — he needs the one/two/other forms of 'cart'
+  | ! he: 1 warning(s):
+  |     : plural form missing: box.two — he needs the one/two/other forms of 'box'
+  | ✗ 1 translation fault
+
+######## NEW en.json mode=dropzero,missalone:zero
+## stub mode = dropzero,missalone:zero
+$ [py new -> new] kaeris translate en.json --langs de,pl,ru,ar,lv,he --no-only-new --no-tm  -> exit 0
+  | de.json
+  | pl.json
+  | ru.json
+  | ar.json
+  | lv.json
+  | he.json
+  | 
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | → Translating en.json → de, pl, ru, ar, lv, he
+  | → 100%  he
+  | → 100%  he
+  | ✓ Wrote 6 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\903282ca-0cef-4a65-881b-d4ad1fba7558\scratchpad\r5\critic3\runs\s1-new-json-dropzero+missalone_zero
+  | ! 9 translation(s) check the meaning before you ship:
+  |     [de] cart_zero: may be untranslated — identical to the source text
+  |     [pl] cart_zero: may be untranslated — identical to the source text
+  |     [ru] cart_zero: may be untranslated — no target-language script, still reads as source text
+  |     [ru] box.zero: may be untranslated — no target-language script, still reads as source text
+  |     [ar] cart_zero: may be untranslated — no target-language script, still reads as source text
+  |     [ar] box.zero: may be untranslated — no target-language script, still reads as source text
+  |     [lv] cart_zero: may be untranslated — identical to the source text
+  |     [he] cart_zero: may be untranslated — no target-language script, still reads as source text
+  |     [he] box.zero: may be untranslated — no target-language script, still reads as source text
+  | ! 12 plural(s) not written in every form of their own:
+  |     [de] 'cart': the zero form(s) could not be translated on their own; the source text may stand there
+  |     [de] 'box': the zero form(s) could not be translated on their own; the source text may stand there
+  |     [pl] 'cart': the zero form(s) could not be translated on their own; the source text may stand there
+  |     [pl] 'box': the zero form(s) could not be translated on their own; the source text may stand there
+  |     [ru] 'cart': the zero form(s) could not be translated on their own; the source text may stand there
+  |     [ru] 'box': the zero form(s) could not be translated on their own; the source text may stand there
+  |     [ar] 'cart': the zero form(s) could not be translated on their own; the source text may stand there
+  |     [ar] 'box': the zero form(s) could not be translated on their own; the source text may stand there
+  |     [lv] 'cart': the zero form(s) could not be translated on their own; the source text may stand there
+  |     [lv] 'box': the zero form(s) could not be translated on their own; the source text may stand there
+  |     [he] 'cart': the zero form(s) could not be translated on their own; the source text may stand there
+  |     [he] 'box': the zero form(s) could not be translated on their own; the source text may stand there
+  | → Run: openai/gpt-6-luna · Free · 6/6 languages · 7 strings · 0.1s
+  |      780 charged
+--- cargo: [["he", {"cart_\u001efold\u001e": "{count, plural, =0 {Your cart is empty ({{count}})} one {{{count}} item in your cart} other {{{count}} items in your cart}}", "box.\u001efold\u001e": "{count, plural, =0 {Nothing here} one {{{count}} box} other {{{count}} boxes}}", "title": "Inbox"}], ["lv", {"cart_\u001efold\u001e": "{count, plural, =0 {Your cart is empty ({{count}})} one {{{count}} item in your cart} other {{{count}} items in your cart}}", "box.\u001efold\u001e": "{count, plural, =0 {Nothing here} one {{{count}} box} other {{{count}} boxes}}", "title": "Inbox"}], ["de", {"cart_\u001efold\u001e": "{count, plural, =0 {Your cart is empty ({{count}})} one {{{count}} item in your cart} other {{{count}} items in your cart}}", "box.\u001efold\u001e": "{count, plural, =0 {Nothing here} one {{{count}} box} other {{{count}} boxes}}", "title": "Inbox"}], ["ar", {"cart_\u001efold\u001e": "{count, plural, =0 {Your cart is empty ({{count}})} one {{{count}} item in your cart} other {{{count}} items in your cart}}", "box.\u001efold\u001e": "{count, plural, =0 {Nothing here} one {{{count}} box} other {{{count}} boxes}}", "title": "Inbox"}], ["ru", {"cart_\u001efold\u001e": "{count, plural, =0 {Your cart is empty ({{count}})} one {{{count}} item in your cart} other {{{count}} items in your cart}}", "box.\u001efold\u001e": "{count, plural, =0 {Nothing here} one {{{count}} box} other {{{count}} boxes}}", "title": "Inbox"}], ["pl", {"cart_\u001efold\u001e": "{count, plural, =0 {Your cart is empty ({{count}})} one {{{count}} item in your cart} other {{{count}} items in your cart}}", "box.\u001efold\u001e": "{count, plural, =0 {Nothing here} one {{{count}} box} other {{{count}} boxes}}", "title": "Inbox"}], ["de", {"cart_zero": "Your cart is empty ({{count}})", "box.zero": "Nothing here"}], ["lv", {"cart_zero": "Your cart is empty ({{count}})", "box.zero": "Nothing here"}], ["he", {"cart_zero": "Your cart is empty ({{count}})", "box.zero": "Nothing here"}], ["pl", {"cart_zero": "Your cart is empty ({{count}})", "box.zero": "Nothing here"}], ["ar", {"cart_zero": "Your cart is empty ({{count}})", "box.zero": "Nothing here"}], ["ru", {"cart_zero": "Your cart is empty ({{count}})", "box.zero": "Nothing here"}], ["de", {"cart_zero": "Your cart is empty ({{count}})", "box.zero": "Nothing here"}], ["lv", {"cart_zero": "Your cart is empty ({{count}})", "box.zero": "Nothing here"}], ["he", {"cart_zero": "Your cart is empty ({{count}})", "box.zero": "Nothing here"}], ["pl", {"cart_zero": "Your cart is empty ({{count}})", "box.zero": "Nothing here"}], ["ar", {"cart_zero": "Your cart is empty ({{count}})", "box.zero": "Nothing here"}], ["ru", {"cart_zero": "Your cart is empty ({{count}})", "box.zero": "Nothing here"}]]
+--- de.json
+{
+  "cart_zero": "Your cart is empty ({{count}})",
+  "cart_one": "{{count}} metiy niy ruoyy tracy",
+  "cart_other": "{{count}} smetiy niy ruoyy tracy",
+  "box": {
+    "zero": "Nothing here",
+    "one": "{{count}} xoby",
+    "other": "{{count}} sexoby"
+  },
+  "title": "xobniy"
+}
+$ [py new -> new] kaeris check --source en.json --langs de  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ! de: 1 warning(s):
+  |     cart_zero: may be untranslated — identical to the source text
+  | ! 1 warning(s) — non-blocking (use --strict to fail on them)
+$ [npm new -> new] kaeris check --source en.json --langs de  -> exit 0
+  | [stderr] ! de: 1 warning(s):
+  |     cart_zero: may be untranslated — identical to the source text
+  | ! 1 warning(s) — non-blocking (use --strict to fail on them)
+--- pl.json
+{
+  "cart_zero": "Your cart is empty ({{count}})",
+  "cart_one": "{{count}} metiy niy ruoyy tracy",
+  "cart_few": "{{count}} smetiy niy ruoyy tracy fe",
+  "cart_many": "{{count}} smetiy niy ruoyy tracy ma",
+  "cart_other": "{{count}} smetiy niy ruoyy tracy",
+  "box": {
+    "zero": "Nothing here",
+    "one": "{{count}} xoby",
+    "few": "{{count}} sexoby fe",
+    "many": "{{count}} sexoby ma",
+    "other": "{{count}} sexoby"
+  },
+  "title": "xobniy"
+}
+$ [py new -> new] kaeris check --source en.json --langs pl  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ! pl: 1 warning(s):
+  |     cart_zero: may be untranslated — identical to the source text
+  | ! 1 warning(s) — non-blocking (use --strict to fail on them)
+$ [npm new -> new] kaeris check --source en.json --langs pl  -> exit 0
+  | [stderr] ! pl: 1 warning(s):
+  |     cart_zero: may be untranslated — identical to the source text
+  | ! 1 warning(s) — non-blocking (use --strict to fail on them)
+--- ru.json
+{
+  "cart_zero": "Your cart is empty ({{count}})",
+  "cart_one": "{{count}} иудм ин шофс васу",
+  "cart_few": "{{count}} иудмт ин шофс васу fe",
+  "cart_many": "{{count}} иудмт ин шофс васу ma",
+  "cart_other": "{{count}} иудмт ин шофс васу",
+  "box": {
+    "zero": "Nothing here",
+    "one": "{{count}} боч",
+    "few": "{{count}} бочдт fe",
+    "many": "{{count}} бочдт ma",
+    "other": "{{count}} бочдт"
+  },
+  "title": "инбоч"
+}
+$ [py new -> new] kaeris check --source en.json --langs ru  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ! ru: 2 warning(s):
+  |     cart_zero: may be untranslated — no target-language script, still reads as source text
+  |     box.zero: may be untranslated — no target-language script, still reads as source text
+  | ! 2 warning(s) — non-blocking (use --strict to fail on them)
+$ [npm new -> new] kaeris check --source en.json --langs ru  -> exit 0
+  | [stderr] ! ru: 2 warning(s):
+  |     cart_zero: may be untranslated — no target-language script, still reads as source text
+  |     box.zero: may be untranslated — no target-language script, still reads as source text
+  | ! 2 warning(s) — non-blocking (use --strict to fail on them)
+--- ar.json
+{
+  "cart_zero": "Your cart is empty ({{count}})",
+  "cart_one": "{{count}} ذفجش ذص نضقع تاعف",
+  "cart_two": "{{count}} ذفجشغ ذص نضقع تاعف tw",
+  "cart_few": "{{count}} ذفجشغ ذص نضقع تاعف fe",
+  "cart_many": "{{count}} ذفجشغ ذص نضقع تاعف ma",
+  "cart_other": "{{count}} ذفجشغ ذص نضقع تاعف",
+  "box": {
+    "zero": "Nothing here",
+    "one": "{{count}} بضم",
+    "two": "{{count}} بضمجغ tw",
+    "few": "{{count}} بضمجغ fe",
+    "many": "{{count}} بضمجغ ma",
+    "other": "{{count}} بضمجغ"
+  },
+  "title": "ذصبضم"
+}
+$ [py new -> new] kaeris check --source en.json --langs ar  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ! ar: 2 warning(s):
+  |     cart_zero: may be untranslated — no target-language script, still reads as source text
+  |     box.zero: may be untranslated — no target-language script, still reads as source text
+  | ! 2 warning(s) — non-blocking (use --strict to fail on them)
+$ [npm new -> new] kaeris check --source en.json --langs ar  -> exit 0
+  | [stderr] ! ar: 2 warning(s):
+  |     cart_zero: may be untranslated — no target-language script, still reads as source text
+  |     box.zero: may be untranslated — no target-language script, still reads as source text
+  | ! 2 warning(s) — non-blocking (use --strict to fail on them)
+--- lv.json
+{
+  "cart_zero": "Your cart is empty ({{count}})",
+  "cart_one": "{{count}} metiy niy ruoyy tracy",
+  "cart_other": "{{count}} smetiy niy ruoyy tracy",
+  "box": {
+    "zero": "Nothing here",
+    "one": "{{count}} xoby",
+    "other": "{{count}} sexoby"
+  },
+  "title": "xobniy"
+}
+$ [py new -> new] kaeris check --source en.json --langs lv  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ! lv: 1 warning(s):
+  |     cart_zero: may be untranslated — identical to the source text
+  | ! 1 warning(s) — non-blocking (use --strict to fail on them)
+$ [npm new -> new] kaeris check --source en.json --langs lv  -> exit 0
+  | [stderr] ! lv: 1 warning(s):
+  |     cart_zero: may be untranslated — identical to the source text
+  | ! 1 warning(s) — non-blocking (use --strict to fail on them)
+--- he.json
+{
+  "cart_zero": "Your cart is empty ({{count}})",
+  "cart_one": "{{count}} טרהמ טנ גסשצ גאצר",
+  "cart_two": "{{count}} טרהמק טנ גסשצ גאצר tw",
+  "cart_other": "{{count}} טרהמק טנ גסשצ גאצר",
+  "box": {
+    "zero": "Nothing here",
+    "one": "{{count}} בסב",
+    "two": "{{count}} בסבהק tw",
+    "other": "{{count}} בסבהק"
+  },
+  "title": "טנבסב"
+}
+$ [py new -> new] kaeris check --source en.json --langs he  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ! he: 2 warning(s):
+  |     cart_zero: may be untranslated — no target-language script, still reads as source text
+  |     box.zero: may be untranslated — no target-language script, still reads as source text
+  | ! 2 warning(s) — non-blocking (use --strict to fail on them)
+$ [npm new -> new] kaeris check --source en.json --langs he  -> exit 0
+  | [stderr] ! he: 2 warning(s):
+  |     cart_zero: may be untranslated — no target-language script, still reads as source text
+  |     box.zero: may be untranslated — no target-language script, still reads as source text
+  | ! 2 warning(s) — non-blocking (use --strict to fail on them)
+
+######## PROD 0.2.46 en.yml
+## stub mode = normal
+$ [py 046 -> prod] kaeris translate en.yml --langs de,pl,ru,ar,lv,he --no-only-new --no-tm  -> exit 0
+  | de.yml
+  | pl.yml
+  | ru.yml
+  | ar.yml
+  | lv.yml
+  | he.yml
+  | 
+  | [stderr] using C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\903282ca-0cef-4a65-881b-d4ad1fba7558\scratchpad\r5\critic3\..\cli046\kaeris\__init__.py 0.2.46
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | → Translating en.yml → de, pl, ru, ar, lv, he
+  | → 100%  he
+  | ✓ Wrote 6 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\903282ca-0cef-4a65-881b-d4ad1fba7558\scratchpad\r5\critic3\runs\s1-prod-yml-normal
+  | ✓ Translation QA: no placeholder loss, no overflow risks
+  | → Run: openai/gpt-6-luna · Free · 6/6 languages · 4 strings · 0.0s
+  |      300 charged
+--- cargo: [["he", {"cart.items.zero": "Your cart is empty", "cart.items.one": "%{count} item", "cart.items.other": "%{count} items", "title": "Inbox"}], ["de", {"cart.items.zero": "Your cart is empty", "cart.items.one": "%{count} item", "cart.items.other": "%{count} items", "title": "Inbox"}], ["ru", {"cart.items.zero": "Your cart is empty", "cart.items.one": "%{count} item", "cart.items.other": "%{count} items", "title": "Inbox"}], ["ar", {"cart.items.zero": "Your cart is empty", "cart.items.one": "%{count} item", "cart.items.other": "%{count} items", "title": "Inbox"}], ["pl", {"cart.items.zero": "Your cart is empty", "cart.items.one": "%{count} item", "cart.items.other": "%{count} items", "title": "Inbox"}], ["lv", {"cart.items.zero": "Your cart is empty", "cart.items.one": "%{count} item", "cart.items.other": "%{count} items", "title": "Inbox"}]]
+--- de.yml
+de:
+  cart:
+    items:
+      zero: ruoyy tracy siy ytpmey
+      one: '%{count} metiy'
+      other: '%{count} smetiy'
+  title: xobniy
+
+$ [py 046 -> prod] kaeris check --source en.yml --langs de  -> exit 0
+  | [stderr] using C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\903282ca-0cef-4a65-881b-d4ad1fba7558\scratchpad\r5\critic3\..\cli046\kaeris\__init__.py 0.2.46
+  | ✓ de: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm 046 -> prod] kaeris check --source en.yml --langs de  -> exit 0
+  | [stderr] ✓ de: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+--- pl.yml
+pl:
+  cart:
+    items:
+      zero: ruoyy tracy siy ytpmey
+      one: '%{count} metiy'
+      other: '%{count} smetiy'
+  title: xobniy
+
+$ [py 046 -> prod] kaeris check --source en.yml --langs pl  -> exit 0
+  | [stderr] using C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\903282ca-0cef-4a65-881b-d4ad1fba7558\scratchpad\r5\critic3\..\cli046\kaeris\__init__.py 0.2.46
+  | ! pl: 2 warning(s):
+  |     : plural form missing: cart.items.few — pl needs the one/few/many/other forms of 'cart.items'
+  |     : plural form missing: cart.items.many — pl needs the one/few/many/other forms of 'cart.items'
+  | ! 2 warning(s) — non-blocking (use --strict to fail on them)
+$ [npm 046 -> prod] kaeris check --source en.yml --langs pl  -> exit 0
+  | [stderr] ! pl: 2 warning(s):
+  |     : plural form missing: cart.items.few — pl needs the one/few/many/other forms of 'cart.items'
+  |     : plural form missing: cart.items.many — pl needs the one/few/many/other forms of 'cart.items'
+  | ! 2 warning(s) — non-blocking (use --strict to fail on them)
+--- ru.yml
+ru:
+  cart:
+    items:
+      zero: шофс васу ит дмпуш
+      one: '%{count} иудм'
+      other: '%{count} иудмт'
+  title: инбоч
+
+$ [py 046 -> prod] kaeris check --source en.yml --langs ru  -> exit 0
+  | [stderr] using C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\903282ca-0cef-4a65-881b-d4ad1fba7558\scratchpad\r5\critic3\..\cli046\kaeris\__init__.py 0.2.46
+  | ! ru: 2 warning(s):
+  |     : plural form missing: cart.items.few — ru needs the one/few/many/other forms of 'cart.items'
+  |     : plural form missing: cart.items.many — ru needs the one/few/many/other forms of 'cart.items'
+  | ! 2 warning(s) — non-blocking (use --strict to fail on them)
+$ [npm 046 -> prod] kaeris check --source en.yml --langs ru  -> exit 0
+  | [stderr] ! ru: 2 warning(s):
+  |     : plural form missing: cart.items.few — ru needs the one/few/many/other forms of 'cart.items'
+  |     : plural form missing: cart.items.many — ru needs the one/few/many/other forms of 'cart.items'
+  | ! 2 warning(s) — non-blocking (use --strict to fail on them)
+--- ar.yml
+ar:
+  cart:
+    items:
+      zero: نضقع تاعف ذغ جشطفن
+      one: '%{count} ذفجش'
+      other: '%{count} ذفجشغ'
+  title: ذصبضم
+
+$ [py 046 -> prod] kaeris check --source en.yml --langs ar  -> exit 0
+  | [stderr] using C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\903282ca-0cef-4a65-881b-d4ad1fba7558\scratchpad\r5\critic3\..\cli046\kaeris\__init__.py 0.2.46
+  | ! ar: 3 warning(s):
+  |     : plural form missing: cart.items.few — ar needs the zero/one/two/few/many/other forms of 'cart.items'
+  |     : plural form missing: cart.items.many — ar needs the zero/one/two/few/many/other forms of 'cart.items'
+  |     : plural form missing: cart.items.two — ar needs the zero/one/two/few/many/other forms of 'cart.items'
+  | ! 3 warning(s) — non-blocking (use --strict to fail on them)
+$ [npm 046 -> prod] kaeris check --source en.yml --langs ar  -> exit 0
+  | [stderr] ! ar: 3 warning(s):
+  |     : plural form missing: cart.items.few — ar needs the zero/one/two/few/many/other forms of 'cart.items'
+  |     : plural form missing: cart.items.many — ar needs the zero/one/two/few/many/other forms of 'cart.items'
+  |     : plural form missing: cart.items.two — ar needs the zero/one/two/few/many/other forms of 'cart.items'
+  | ! 3 warning(s) — non-blocking (use --strict to fail on them)
+--- lv.yml
+lv:
+  cart:
+    items:
+      zero: ruoyy tracy siy ytpmey
+      one: '%{count} metiy'
+      other: '%{count} smetiy'
+  title: xobniy
+
+$ [py 046 -> prod] kaeris check --source en.yml --langs lv  -> exit 0
+  | [stderr] using C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\903282ca-0cef-4a65-881b-d4ad1fba7558\scratchpad\r5\critic3\..\cli046\kaeris\__init__.py 0.2.46
+  | ✓ lv: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm 046 -> prod] kaeris check --source en.yml --langs lv  -> exit 0
+  | [stderr] ✓ lv: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+--- he.yml
+he:
+  cart:
+    items:
+      zero: גסשצ גאצר טק המערג
+      one: '%{count} טרהמ'
+      other: '%{count} טרהמק'
+  title: טנבסב
+
+$ [py 046 -> prod] kaeris check --source en.yml --langs he  -> exit 0
+  | [stderr] using C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\903282ca-0cef-4a65-881b-d4ad1fba7558\scratchpad\r5\critic3\..\cli046\kaeris\__init__.py 0.2.46
+  | ! he: 1 warning(s):
+  |     : plural form missing: cart.items.two — he needs the one/two/other forms of 'cart.items'
+  | ! 1 warning(s) — non-blocking (use --strict to fail on them)
+$ [npm 046 -> prod] kaeris check --source en.yml --langs he  -> exit 0
+  | [stderr] ! he: 1 warning(s):
+  |     : plural form missing: cart.items.two — he needs the one/two/other forms of 'cart.items'
+  | ! 1 warning(s) — non-blocking (use --strict to fail on them)
+
+######## NEW en.yml mode=normal
+## stub mode = normal
+$ [py new -> new] kaeris translate en.yml --langs de,pl,ru,ar,lv,he --no-only-new --no-tm  -> exit 0
+  | de.yml
+  | pl.yml
+  | ru.yml
+  | ar.yml
+  | lv.yml
+  | he.yml
+  | 
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | → Translating en.yml → de, pl, ru, ar, lv, he
+  | → 100%  he
+  | ✓ Wrote 6 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\903282ca-0cef-4a65-881b-d4ad1fba7558\scratchpad\r5\critic3\runs\s1-new-yml-normal
+  | ✓ Translation QA: no placeholder loss, no overflow risks
+  | → Run: openai/gpt-6-luna · Free · 6/6 languages · 4 strings · 0.0s
+  |      300 charged
+--- cargo: [["pl", {"cart.items.\u001efold\u001e": "{count, plural, =0 {Your cart is empty} one {%{count} item} other {%{count} items}}", "title": "Inbox"}], ["lv", {"cart.items.\u001efold\u001e": "{count, plural, =0 {Your cart is empty} one {%{count} item} other {%{count} items}}", "title": "Inbox"}], ["ru", {"cart.items.\u001efold\u001e": "{count, plural, =0 {Your cart is empty} one {%{count} item} other {%{count} items}}", "title": "Inbox"}], ["he", {"cart.items.\u001efold\u001e": "{count, plural, =0 {Your cart is empty} one {%{count} item} other {%{count} items}}", "title": "Inbox"}], ["de", {"cart.items.\u001efold\u001e": "{count, plural, =0 {Your cart is empty} one {%{count} item} other {%{count} items}}", "title": "Inbox"}], ["ar", {"cart.items.\u001efold\u001e": "{count, plural, =0 {Your cart is empty} one {%{count} item} other {%{count} items}}", "title": "Inbox"}]]
+--- de.yml
+de:
+  cart:
+    items:
+      zero: ruoyy tracy siy ytpmey
+      one: '%{count} metiy'
+      other: '%{count} smetiy'
+  title: xobniy
+
+$ [py new -> new] kaeris check --source en.yml --langs de  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ de: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.yml --langs de  -> exit 0
+  | [stderr] ✓ de: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+--- pl.yml
+pl:
+  cart:
+    items:
+      zero: ruoyy tracy siy ytpmey
+      one: '%{count} metiy'
+      few: '%{count} smetiy fe'
+      many: '%{count} smetiy ma'
+      other: '%{count} smetiy'
+  title: xobniy
+
+$ [py new -> new] kaeris check --source en.yml --langs pl  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ pl: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.yml --langs pl  -> exit 0
+  | [stderr] ✓ pl: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+--- ru.yml
+ru:
+  cart:
+    items:
+      zero: шофс васу ит дмпуш
+      one: '%{count} иудм'
+      few: '%{count} иудмт fe'
+      many: '%{count} иудмт ma'
+      other: '%{count} иудмт'
+  title: инбоч
+
+$ [py new -> new] kaeris check --source en.yml --langs ru  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ ru: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.yml --langs ru  -> exit 0
+  | [stderr] ✓ ru: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+--- ar.yml
+ar:
+  cart:
+    items:
+      zero: نضقع تاعف ذغ جشطفن
+      one: '%{count} ذفجش'
+      two: '%{count} ذفجشغ tw'
+      few: '%{count} ذفجشغ fe'
+      many: '%{count} ذفجشغ ma'
+      other: '%{count} ذفجشغ'
+  title: ذصبضم
+
+$ [py new -> new] kaeris check --source en.yml --langs ar  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ ar: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.yml --langs ar  -> exit 0
+  | [stderr] ✓ ar: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+--- lv.yml
+lv:
+  cart:
+    items:
+      zero: ruoyy tracy siy ytpmey
+      one: '%{count} metiy'
+      other: '%{count} smetiy'
+  title: xobniy
+
+$ [py new -> new] kaeris check --source en.yml --langs lv  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ lv: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.yml --langs lv  -> exit 0
+  | [stderr] ✓ lv: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+--- he.yml
+he:
+  cart:
+    items:
+      zero: גסשצ גאצר טק המערג
+      one: '%{count} טרהמ'
+      two: '%{count} טרהמק tw'
+      other: '%{count} טרהמק'
+  title: טנבסב
+
+$ [py new -> new] kaeris check --source en.yml --langs he  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ he: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.yml --langs he  -> exit 0
+  | [stderr] ✓ he: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+
+######## NEW en.yml mode=dropzero
+## stub mode = dropzero
+$ [py new -> new] kaeris translate en.yml --langs de,pl,ru,ar,lv,he --no-only-new --no-tm  -> exit 0
+  | de.yml
+  | pl.yml
+  | ru.yml
+  | ar.yml
+  | lv.yml
+  | he.yml
+  | 
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | → Translating en.yml → de, pl, ru, ar, lv, he
+  | →   0%  he
+  | → 100%  he
+  | ✓ Wrote 6 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\903282ca-0cef-4a65-881b-d4ad1fba7558\scratchpad\r5\critic3\runs\s1-new-yml-dropzero
+  | ✓ Translation QA: no placeholder loss, no overflow risks
+  | → Run: openai/gpt-6-luna · Free · 6/6 languages · 4 strings · 0.1s
+  |      300 charged
+--- cargo: [["lv", {"cart.items.\u001efold\u001e": "{count, plural, =0 {Your cart is empty} one {%{count} item} other {%{count} items}}", "title": "Inbox"}], ["ru", {"cart.items.\u001efold\u001e": "{count, plural, =0 {Your cart is empty} one {%{count} item} other {%{count} items}}", "title": "Inbox"}], ["de", {"cart.items.\u001efold\u001e": "{count, plural, =0 {Your cart is empty} one {%{count} item} other {%{count} items}}", "title": "Inbox"}], ["he", {"cart.items.\u001efold\u001e": "{count, plural, =0 {Your cart is empty} one {%{count} item} other {%{count} items}}", "title": "Inbox"}], ["pl", {"cart.items.\u001efold\u001e": "{count, plural, =0 {Your cart is empty} one {%{count} item} other {%{count} items}}", "title": "Inbox"}], ["ar", {"cart.items.\u001efold\u001e": "{count, plural, =0 {Your cart is empty} one {%{count} item} other {%{count} items}}", "title": "Inbox"}], ["pl", {"cart.items.zero": "Your cart is empty"}], ["de", {"cart.items.zero": "Your cart is empty"}], ["ru", {"cart.items.zero": "Your cart is empty"}], ["ar", {"cart.items.zero": "Your cart is empty"}], ["he", {"cart.items.zero": "Your cart is empty"}], ["lv", {"cart.items.zero": "Your cart is empty"}]]
+--- de.yml
+de:
+  cart:
+    items:
+      zero: ruoyy tracy siy ytpmey
+      one: '%{count} metiy'
+      other: '%{count} smetiy'
+  title: xobniy
+
+$ [py new -> new] kaeris check --source en.yml --langs de  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ de: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.yml --langs de  -> exit 0
+  | [stderr] ✓ de: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+--- pl.yml
+pl:
+  cart:
+    items:
+      zero: ruoyy tracy siy ytpmey
+      one: '%{count} metiy'
+      few: '%{count} smetiy fe'
+      many: '%{count} smetiy ma'
+      other: '%{count} smetiy'
+  title: xobniy
+
+$ [py new -> new] kaeris check --source en.yml --langs pl  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ pl: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.yml --langs pl  -> exit 0
+  | [stderr] ✓ pl: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+--- ru.yml
+ru:
+  cart:
+    items:
+      zero: шофс васу ит дмпуш
+      one: '%{count} иудм'
+      few: '%{count} иудмт fe'
+      many: '%{count} иудмт ma'
+      other: '%{count} иудмт'
+  title: инбоч
+
+$ [py new -> new] kaeris check --source en.yml --langs ru  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ ru: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.yml --langs ru  -> exit 0
+  | [stderr] ✓ ru: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+--- ar.yml
+ar:
+  cart:
+    items:
+      zero: نضقع تاعف ذغ جشطفن
+      one: '%{count} ذفجش'
+      two: '%{count} ذفجشغ tw'
+      few: '%{count} ذفجشغ fe'
+      many: '%{count} ذفجشغ ma'
+      other: '%{count} ذفجشغ'
+  title: ذصبضم
+
+$ [py new -> new] kaeris check --source en.yml --langs ar  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ ar: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.yml --langs ar  -> exit 0
+  | [stderr] ✓ ar: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+--- lv.yml
+lv:
+  cart:
+    items:
+      zero: ruoyy tracy siy ytpmey
+      one: '%{count} metiy'
+      other: '%{count} smetiy'
+  title: xobniy
+
+$ [py new -> new] kaeris check --source en.yml --langs lv  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ lv: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.yml --langs lv  -> exit 0
+  | [stderr] ✓ lv: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+--- he.yml
+he:
+  cart:
+    items:
+      zero: גסשצ גאצר טק המערג
+      one: '%{count} טרהמ'
+      two: '%{count} טרהמק tw'
+      other: '%{count} טרהמק'
+  title: טנבסב
+
+$ [py new -> new] kaeris check --source en.yml --langs he  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ he: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.yml --langs he  -> exit 0
+  | [stderr] ✓ he: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+
+######## NEW en.yml mode=cldrzero
+## stub mode = cldrzero
+$ [py new -> new] kaeris translate en.yml --langs de,pl,ru,ar,lv,he --no-only-new --no-tm  -> exit 0
+  | de.yml
+  | pl.yml
+  | ru.yml
+  | ar.yml
+  | lv.yml
+  | he.yml
+  | 
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | → Translating en.yml → de, pl, ru, ar, lv, he
+  | → 100%  he
+  | ✓ Wrote 6 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\903282ca-0cef-4a65-881b-d4ad1fba7558\scratchpad\r5\critic3\runs\s1-new-yml-cldrzero
+  | ✓ Translation QA: no placeholder loss, no overflow risks
+  | → Run: openai/gpt-6-luna · Free · 6/6 languages · 4 strings · 0.1s
+  |      300 charged
+--- cargo: [["ru", {"cart.items.\u001efold\u001e": "{count, plural, =0 {Your cart is empty} one {%{count} item} other {%{count} items}}", "title": "Inbox"}], ["ar", {"cart.items.\u001efold\u001e": "{count, plural, =0 {Your cart is empty} one {%{count} item} other {%{count} items}}", "title": "Inbox"}], ["he", {"cart.items.\u001efold\u001e": "{count, plural, =0 {Your cart is empty} one {%{count} item} other {%{count} items}}", "title": "Inbox"}], ["de", {"cart.items.\u001efold\u001e": "{count, plural, =0 {Your cart is empty} one {%{count} item} other {%{count} items}}", "title": "Inbox"}], ["lv", {"cart.items.\u001efold\u001e": "{count, plural, =0 {Your cart is empty} one {%{count} item} other {%{count} items}}", "title": "Inbox"}], ["pl", {"cart.items.\u001efold\u001e": "{count, plural, =0 {Your cart is empty} one {%{count} item} other {%{count} items}}", "title": "Inbox"}], ["de", {"cart.items.zero": "Your cart is empty"}], ["lv", {"cart.items.zero": "Your cart is empty"}], ["ar", {"cart.items.zero": "Your cart is empty"}], ["pl", {"cart.items.zero": "Your cart is empty"}], ["he", {"cart.items.zero": "Your cart is empty"}], ["ru", {"cart.items.zero": "Your cart is empty"}]]
+--- de.yml
+de:
+  cart:
+    items:
+      zero: ruoyy tracy siy ytpmey
+      one: '%{count} metiy'
+      other: '%{count} smetiy'
+  title: xobniy
+
+$ [py new -> new] kaeris check --source en.yml --langs de  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ de: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.yml --langs de  -> exit 0
+  | [stderr] ✓ de: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+--- pl.yml
+pl:
+  cart:
+    items:
+      zero: ruoyy tracy siy ytpmey
+      one: '%{count} metiy'
+      few: '%{count} smetiy fe'
+      many: '%{count} smetiy ma'
+      other: '%{count} smetiy'
+  title: xobniy
+
+$ [py new -> new] kaeris check --source en.yml --langs pl  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ pl: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.yml --langs pl  -> exit 0
+  | [stderr] ✓ pl: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+--- ru.yml
+ru:
+  cart:
+    items:
+      zero: шофс васу ит дмпуш
+      one: '%{count} иудм'
+      few: '%{count} иудмт fe'
+      many: '%{count} иудмт ma'
+      other: '%{count} иудмт'
+  title: инбоч
+
+$ [py new -> new] kaeris check --source en.yml --langs ru  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ ru: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.yml --langs ru  -> exit 0
+  | [stderr] ✓ ru: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+--- ar.yml
+ar:
+  cart:
+    items:
+      zero: نضقع تاعف ذغ جشطفن
+      one: '%{count} ذفجش'
+      two: '%{count} ذفجشغ tw'
+      few: '%{count} ذفجشغ fe'
+      many: '%{count} ذفجشغ ma'
+      other: '%{count} ذفجشغ'
+  title: ذصبضم
+
+$ [py new -> new] kaeris check --source en.yml --langs ar  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ ar: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.yml --langs ar  -> exit 0
+  | [stderr] ✓ ar: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+--- lv.yml
+lv:
+  cart:
+    items:
+      zero: ruoyy tracy siy ytpmey
+      one: '%{count} metiy'
+      other: '%{count} smetiy'
+  title: xobniy
+
+$ [py new -> new] kaeris check --source en.yml --langs lv  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ lv: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.yml --langs lv  -> exit 0
+  | [stderr] ✓ lv: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+--- he.yml
+he:
+  cart:
+    items:
+      zero: גסשצ גאצר טק המערג
+      one: '%{count} טרהמ'
+      two: '%{count} טרהמק tw'
+      other: '%{count} טרהמק'
+  title: טנבסב
+
+$ [py new -> new] kaeris check --source en.yml --langs he  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ he: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.yml --langs he  -> exit 0
+  | [stderr] ✓ he: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+
+######## NEW en.yml mode=extrazero
+## stub mode = extrazero
+$ [py new -> new] kaeris translate en.yml --langs de,pl,ru,ar,lv,he --no-only-new --no-tm  -> exit 0
+  | de.yml
+  | pl.yml
+  | ru.yml
+  | ar.yml
+  | lv.yml
+  | he.yml
+  | 
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | → Translating en.yml → de, pl, ru, ar, lv, he
+  | → 100%  he
+  | ✓ Wrote 6 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\903282ca-0cef-4a65-881b-d4ad1fba7558\scratchpad\r5\critic3\runs\s1-new-yml-extrazero
+  | ✓ Translation QA: no placeholder loss, no overflow risks
+  | → Run: openai/gpt-6-luna · Free · 6/6 languages · 4 strings · 0.0s
+  |      300 charged
+--- cargo: [["ar", {"cart.items.\u001efold\u001e": "{count, plural, =0 {Your cart is empty} one {%{count} item} other {%{count} items}}", "title": "Inbox"}], ["ru", {"cart.items.\u001efold\u001e": "{count, plural, =0 {Your cart is empty} one {%{count} item} other {%{count} items}}", "title": "Inbox"}], ["pl", {"cart.items.\u001efold\u001e": "{count, plural, =0 {Your cart is empty} one {%{count} item} other {%{count} items}}", "title": "Inbox"}], ["he", {"cart.items.\u001efold\u001e": "{count, plural, =0 {Your cart is empty} one {%{count} item} other {%{count} items}}", "title": "Inbox"}], ["lv", {"cart.items.\u001efold\u001e": "{count, plural, =0 {Your cart is empty} one {%{count} item} other {%{count} items}}", "title": "Inbox"}], ["de", {"cart.items.\u001efold\u001e": "{count, plural, =0 {Your cart is empty} one {%{count} item} other {%{count} items}}", "title": "Inbox"}]]
+--- de.yml
+de:
+  cart:
+    items:
+      zero: ruoyy tracy siy ytpmey
+      one: '%{count} metiy'
+      other: '%{count} smetiy'
+  title: xobniy
+
+$ [py new -> new] kaeris check --source en.yml --langs de  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ de: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.yml --langs de  -> exit 0
+  | [stderr] ✓ de: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+--- pl.yml
+pl:
+  cart:
+    items:
+      zero: ruoyy tracy siy ytpmey
+      one: '%{count} metiy'
+      few: '%{count} smetiy fe'
+      many: '%{count} smetiy ma'
+      other: '%{count} smetiy'
+  title: xobniy
+
+$ [py new -> new] kaeris check --source en.yml --langs pl  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ pl: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.yml --langs pl  -> exit 0
+  | [stderr] ✓ pl: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+--- ru.yml
+ru:
+  cart:
+    items:
+      zero: шофс васу ит дмпуш
+      one: '%{count} иудм'
+      few: '%{count} иудмт fe'
+      many: '%{count} иудмт ma'
+      other: '%{count} иудмт'
+  title: инбоч
+
+$ [py new -> new] kaeris check --source en.yml --langs ru  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ ru: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.yml --langs ru  -> exit 0
+  | [stderr] ✓ ru: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+--- ar.yml
+ar:
+  cart:
+    items:
+      zero: نضقع تاعف ذغ جشطفن
+      one: '%{count} ذفجش'
+      two: '%{count} ذفجشغ tw'
+      few: '%{count} ذفجشغ fe'
+      many: '%{count} ذفجشغ ma'
+      other: '%{count} ذفجشغ'
+  title: ذصبضم
+
+$ [py new -> new] kaeris check --source en.yml --langs ar  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ ar: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.yml --langs ar  -> exit 0
+  | [stderr] ✓ ar: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+--- lv.yml
+lv:
+  cart:
+    items:
+      zero: ruoyy tracy siy ytpmey
+      one: '%{count} metiy'
+      other: '%{count} smetiy'
+  title: xobniy
+
+$ [py new -> new] kaeris check --source en.yml --langs lv  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ lv: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.yml --langs lv  -> exit 0
+  | [stderr] ✓ lv: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+--- he.yml
+he:
+  cart:
+    items:
+      zero: גסשצ גאצר טק המערג
+      one: '%{count} טרהמ'
+      two: '%{count} טרהמק tw'
+      other: '%{count} טרהמק'
+  title: טנבסב
+
+$ [py new -> new] kaeris check --source en.yml --langs he  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ he: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.yml --langs he  -> exit 0
+  | [stderr] ✓ he: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+
+######## NEW en.yml mode=drop:few
+## stub mode = drop:few
+$ [py new -> new] kaeris translate en.yml --langs de,pl,ru,ar,lv,he --no-only-new --no-tm  -> exit 0
+  | de.yml
+  | pl.yml
+  | ru.yml
+  | ar.yml
+  | lv.yml
+  | he.yml
+  | 
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | → Translating en.yml → de, pl, ru, ar, lv, he
+  | →   0%  he
+  | → 100%  ar
+  | ✓ Wrote 6 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\903282ca-0cef-4a65-881b-d4ad1fba7558\scratchpad\r5\critic3\runs\s1-new-yml-drop_few
+  | ! 3 plural(s) not written in every form of their own:
+  |     [pl] 'cart.items': plural is missing the few/many form(s) pl requires
+  |     [ru] 'cart.items': plural is missing the few/many form(s) ru requires
+  |     [ar] 'cart.items': plural is missing the few/many/two form(s) ar requires
+  | → Run: openai/gpt-6-luna · Free · 6/6 languages · 4 strings · 0.1s
+  |      300 charged
+--- cargo: [["he", {"cart.items.\u001efold\u001e": "{count, plural, =0 {Your cart is empty} one {%{count} item} other {%{count} items}}", "title": "Inbox"}], ["ru", {"cart.items.\u001efold\u001e": "{count, plural, =0 {Your cart is empty} one {%{count} item} other {%{count} items}}", "title": "Inbox"}], ["lv", {"cart.items.\u001efold\u001e": "{count, plural, =0 {Your cart is empty} one {%{count} item} other {%{count} items}}", "title": "Inbox"}], ["pl", {"cart.items.\u001efold\u001e": "{count, plural, =0 {Your cart is empty} one {%{count} item} other {%{count} items}}", "title": "Inbox"}], ["de", {"cart.items.\u001efold\u001e": "{count, plural, =0 {Your cart is empty} one {%{count} item} other {%{count} items}}", "title": "Inbox"}], ["ar", {"cart.items.\u001efold\u001e": "{count, plural, =0 {Your cart is empty} one {%{count} item} other {%{count} items}}", "title": "Inbox"}], ["ru", {"cart.items.zero": "Your cart is empty", "cart.items.one": "%{count} item", "cart.items.other": "%{count} items"}], ["pl", {"cart.items.zero": "Your cart is empty", "cart.items.one": "%{count} item", "cart.items.other": "%{count} items"}], ["ar", {"cart.items.zero": "Your cart is empty", "cart.items.one": "%{count} item", "cart.items.other": "%{count} items"}]]
+--- de.yml
+de:
+  cart:
+    items:
+      zero: ruoyy tracy siy ytpmey
+      one: '%{count} metiy'
+      other: '%{count} smetiy'
+  title: xobniy
+
+$ [py new -> new] kaeris check --source en.yml --langs de  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ de: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.yml --langs de  -> exit 0
+  | [stderr] ✓ de: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+--- pl.yml
+pl:
+  cart:
+    items:
+      zero: ruoyy tracy siy ytpmey
+      one: '%{count} metiy'
+      other: '%{count} smetiy'
+  title: xobniy
+
+$ [py new -> new] kaeris check --source en.yml --langs pl  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ! pl: 2 warning(s):
+  |     : plural form missing: cart.items.few — pl needs the one/few/many/other forms of 'cart.items'
+  |     : plural form missing: cart.items.many — pl needs the one/few/many/other forms of 'cart.items'
+  | ! 2 warning(s) — non-blocking (use --strict to fail on them)
+$ [npm new -> new] kaeris check --source en.yml --langs pl  -> exit 0
+  | [stderr] ! pl: 2 warning(s):
+  |     : plural form missing: cart.items.few — pl needs the one/few/many/other forms of 'cart.items'
+  |     : plural form missing: cart.items.many — pl needs the one/few/many/other forms of 'cart.items'
+  | ! 2 warning(s) — non-blocking (use --strict to fail on them)
+--- ru.yml
+ru:
+  cart:
+    items:
+      zero: шофс васу ит дмпуш
+      one: '%{count} иудм'
+      other: '%{count} иудмт'
+  title: инбоч
+
+$ [py new -> new] kaeris check --source en.yml --langs ru  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ! ru: 2 warning(s):
+  |     : plural form missing: cart.items.few — ru needs the one/few/many/other forms of 'cart.items'
+  |     : plural form missing: cart.items.many — ru needs the one/few/many/other forms of 'cart.items'
+  | ! 2 warning(s) — non-blocking (use --strict to fail on them)
+$ [npm new -> new] kaeris check --source en.yml --langs ru  -> exit 0
+  | [stderr] ! ru: 2 warning(s):
+  |     : plural form missing: cart.items.few — ru needs the one/few/many/other forms of 'cart.items'
+  |     : plural form missing: cart.items.many — ru needs the one/few/many/other forms of 'cart.items'
+  | ! 2 warning(s) — non-blocking (use --strict to fail on them)
+--- ar.yml
+ar:
+  cart:
+    items:
+      zero: نضقع تاعف ذغ جشطفن
+      one: '%{count} ذفجش'
+      other: '%{count} ذفجشغ'
+  title: ذصبضم
+
+$ [py new -> new] kaeris check --source en.yml --langs ar  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ! ar: 3 warning(s):
+  |     : plural form missing: cart.items.few — ar needs the zero/one/two/few/many/other forms of 'cart.items'
+  |     : plural form missing: cart.items.many — ar needs the zero/one/two/few/many/other forms of 'cart.items'
+  |     : plural form missing: cart.items.two — ar needs the zero/one/two/few/many/other forms of 'cart.items'
+  | ! 3 warning(s) — non-blocking (use --strict to fail on them)
+$ [npm new -> new] kaeris check --source en.yml --langs ar  -> exit 0
+  | [stderr] ! ar: 3 warning(s):
+  |     : plural form missing: cart.items.few — ar needs the zero/one/two/few/many/other forms of 'cart.items'
+  |     : plural form missing: cart.items.many — ar needs the zero/one/two/few/many/other forms of 'cart.items'
+  |     : plural form missing: cart.items.two — ar needs the zero/one/two/few/many/other forms of 'cart.items'
+  | ! 3 warning(s) — non-blocking (use --strict to fail on them)
+--- lv.yml
+lv:
+  cart:
+    items:
+      zero: ruoyy tracy siy ytpmey
+      one: '%{count} metiy'
+      other: '%{count} smetiy'
+  title: xobniy
+
+$ [py new -> new] kaeris check --source en.yml --langs lv  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ lv: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.yml --langs lv  -> exit 0
+  | [stderr] ✓ lv: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+--- he.yml
+he:
+  cart:
+    items:
+      zero: גסשצ גאצר טק המערג
+      one: '%{count} טרהמ'
+      two: '%{count} טרהמק tw'
+      other: '%{count} טרהמק'
+  title: טנבסב
+
+$ [py new -> new] kaeris check --source en.yml --langs he  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ he: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.yml --langs he  -> exit 0
+  | [stderr] ✓ he: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+
+######## NEW en.yml mode=missfold
+## stub mode = missfold
+$ [py new -> new] kaeris translate en.yml --langs de,pl,ru,ar,lv,he --no-only-new --no-tm  -> exit 0
+  | de.yml
+  | pl.yml
+  | ru.yml
+  | ar.yml
+  | lv.yml
+  | he.yml
+  | 
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | → Translating en.yml → de, pl, ru, ar, lv, he
+  | →   0%  he
+  | → 100%  he
+  | ✓ Wrote 6 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\903282ca-0cef-4a65-881b-d4ad1fba7558\scratchpad\r5\critic3\runs\s1-new-yml-missfold
+  | ! 4 plural(s) not written in every form of their own:
+  |     [pl] 'cart.items': plural is missing the few/many form(s) pl requires
+  |     [ru] 'cart.items': plural is missing the few/many form(s) ru requires
+  |     [ar] 'cart.items': plural is missing the few/many/two form(s) ar requires
+  |     [he] 'cart.items': plural is missing the two form(s) he requires
+  | → Run: openai/gpt-6-luna · Free · 6/6 languages · 4 strings · 0.1s
+  |      300 charged
+--- cargo: [["he", {"cart.items.\u001efold\u001e": "{count, plural, =0 {Your cart is empty} one {%{count} item} other {%{count} items}}", "title": "Inbox"}], ["ru", {"cart.items.\u001efold\u001e": "{count, plural, =0 {Your cart is empty} one {%{count} item} other {%{count} items}}", "title": "Inbox"}], ["lv", {"cart.items.\u001efold\u001e": "{count, plural, =0 {Your cart is empty} one {%{count} item} other {%{count} items}}", "title": "Inbox"}], ["ar", {"cart.items.\u001efold\u001e": "{count, plural, =0 {Your cart is empty} one {%{count} item} other {%{count} items}}", "title": "Inbox"}], ["pl", {"cart.items.\u001efold\u001e": "{count, plural, =0 {Your cart is empty} one {%{count} item} other {%{count} items}}", "title": "Inbox"}], ["de", {"cart.items.\u001efold\u001e": "{count, plural, =0 {Your cart is empty} one {%{count} item} other {%{count} items}}", "title": "Inbox"}], ["pl", {"cart.items.zero": "Your cart is empty", "cart.items.one": "%{count} item", "cart.items.other": "%{count} items"}], ["he", {"cart.items.zero": "Your cart is empty", "cart.items.one": "%{count} item", "cart.items.other": "%{count} items"}], ["de", {"cart.items.zero": "Your cart is empty", "cart.items.one": "%{count} item", "cart.items.other": "%{count} items"}], ["ar", {"cart.items.zero": "Your cart is empty", "cart.items.one": "%{count} item", "cart.items.other": "%{count} items"}], ["lv", {"cart.items.zero": "Your cart is empty", "cart.items.one": "%{count} item", "cart.items.other": "%{count} items"}], ["ru", {"cart.items.zero": "Your cart is empty", "cart.items.one": "%{count} item", "cart.items.other": "%{count} items"}]]
+--- de.yml
+de:
+  cart:
+    items:
+      zero: ruoyy tracy siy ytpmey
+      one: '%{count} metiy'
+      other: '%{count} smetiy'
+  title: xobniy
+
+$ [py new -> new] kaeris check --source en.yml --langs de  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ de: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.yml --langs de  -> exit 0
+  | [stderr] ✓ de: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+--- pl.yml
+pl:
+  cart:
+    items:
+      zero: ruoyy tracy siy ytpmey
+      one: '%{count} metiy'
+      other: '%{count} smetiy'
+  title: xobniy
+
+$ [py new -> new] kaeris check --source en.yml --langs pl  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ! pl: 2 warning(s):
+  |     : plural form missing: cart.items.few — pl needs the one/few/many/other forms of 'cart.items'
+  |     : plural form missing: cart.items.many — pl needs the one/few/many/other forms of 'cart.items'
+  | ! 2 warning(s) — non-blocking (use --strict to fail on them)
+$ [npm new -> new] kaeris check --source en.yml --langs pl  -> exit 0
+  | [stderr] ! pl: 2 warning(s):
+  |     : plural form missing: cart.items.few — pl needs the one/few/many/other forms of 'cart.items'
+  |     : plural form missing: cart.items.many — pl needs the one/few/many/other forms of 'cart.items'
+  | ! 2 warning(s) — non-blocking (use --strict to fail on them)
+--- ru.yml
+ru:
+  cart:
+    items:
+      zero: шофс васу ит дмпуш
+      one: '%{count} иудм'
+      other: '%{count} иудмт'
+  title: инбоч
+
+$ [py new -> new] kaeris check --source en.yml --langs ru  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ! ru: 2 warning(s):
+  |     : plural form missing: cart.items.few — ru needs the one/few/many/other forms of 'cart.items'
+  |     : plural form missing: cart.items.many — ru needs the one/few/many/other forms of 'cart.items'
+  | ! 2 warning(s) — non-blocking (use --strict to fail on them)
+$ [npm new -> new] kaeris check --source en.yml --langs ru  -> exit 0
+  | [stderr] ! ru: 2 warning(s):
+  |     : plural form missing: cart.items.few — ru needs the one/few/many/other forms of 'cart.items'
+  |     : plural form missing: cart.items.many — ru needs the one/few/many/other forms of 'cart.items'
+  | ! 2 warning(s) — non-blocking (use --strict to fail on them)
+--- ar.yml
+ar:
+  cart:
+    items:
+      zero: نضقع تاعف ذغ جشطفن
+      one: '%{count} ذفجش'
+      other: '%{count} ذفجشغ'
+  title: ذصبضم
+
+$ [py new -> new] kaeris check --source en.yml --langs ar  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ! ar: 3 warning(s):
+  |     : plural form missing: cart.items.few — ar needs the zero/one/two/few/many/other forms of 'cart.items'
+  |     : plural form missing: cart.items.many — ar needs the zero/one/two/few/many/other forms of 'cart.items'
+  |     : plural form missing: cart.items.two — ar needs the zero/one/two/few/many/other forms of 'cart.items'
+  | ! 3 warning(s) — non-blocking (use --strict to fail on them)
+$ [npm new -> new] kaeris check --source en.yml --langs ar  -> exit 0
+  | [stderr] ! ar: 3 warning(s):
+  |     : plural form missing: cart.items.few — ar needs the zero/one/two/few/many/other forms of 'cart.items'
+  |     : plural form missing: cart.items.many — ar needs the zero/one/two/few/many/other forms of 'cart.items'
+  |     : plural form missing: cart.items.two — ar needs the zero/one/two/few/many/other forms of 'cart.items'
+  | ! 3 warning(s) — non-blocking (use --strict to fail on them)
+--- lv.yml
+lv:
+  cart:
+    items:
+      zero: ruoyy tracy siy ytpmey
+      one: '%{count} metiy'
+      other: '%{count} smetiy'
+  title: xobniy
+
+$ [py new -> new] kaeris check --source en.yml --langs lv  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ✓ lv: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+$ [npm new -> new] kaeris check --source en.yml --langs lv  -> exit 0
+  | [stderr] ✓ lv: complete & placeholder-safe
+  | ✓ all locales complete & placeholder-safe
+--- he.yml
+he:
+  cart:
+    items:
+      zero: גסשצ גאצר טק המערג
+      one: '%{count} טרהמ'
+      other: '%{count} טרהמק'
+  title: טנבסב
+
+$ [py new -> new] kaeris check --source en.yml --langs he  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ! he: 1 warning(s):
+  |     : plural form missing: cart.items.two — he needs the one/two/other forms of 'cart.items'
+  | ! 1 warning(s) — non-blocking (use --strict to fail on them)
+$ [npm new -> new] kaeris check --source en.yml --langs he  -> exit 0
+  | [stderr] ! he: 1 warning(s):
+  |     : plural form missing: cart.items.two — he needs the one/two/other forms of 'cart.items'
+  | ! 1 warning(s) — non-blocking (use --strict to fail on them)
+
+######## NEW en.yml mode=dropzero,missalone:zero
+## stub mode = dropzero,missalone:zero
+$ [py new -> new] kaeris translate en.yml --langs de,pl,ru,ar,lv,he --no-only-new --no-tm  -> exit 0
+  | de.yml
+  | pl.yml
+  | ru.yml
+  | ar.yml
+  | lv.yml
+  | he.yml
+  | 
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key
+  | → Translating en.yml → de, pl, ru, ar, lv, he
+  | →  16%  he
+  | → 100%  he
+  | ✓ Wrote 6 file(s) to C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\903282ca-0cef-4a65-881b-d4ad1fba7558\scratchpad\r5\critic3\runs\s1-new-yml-dropzero+missalone_zero
+  | ! 6 translation(s) check the meaning before you ship:
+  |     [de] cart.items.zero: may be untranslated — identical to the source text
+  |     [pl] cart.items.zero: may be untranslated — identical to the source text
+  |     [ru] cart.items.zero: may be untranslated — no target-language script, still reads as source text
+  |     [ar] cart.items.zero: may be untranslated — no target-language script, still reads as source text
+  |     [lv] cart.items.zero: may be untranslated — identical to the source text
+  |     [he] cart.items.zero: may be untranslated — no target-language script, still reads as source text
+  | → Run: openai/gpt-6-luna · Free · 6/6 languages · 4 strings · 0.1s
+  |      300 charged
+--- cargo: [["he", {"cart.items.\u001efold\u001e": "{count, plural, =0 {Your cart is empty} one {%{count} item} other {%{count} items}}", "title": "Inbox"}], ["lv", {"cart.items.\u001efold\u001e": "{count, plural, =0 {Your cart is empty} one {%{count} item} other {%{count} items}}", "title": "Inbox"}], ["ru", {"cart.items.\u001efold\u001e": "{count, plural, =0 {Your cart is empty} one {%{count} item} other {%{count} items}}", "title": "Inbox"}], ["ar", {"cart.items.\u001efold\u001e": "{count, plural, =0 {Your cart is empty} one {%{count} item} other {%{count} items}}", "title": "Inbox"}], ["de", {"cart.items.\u001efold\u001e": "{count, plural, =0 {Your cart is empty} one {%{count} item} other {%{count} items}}", "title": "Inbox"}], ["pl", {"cart.items.\u001efold\u001e": "{count, plural, =0 {Your cart is empty} one {%{count} item} other {%{count} items}}", "title": "Inbox"}], ["he", {"cart.items.zero": "Your cart is empty"}], ["pl", {"cart.items.zero": "Your cart is empty"}], ["ar", {"cart.items.zero": "Your cart is empty"}], ["lv", {"cart.items.zero": "Your cart is empty"}], ["de", {"cart.items.zero": "Your cart is empty"}], ["ru", {"cart.items.zero": "Your cart is empty"}]]
+--- de.yml
+de:
+  cart:
+    items:
+      zero: Your cart is empty
+      one: '%{count} metiy'
+      other: '%{count} smetiy'
+  title: xobniy
+
+$ [py new -> new] kaeris check --source en.yml --langs de  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ! de: 1 warning(s):
+  |     cart.items.zero: may be untranslated — identical to the source text
+  | ! 1 warning(s) — non-blocking (use --strict to fail on them)
+$ [npm new -> new] kaeris check --source en.yml --langs de  -> exit 0
+  | [stderr] ! de: 1 warning(s):
+  |     cart.items.zero: may be untranslated — identical to the source text
+  | ! 1 warning(s) — non-blocking (use --strict to fail on them)
+--- pl.yml
+pl:
+  cart:
+    items:
+      zero: Your cart is empty
+      one: '%{count} metiy'
+      few: '%{count} smetiy fe'
+      many: '%{count} smetiy ma'
+      other: '%{count} smetiy'
+  title: xobniy
+
+$ [py new -> new] kaeris check --source en.yml --langs pl  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ! pl: 1 warning(s):
+  |     cart.items.zero: may be untranslated — identical to the source text
+  | ! 1 warning(s) — non-blocking (use --strict to fail on them)
+$ [npm new -> new] kaeris check --source en.yml --langs pl  -> exit 0
+  | [stderr] ! pl: 1 warning(s):
+  |     cart.items.zero: may be untranslated — identical to the source text
+  | ! 1 warning(s) — non-blocking (use --strict to fail on them)
+--- ru.yml
+ru:
+  cart:
+    items:
+      zero: Your cart is empty
+      one: '%{count} иудм'
+      few: '%{count} иудмт fe'
+      many: '%{count} иудмт ma'
+      other: '%{count} иудмт'
+  title: инбоч
+
+$ [py new -> new] kaeris check --source en.yml --langs ru  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ! ru: 1 warning(s):
+  |     cart.items.zero: may be untranslated — no target-language script, still reads as source text
+  | ! 1 warning(s) — non-blocking (use --strict to fail on them)
+$ [npm new -> new] kaeris check --source en.yml --langs ru  -> exit 0
+  | [stderr] ! ru: 1 warning(s):
+  |     cart.items.zero: may be untranslated — no target-language script, still reads as source text
+  | ! 1 warning(s) — non-blocking (use --strict to fail on them)
+--- ar.yml
+ar:
+  cart:
+    items:
+      zero: Your cart is empty
+      one: '%{count} ذفجش'
+      two: '%{count} ذفجشغ tw'
+      few: '%{count} ذفجشغ fe'
+      many: '%{count} ذفجشغ ma'
+      other: '%{count} ذفجشغ'
+  title: ذصبضم
+
+$ [py new -> new] kaeris check --source en.yml --langs ar  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ! ar: 1 warning(s):
+  |     cart.items.zero: may be untranslated — no target-language script, still reads as source text
+  | ! 1 warning(s) — non-blocking (use --strict to fail on them)
+$ [npm new -> new] kaeris check --source en.yml --langs ar  -> exit 0
+  | [stderr] ! ar: 1 warning(s):
+  |     cart.items.zero: may be untranslated — no target-language script, still reads as source text
+  | ! 1 warning(s) — non-blocking (use --strict to fail on them)
+--- lv.yml
+lv:
+  cart:
+    items:
+      zero: Your cart is empty
+      one: '%{count} metiy'
+      other: '%{count} smetiy'
+  title: xobniy
+
+$ [py new -> new] kaeris check --source en.yml --langs lv  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ! lv: 1 warning(s):
+  |     cart.items.zero: may be untranslated — identical to the source text
+  | ! 1 warning(s) — non-blocking (use --strict to fail on them)
+$ [npm new -> new] kaeris check --source en.yml --langs lv  -> exit 0
+  | [stderr] ! lv: 1 warning(s):
+  |     cart.items.zero: may be untranslated — identical to the source text
+  | ! 1 warning(s) — non-blocking (use --strict to fail on them)
+--- he.yml
+he:
+  cart:
+    items:
+      zero: Your cart is empty
+      one: '%{count} טרהמ'
+      two: '%{count} טרהמק tw'
+      other: '%{count} טרהמק'
+  title: טנבסב
+
+$ [py new -> new] kaeris check --source en.yml --langs he  -> exit 0
+  | [stderr] using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
+  | ! he: 1 warning(s):
+  |     cart.items.zero: may be untranslated — no target-language script, still reads as source text
+  | ! 1 warning(s) — non-blocking (use --strict to fail on them)
+$ [npm new -> new] kaeris check --source en.yml --langs he  -> exit 0
+  | [stderr] ! he: 1 warning(s):
+  |     cart.items.zero: may be untranslated — no target-language script, still reads as source text
+  | ! 1 warning(s) — non-blocking (use --strict to fail on them)
+# stopped pids 22036 21852 10120: rc [1, 1, 1]

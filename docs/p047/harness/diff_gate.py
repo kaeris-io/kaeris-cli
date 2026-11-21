@@ -47,7 +47,7 @@ LANGS = ["de", "pl", "ru", "ar", "lv", "he", "ja", "zh", "ko"]
 LANG_RUNS = (LANGS[:5], LANGS[5:])
 REFUSED = "cy"          # not one of the server's languages: refused alike, run on its own
 MODES = ["normal", "dropzero", "drop:zero", "drop:one", "drop:two", "drop:few", "drop:many",
-         "hashall", "missfold", "echo:file", "empty", "fail500after1"]
+         "hashall", "missfold", "echo:file", "empty", "fail500repeat"]
 
 HEAD = ('msgid ""\nmsgstr ""\n"Content-Type: text/plain; charset=UTF-8\\n"\n'
         '"Plural-Forms: nplurals=2; plural=(n != 1);\\n"\n"Language: en\\n"\n\n')
@@ -202,6 +202,9 @@ class Gate:
                        # ~1500 keyless runs in one gate: the day's free allowance of one
                        # address would run out halfway (HTTP 429), the same on every server
                        ANON_DAILY_CHAR_CAP="1000000000", ANON_DAILY_CHAR_CAP_PER_IP="1000000000",
+                       # every cell on its own: the provider breaker (3 failures in a row: 503 for
+                       # 60 s, every job of the process) would carry a 500 mode into the next cells
+                       UPSTREAM_FAILURES_TO_TRIP="1000000",
                        KAERIS_DATA_DIR=os.path.join(self.runs, f"_srvdata-{pair}"))
             self.procs.append(subprocess.Popen(
                 [VENV_PY, "-m", "uvicorn", "main:app", "--host", "127.0.0.1", "--port", str(PORTS[pair]),
@@ -449,9 +452,11 @@ class Gate:
 
     def compare_runs(self, log, where, fmt, got, base="op", pairs=("on", "nn"), tag_money=None):
         b_rc, b_money, b_files, b_chk, b_out = got[base]
-        if b_rc not in (0, 3) or not any(self.target(fmt, l) in b_files for l in LANGS) and b_rc != 3:
-            # a run that wrote nothing without saying a language fell back is the harness's fault
-            # (a flag, a path), and two such runs would compare as "the same"
+        if b_rc == 2 or re.search(r"HTTP 4\d\d|usage:|unrecognized arguments|Traceback", b_out):
+            # a refused request (a flag, a limit, a crash) is the harness's fault, and two such
+            # runs would compare as "the same". (0.2.46 itself may write nothing and exit 0:
+            # `--only-new` on an ICU-only JSON whose plurals the model left out says "no output
+            # returned" per language — that is compared, not flagged.)
             self.row(log, "run", f"{where} {base} sane", "RED", "harness",
                      f"exit {b_rc}, files {sorted(b_files)}; "
                      + " | ".join(l.strip() for l in b_out.splitlines()[-4:])[:400])

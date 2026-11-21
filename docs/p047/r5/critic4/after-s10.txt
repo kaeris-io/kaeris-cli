@@ -1,0 +1,148 @@
+# pids 18764 22600 21864
+# server new up, plural_forms='cldr'
+# server prod up, plural_forms=None
+## stub mode = normal
+== .po mode=normal [pl,ru,uk,cs,ar,lv]: translate exit 0; all-clear printed=False; ['! 1 plural(s) not written in every form of their own:']
+   [lv] 'One message': msgstr[1] (one: 1, 21, 31…) stands for more than one number and needs %d, which the answer's one form leaves out; written as before 0.2.47: msgstr[0] (zero) holds the singular, msgstr[2] (other) repeats msgstr[1] (one)
+== .po mode=normal [he,sl,ro,ja,zh,de]: translate exit 0; all-clear printed=True; []
+   pl: check 0 {"%d file": ["%d elify", "%d selify fe", "%d selify ma"], "One message": ["enoy egassemy", "%d segassemy fe", "%d segassemy ma"]}
+   ru: check 0 {"%d file": ["%d еилд", "%d еилдт fe", "%d еилдт ma"], "One message": ["онд мдттажд", "%d мдттаждт fe", "%d мдттаждт ma"]}
+   uk: check 0 {"%d file": ["%d еилд", "%d еилдт fe", "%d еилдт ma"], "One message": ["онд мдттажд", "%d мдттаждт fe", "%d мдттаждт ma"]}
+   cs: check 0 {"%d file": ["%d elify", "%d selify fe", "%d selify"], "One message": ["enoy egassemy", "%d segassemy fe", "%d segassemy"]}
+   ar: check 0 {"%d file": ["%d حذسجغ ze", "%d حذسج", "%d حذسجغ tw", "%d حذسجغ fe", "%d حذسجغ ma", "%d حذسجغ"], "One message": ["%d شجغغاخجغ ze", "ضصج شجغغاخج", "%d شجغغاخجغ tw", "%d شجغغاخجغ fe", "%d شجغغاخجغ ma", "%d شجغغاخجغ"]}
+   lv: check 0 {"%d file": ["%d selify ze", "%d elify", "%d selify"], "One message": ["enoy egassemy", "%d segassemy", "%d segassemy"]}
+   he: check 0 {"%d file": ["%d וטלה", "%d וטלהק tw", "%d וטלהק"], "One message": ["סנה מהקקאזה", "%d מהקקאזהק tw", "%d מהקקאזהק"]}
+   sl: check 0 {"%d file": ["%d elify", "%d selify tw", "%d selify fe", "%d selify"], "One message": ["enoy egassemy", "%d segassemy tw", "%d segassemy fe", "%d segassemy"]}
+   ro: check 0 {"%d file": ["%d elify", "%d selify fe", "%d selify"], "One message": ["enoy egassemy", "%d segassemy fe", "%d segassemy"]}
+   ja: check 0 {"%d file": ["%d カケシオテ"], "One message": ["%d スオテテアキオテ"]}
+   zh: check 0 {"%d file": ["%d 人有中了说"], "One message": ["%d 大了说说的我了说"]}
+   de: check 0 {"%d file": ["%d elify", "%d selify"], "One message": ["enoy egassemy", "%d segassemy"]}
+## stub mode = drop:many
+== .po mode=drop:many [pl,ru,uk,cs,ar,lv]: translate exit 0; all-clear printed=False; ['! 9 plural(s) not written in every form of their own:']
+   [pl] '%d file': the answer had no many form; written as before 0.2.47: msgstr[0] (one) holds the singular, msgstr[2] (many) repeats msgstr[1] (few)
+   [pl] 'One message': the answer had no many form; written as before 0.2.47: msgstr[0] (one) holds the singular, msgstr[2] (many) repeats msgstr[1] (few)
+   [ru] '%d file': the answer had no many form; written as before 0.2.47: msgstr[0] (one) holds the singular, msgstr[2] (many) repeats msgstr[1] (few)
+   [ru] 'One message': the answer had no many form; written as before 0.2.47: msgstr[0] (one) holds the singular, msgstr[2] (many) repeats msgstr[1] (few)
+   [uk] '%d file': the answer had no many form; written as before 0.2.47: msgstr[0] (one) holds the singular, msgstr[2] (many) repeats msgstr[1] (few)
+   [uk] 'One message': the answer had no many form; written as before 0.2.47: msgstr[0] (one) holds the singular, msgstr[2] (many) repeats msgstr[1] (few)
+   [ar] '%d file': the answer had no many form; written as before 0.2.47: msgstr[0] (zero) holds the singular, msgstr[2..5] (two/few/many/other) repeat msgstr[1] (one)
+   [ar] 'One message': the answer had no many form; written as before 0.2.47: msgstr[0] (zero) holds the singular, msgstr[2..5] (two/few/many/other) repeat msgstr[1] (one)
+   [lv] 'One message': msgstr[1] (one: 1, 21, 31…) stands for more than one number and needs %d, which the answer's one form leaves out; written as before 0.2.47: msgstr[0] (zero) holds the singular, msgstr[2] (other) repeats msgstr[1] (one)
+== .po mode=drop:many [he,sl,ro,ja,zh,de]: translate exit 0; all-clear printed=True; []
+   pl: check 0 {"%d file": ["%d elify", "%d selify", "%d selify"], "One message": ["enoy egassemy", "%d segassemy", "%d segassemy"]}
+   ru: check 0 {"%d file": ["%d еилд", "%d еилдт", "%d еилдт"], "One message": ["онд мдттажд", "%d мдттаждт", "%d мдттаждт"]}
+   uk: check 0 {"%d file": ["%d еилд", "%d еилдт", "%d еилдт"], "One message": ["онд мдттажд", "%d мдттаждт", "%d мдттаждт"]}
+   cs: check 0 {"%d file": ["%d elify", "%d selify fe", "%d selify"], "One message": ["enoy egassemy", "%d segassemy fe", "%d segassemy"]}
+   ar: check 0 {"%d file": ["%d حذسج", "%d حذسجغ", "%d حذسجغ", "%d حذسجغ", "%d حذسجغ", "%d حذسجغ"], "One message": ["ضصج شجغغاخج", "%d شجغغاخجغ", "%d شجغغاخجغ", "%d شجغغاخجغ", "%d شجغغاخجغ", "%d شجغغاخجغ"]}
+   lv: check 0 {"%d file": ["%d selify ze", "%d elify", "%d selify"], "One message": ["enoy egassemy", "%d segassemy", "%d segassemy"]}
+   he: check 0 {"%d file": ["%d וטלה", "%d וטלהק tw", "%d וטלהק"], "One message": ["סנה מהקקאזה", "%d מהקקאזהק tw", "%d מהקקאזהק"]}
+   sl: check 0 {"%d file": ["%d elify", "%d selify tw", "%d selify fe", "%d selify"], "One message": ["enoy egassemy", "%d segassemy tw", "%d segassemy fe", "%d segassemy"]}
+   ro: check 0 {"%d file": ["%d elify", "%d selify fe", "%d selify"], "One message": ["enoy egassemy", "%d segassemy fe", "%d segassemy"]}
+   ja: check 0 {"%d file": ["%d カケシオテ"], "One message": ["%d スオテテアキオテ"]}
+   zh: check 0 {"%d file": ["%d 人有中了说"], "One message": ["%d 大了说说的我了说"]}
+   de: check 0 {"%d file": ["%d elify", "%d selify"], "One message": ["enoy egassemy", "%d segassemy"]}
+## stub mode = drop:few
+== .po mode=drop:few [pl,ru,uk,cs,ar,lv]: translate exit 0; all-clear printed=False; ['! 11 plural(s) not written in every form of their own:']
+   [pl] '%d file': the answer had no few form; written as before 0.2.47: msgstr[0] (one) holds the singular, msgstr[2] (many) repeats msgstr[1] (few)
+   [pl] 'One message': the answer had no few form; written as before 0.2.47: msgstr[0] (one) holds the singular, msgstr[2] (many) repeats msgstr[1] (few)
+   [ru] '%d file': the answer had no few form; written as before 0.2.47: msgstr[0] (one) holds the singular, msgstr[2] (many) repeats msgstr[1] (few)
+   [ru] 'One message': the answer had no few form; written as before 0.2.47: msgstr[0] (one) holds the singular, msgstr[2] (many) repeats msgstr[1] (few)
+   [uk] '%d file': the answer had no few form; written as before 0.2.47: msgstr[0] (one) holds the singular, msgstr[2] (many) repeats msgstr[1] (few)
+   [uk] 'One message': the answer had no few form; written as before 0.2.47: msgstr[0] (one) holds the singular, msgstr[2] (many) repeats msgstr[1] (few)
+   [cs] '%d file': the answer had no few form; written as before 0.2.47: msgstr[0] (one) holds the singular, msgstr[2] (other) repeats msgstr[1] (few)
+   [cs] 'One message': the answer had no few form; written as before 0.2.47: msgstr[0] (one) holds the singular, msgstr[2] (other) repeats msgstr[1] (few)
+   [ar] '%d file': the answer had no few form; written as before 0.2.47: msgstr[0] (zero) holds the singular, msgstr[2..5] (two/few/many/other) repeat msgstr[1] (one)
+   [ar] 'One message': the answer had no few form; written as before 0.2.47: msgstr[0] (zero) holds the singular, msgstr[2..5] (two/few/many/other) repeat msgstr[1] (one)
+   [lv] 'One message': msgstr[1] (one: 1, 21, 31…) stands for more than one number and needs %d, which the answer's one form leaves out; written as before 0.2.47: msgstr[0] (zero) holds the singular, msgstr[2] (other) repeats msgstr[1] (one)
+== .po mode=drop:few [he,sl,ro,ja,zh,de]: translate exit 0; all-clear printed=False; ['! 4 plural(s) not written in every form of their own:']
+   [sl] '%d file': the answer had no few form; written as before 0.2.47: msgstr[0] (one) holds the singular, msgstr[2..3] (few/other) repeat msgstr[1] (two)
+   [sl] 'One message': the answer had no few form; written as before 0.2.47: msgstr[0] (one) holds the singular, msgstr[2..3] (few/other) repeat msgstr[1] (two)
+   [ro] '%d file': the answer had no few form; written as before 0.2.47: msgstr[0] (one) holds the singular, msgstr[2] (other) repeats msgstr[1] (few)
+   [ro] 'One message': the answer had no few form; written as before 0.2.47: msgstr[0] (one) holds the singular, msgstr[2] (other) repeats msgstr[1] (few)
+   pl: check 0 {"%d file": ["%d elify", "%d selify", "%d selify"], "One message": ["enoy egassemy", "%d segassemy", "%d segassemy"]}
+   ru: check 0 {"%d file": ["%d еилд", "%d еилдт", "%d еилдт"], "One message": ["онд мдттажд", "%d мдттаждт", "%d мдттаждт"]}
+   uk: check 0 {"%d file": ["%d еилд", "%d еилдт", "%d еилдт"], "One message": ["онд мдттажд", "%d мдттаждт", "%d мдттаждт"]}
+   cs: check 0 {"%d file": ["%d elify", "%d selify", "%d selify"], "One message": ["enoy egassemy", "%d segassemy", "%d segassemy"]}
+   ar: check 0 {"%d file": ["%d حذسج", "%d حذسجغ", "%d حذسجغ", "%d حذسجغ", "%d حذسجغ", "%d حذسجغ"], "One message": ["ضصج شجغغاخج", "%d شجغغاخجغ", "%d شجغغاخجغ", "%d شجغغاخجغ", "%d شجغغاخجغ", "%d شجغغاخجغ"]}
+   lv: check 0 {"%d file": ["%d selify ze", "%d elify", "%d selify"], "One message": ["enoy egassemy", "%d segassemy", "%d segassemy"]}
+   he: check 0 {"%d file": ["%d וטלה", "%d וטלהק tw", "%d וטלהק"], "One message": ["סנה מהקקאזה", "%d מהקקאזהק tw", "%d מהקקאזהק"]}
+   sl: check 0 {"%d file": ["%d elify", "%d selify", "%d selify", "%d selify"], "One message": ["enoy egassemy", "%d segassemy", "%d segassemy", "%d segassemy"]}
+   ro: check 0 {"%d file": ["%d elify", "%d selify", "%d selify"], "One message": ["enoy egassemy", "%d segassemy", "%d segassemy"]}
+   ja: check 0 {"%d file": ["%d カケシオテ"], "One message": ["%d スオテテアキオテ"]}
+   zh: check 0 {"%d file": ["%d 人有中了说"], "One message": ["%d 大了说说的我了说"]}
+   de: check 0 {"%d file": ["%d elify", "%d selify"], "One message": ["enoy egassemy", "%d segassemy"]}
+## stub mode = drop:two
+== .po mode=drop:two [pl,ru,uk,cs,ar,lv]: translate exit 0; all-clear printed=False; ['! 3 plural(s) not written in every form of their own:']
+   [ar] '%d file': the answer had no two form; written as before 0.2.47: msgstr[0] (zero) holds the singular, msgstr[2..5] (two/few/many/other) repeat msgstr[1] (one)
+   [ar] 'One message': the answer had no two form; written as before 0.2.47: msgstr[0] (zero) holds the singular, msgstr[2..5] (two/few/many/other) repeat msgstr[1] (one)
+   [lv] 'One message': msgstr[1] (one: 1, 21, 31…) stands for more than one number and needs %d, which the answer's one form leaves out; written as before 0.2.47: msgstr[0] (zero) holds the singular, msgstr[2] (other) repeats msgstr[1] (one)
+== .po mode=drop:two [he,sl,ro,ja,zh,de]: translate exit 0; all-clear printed=False; ['! 4 plural(s) not written in every form of their own:']
+   [he] '%d file': the answer had no two form; written as before 0.2.47: msgstr[0] (one) holds the singular, msgstr[2] (other) repeats msgstr[1] (two)
+   [he] 'One message': the answer had no two form; written as before 0.2.47: msgstr[0] (one) holds the singular, msgstr[2] (other) repeats msgstr[1] (two)
+   [sl] '%d file': the answer had no two form; written as before 0.2.47: msgstr[0] (one) holds the singular, msgstr[2..3] (few/other) repeat msgstr[1] (two)
+   [sl] 'One message': the answer had no two form; written as before 0.2.47: msgstr[0] (one) holds the singular, msgstr[2..3] (few/other) repeat msgstr[1] (two)
+   pl: check 0 {"%d file": ["%d elify", "%d selify fe", "%d selify ma"], "One message": ["enoy egassemy", "%d segassemy fe", "%d segassemy ma"]}
+   ru: check 0 {"%d file": ["%d еилд", "%d еилдт fe", "%d еилдт ma"], "One message": ["онд мдттажд", "%d мдттаждт fe", "%d мдттаждт ma"]}
+   uk: check 0 {"%d file": ["%d еилд", "%d еилдт fe", "%d еилдт ma"], "One message": ["онд мдттажд", "%d мдттаждт fe", "%d мдттаждт ma"]}
+   cs: check 0 {"%d file": ["%d elify", "%d selify fe", "%d selify"], "One message": ["enoy egassemy", "%d segassemy fe", "%d segassemy"]}
+   ar: check 0 {"%d file": ["%d حذسج", "%d حذسجغ", "%d حذسجغ", "%d حذسجغ", "%d حذسجغ", "%d حذسجغ"], "One message": ["ضصج شجغغاخج", "%d شجغغاخجغ", "%d شجغغاخجغ", "%d شجغغاخجغ", "%d شجغغاخجغ", "%d شجغغاخجغ"]}
+   lv: check 0 {"%d file": ["%d selify ze", "%d elify", "%d selify"], "One message": ["enoy egassemy", "%d segassemy", "%d segassemy"]}
+   he: check 0 {"%d file": ["%d וטלה", "%d וטלהק", "%d וטלהק"], "One message": ["סנה מהקקאזה", "%d מהקקאזהק", "%d מהקקאזהק"]}
+   sl: check 0 {"%d file": ["%d elify", "%d selify", "%d selify", "%d selify"], "One message": ["enoy egassemy", "%d segassemy", "%d segassemy", "%d segassemy"]}
+   ro: check 0 {"%d file": ["%d elify", "%d selify fe", "%d selify"], "One message": ["enoy egassemy", "%d segassemy fe", "%d segassemy"]}
+   ja: check 0 {"%d file": ["%d カケシオテ"], "One message": ["%d スオテテアキオテ"]}
+   zh: check 0 {"%d file": ["%d 人有中了说"], "One message": ["%d 大了说说的我了说"]}
+   de: check 0 {"%d file": ["%d elify", "%d selify"], "One message": ["enoy egassemy", "%d segassemy"]}
+## stub mode = drop:zero
+== .po mode=drop:zero [pl,ru,uk,cs,ar,lv]: translate exit 0; all-clear printed=False; ['! 4 plural(s) not written in every form of their own:']
+   [ar] '%d file': the answer had no zero form; written as before 0.2.47: msgstr[0] (zero) holds the singular, msgstr[2..5] (two/few/many/other) repeat msgstr[1] (one)
+   [ar] 'One message': the answer had no zero form; written as before 0.2.47: msgstr[0] (zero) holds the singular, msgstr[2..5] (two/few/many/other) repeat msgstr[1] (one)
+   [lv] '%d file': the answer had no zero form; written as before 0.2.47: msgstr[0] (zero) holds the singular, msgstr[2] (other) repeats msgstr[1] (one)
+   [lv] 'One message': the answer had no zero form; written as before 0.2.47: msgstr[0] (zero) holds the singular, msgstr[2] (other) repeats msgstr[1] (one)
+== .po mode=drop:zero [he,sl,ro,ja,zh,de]: translate exit 0; all-clear printed=True; []
+   pl: check 0 {"%d file": ["%d elify", "%d selify fe", "%d selify ma"], "One message": ["enoy egassemy", "%d segassemy fe", "%d segassemy ma"]}
+   ru: check 0 {"%d file": ["%d еилд", "%d еилдт fe", "%d еилдт ma"], "One message": ["онд мдттажд", "%d мдттаждт fe", "%d мдттаждт ma"]}
+   uk: check 0 {"%d file": ["%d еилд", "%d еилдт fe", "%d еилдт ma"], "One message": ["онд мдттажд", "%d мдттаждт fe", "%d мдттаждт ma"]}
+   cs: check 0 {"%d file": ["%d elify", "%d selify fe", "%d selify"], "One message": ["enoy egassemy", "%d segassemy fe", "%d segassemy"]}
+   ar: check 0 {"%d file": ["%d حذسج", "%d حذسجغ", "%d حذسجغ", "%d حذسجغ", "%d حذسجغ", "%d حذسجغ"], "One message": ["ضصج شجغغاخج", "%d شجغغاخجغ", "%d شجغغاخجغ", "%d شجغغاخجغ", "%d شجغغاخجغ", "%d شجغغاخجغ"]}
+   lv: check 0 {"%d file": ["%d elify", "%d selify", "%d selify"], "One message": ["enoy egassemy", "%d segassemy", "%d segassemy"]}
+   he: check 0 {"%d file": ["%d וטלה", "%d וטלהק tw", "%d וטלהק"], "One message": ["סנה מהקקאזה", "%d מהקקאזהק tw", "%d מהקקאזהק"]}
+   sl: check 0 {"%d file": ["%d elify", "%d selify tw", "%d selify fe", "%d selify"], "One message": ["enoy egassemy", "%d segassemy tw", "%d segassemy fe", "%d segassemy"]}
+   ro: check 0 {"%d file": ["%d elify", "%d selify fe", "%d selify"], "One message": ["enoy egassemy", "%d segassemy fe", "%d segassemy"]}
+   ja: check 0 {"%d file": ["%d カケシオテ"], "One message": ["%d スオテテアキオテ"]}
+   zh: check 0 {"%d file": ["%d 人有中了说"], "One message": ["%d 大了说说的我了说"]}
+   de: check 0 {"%d file": ["%d elify", "%d selify"], "One message": ["enoy egassemy", "%d segassemy"]}
+## stub mode = drop:one
+== .po mode=drop:one [pl,ru,uk,cs,ar,lv]: translate exit 0; all-clear printed=False; ['! 12 plural(s) not written in every form of their own:']
+   [pl] '%d file': the answer had no one form; written as before 0.2.47: msgstr[0] (one) holds the singular, msgstr[2] (many) repeats msgstr[1] (few)
+   [pl] 'One message': the answer had no one form; written as before 0.2.47: msgstr[0] (one) holds the singular, msgstr[2] (many) repeats msgstr[1] (few)
+   [ru] '%d file': the answer had no one form; written as before 0.2.47: msgstr[0] (one) holds the singular, msgstr[2] (many) repeats msgstr[1] (few)
+   [ru] 'One message': the answer had no one form; written as before 0.2.47: msgstr[0] (one) holds the singular, msgstr[2] (many) repeats msgstr[1] (few)
+   [uk] '%d file': the answer had no one form; written as before 0.2.47: msgstr[0] (one) holds the singular, msgstr[2] (many) repeats msgstr[1] (few)
+   [uk] 'One message': the answer had no one form; written as before 0.2.47: msgstr[0] (one) holds the singular, msgstr[2] (many) repeats msgstr[1] (few)
+   [cs] '%d file': the answer had no one form; written as before 0.2.47: msgstr[0] (one) holds the singular, msgstr[2] (other) repeats msgstr[1] (few)
+   [cs] 'One message': the answer had no one form; written as before 0.2.47: msgstr[0] (one) holds the singular, msgstr[2] (other) repeats msgstr[1] (few)
+   [ar] '%d file': the answer had no one form; written as before 0.2.47: msgstr[0] (zero) holds the singular, msgstr[2..5] (two/few/many/other) repeat msgstr[1] (one)
+   [ar] 'One message': the answer had no one form; written as before 0.2.47: msgstr[0] (zero) holds the singular, msgstr[2..5] (two/few/many/other) repeat msgstr[1] (one)
+   [lv] '%d file': the answer had no one form; written as before 0.2.47: msgstr[0] (zero) holds the singular, msgstr[2] (other) repeats msgstr[1] (one)
+   [lv] 'One message': the answer had no one form; written as before 0.2.47: msgstr[0] (zero) holds the singular, msgstr[2] (other) repeats msgstr[1] (one)
+== .po mode=drop:one [he,sl,ro,ja,zh,de]: translate exit 0; all-clear printed=False; ['! 6 plural(s) not written in every form of their own:']
+   [he] '%d file': the answer had no one form; written as before 0.2.47: msgstr[0] (one) holds the singular, msgstr[2] (other) repeats msgstr[1] (two)
+   [he] 'One message': the answer had no one form; written as before 0.2.47: msgstr[0] (one) holds the singular, msgstr[2] (other) repeats msgstr[1] (two)
+   [sl] '%d file': the answer had no one form; written as before 0.2.47: msgstr[0] (one) holds the singular, msgstr[2..3] (few/other) repeat msgstr[1] (two)
+   [sl] 'One message': the answer had no one form; written as before 0.2.47: msgstr[0] (one) holds the singular, msgstr[2..3] (few/other) repeat msgstr[1] (two)
+   [ro] '%d file': the answer had no one form; written as before 0.2.47: msgstr[0] (one) holds the singular, msgstr[2] (other) repeats msgstr[1] (few)
+   [ro] 'One message': the answer had no one form; written as before 0.2.47: msgstr[0] (one) holds the singular, msgstr[2] (other) repeats msgstr[1] (few)
+   pl: check 0 {"%d file": ["%d elify", "%d selify", "%d selify"], "One message": ["enoy egassemy", "%d segassemy", "%d segassemy"]}
+   ru: check 0 {"%d file": ["%d еилд", "%d еилдт", "%d еилдт"], "One message": ["онд мдттажд", "%d мдттаждт", "%d мдттаждт"]}
+   uk: check 0 {"%d file": ["%d еилд", "%d еилдт", "%d еилдт"], "One message": ["онд мдттажд", "%d мдттаждт", "%d мдттаждт"]}
+   cs: check 0 {"%d file": ["%d elify", "%d selify", "%d selify"], "One message": ["enoy egassemy", "%d segassemy", "%d segassemy"]}
+   ar: check 0 {"%d file": ["%d حذسج", "%d حذسجغ", "%d حذسجغ", "%d حذسجغ", "%d حذسجغ", "%d حذسجغ"], "One message": ["ضصج شجغغاخج", "%d شجغغاخجغ", "%d شجغغاخجغ", "%d شجغغاخجغ", "%d شجغغاخجغ", "%d شجغغاخجغ"]}
+   lv: check 0 {"%d file": ["%d elify", "%d selify", "%d selify"], "One message": ["enoy egassemy", "%d segassemy", "%d segassemy"]}
+   he: check 0 {"%d file": ["%d וטלה", "%d וטלהק", "%d וטלהק"], "One message": ["סנה מהקקאזה", "%d מהקקאזהק", "%d מהקקאזהק"]}
+   sl: check 0 {"%d file": ["%d elify", "%d selify", "%d selify", "%d selify"], "One message": ["enoy egassemy", "%d segassemy", "%d segassemy", "%d segassemy"]}
+   ro: check 0 {"%d file": ["%d elify", "%d selify", "%d selify"], "One message": ["enoy egassemy", "%d segassemy", "%d segassemy"]}
+   ja: check 0 {"%d file": ["%d カケシオテ"], "One message": ["%d スオテテアキオテ"]}
+   zh: check 0 {"%d file": ["%d 人有中了说"], "One message": ["%d 大了说说的我了说"]}
+   de: check 0 {"%d file": ["%d elify", "%d selify"], "One message": ["enoy egassemy", "%d segassemy"]}
+# stopped pids 18764 22600 21864: rc [1, 1, 1]

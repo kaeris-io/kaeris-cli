@@ -1,0 +1,30 @@
+# pids 11728 12492 4304
+# server new up, plural_forms='cldr'
+# server prod up, plural_forms=None
+## stub mode = missfold
+== missfold [046->prod] exit 0; plural lines: []
+   ja: check 0 [] {"One message": ["ソセオ スオテテアキオ"], "One file": ["ソセオ カケシオ"]}
+   zh: check 0 [] {"One message": ["上来了 大了说说的我了"], "One file": ["上来了 人有中了"]}
+   ko: check 0 [] {"One message": ["거하마 파마머머가사마"], "One file": ["거하마 바자타마"]}
+   ar: check 0 [] {"One message": ["ضصج شجغغاخج", "%d شجغغاخجغ", "%d شجغغاخجغ", "%d شجغغاخجغ", "%d شجغغاخجغ", "%d شجغغاخجغ"], "One file": ["ضصج حذسج", "%(count)s حذسجغ", "%(count)s حذسجغ", "%(count)s حذسجغ", "%(count)s حذسجغ", "%(count)s حذسجغ"]}
+   pl: check 0 [] {"One message": ["enoy egassemy", "%d segassemy", "%d segassemy"], "One file": ["enoy elify", "%(count)s selify", "%(count)s selify"]}
+== missfold [new->new] exit 3; plural lines: ["[ar] 'One message': the model left the plural out; written as before 0.2.47: msgstr[0] (zero) holds the singular, msgstr[2..5] (two/few/many/other) repeat msgstr[1] (one)", "[ar] 'One file': the model left the plural out; written as before 0.2.47: msgstr[0] (zero) holds the singular, msgstr[2..5] (two/few/many/other) repeat msgstr[1] (one)", "[pl] 'One message': the model left the plural out; written as before 0.2.47: msgstr[0] (one) holds the singular, msgstr[2] (many) repeats msgstr[1] (few)", "[pl] 'One file': the model left the plural out; written as before 0.2.47: msgstr[0] (one) holds the singular, msgstr[2] (many) repeats msgstr[1] (few)"]
+   ja: check 1 [] {}
+   zh: check 1 [] {}
+   ko: check 1 [] {}
+   ar: check 1 [] {}
+   pl: check 1 [] {}
+## stub mode = normal
+== normal [046->prod] exit 0; plural lines: []
+   ja: check 0 [] {"One message": ["ソセオ スオテテアキオ"], "One file": ["ソセオ カケシオ"]}
+   zh: check 0 [] {"One message": ["上来了 大了说说的我了"], "One file": ["上来了 人有中了"]}
+   ko: check 0 [] {"One message": ["거하마 파마머머가사마"], "One file": ["거하마 바자타마"]}
+   ar: check 0 [] {"One message": ["ضصج شجغغاخج", "%d شجغغاخجغ", "%d شجغغاخجغ", "%d شجغغاخجغ", "%d شجغغاخجغ", "%d شجغغاخجغ"], "One file": ["ضصج حذسج", "%(count)s حذسجغ", "%(count)s حذسجغ", "%(count)s حذسجغ", "%(count)s حذسجغ", "%(count)s حذسجغ"]}
+   pl: check 0 [] {"One message": ["enoy egassemy", "%d segassemy", "%d segassemy"], "One file": ["enoy elify", "%(count)s selify", "%(count)s selify"]}
+== normal [new->new] exit 0; plural lines: []
+   ja: check 1 ['One file: invented placeholder %(count)s (not in source)'] {"One message": ["%d スオテテアキオテ"], "One file": ["%(count)s カケシオテ"]}
+   zh: check 1 ['One file: invented placeholder %(count)s (not in source)'] {"One message": ["%d 大了说说的我了说"], "One file": ["%(count)s 人有中了说"]}
+   ko: check 1 ['One file: invented placeholder %(count)s (not in source)'] {"One message": ["%d 파마머머가사마머"], "One file": ["%(count)s 바자타마머"]}
+   ar: check 1 ['One file: invented placeholder %(count)s (not in source)', 'One file (plural): lost placeholder %(count)s'] {"One message": ["%d شجغغاخجغ ze", "ضصج شجغغاخج", "%d شجغغاخجغ tw", "%d شجغغاخجغ fe", "%d شجغغاخجغ ma", "%d شجغغاخجغ"], "One file": ["%(count)s حذسجغ ze", "ضصج حذسج", "%(count)s حذسجغ tw", "%(count)s حذسجغ fe", "%(count)s حذسجغ ma", "%(count)s حذسجغ"]}
+   pl: check 0 [] {"One message": ["enoy egassemy", "%d segassemy fe", "%d segassemy ma"], "One file": ["enoy elify", "%(count)s selify fe", "%(count)s selify ma"]}
+# stopped pids 11728 12492 4304: rc [1, 1, 1]

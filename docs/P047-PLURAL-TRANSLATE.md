@@ -654,6 +654,174 @@ Not verified: a real model (how often it writes `#`, keeps `=0`, drops a form) �
 probe; the refund path for a language that really fails (unchanged, only its unit tests ran);
 MCP end to end with the real SDK; the server CI (off).
 
+## Round 5: critic round 4 (NOT ACCEPTED, B6 + B7) and what changed
+
+Verdict: `ops-logs/critic-p047-1121/round4/VERDICT.md`. Four rounds in a row found a new blocker,
+each in a new path where the server rewrites the model's answer. The rule of this round:
+**new behaviour only where it is plainly right; where in doubt, byte for byte what 0.2.46 + the
+production server (94114a89) gives — same file, same money, same exit code. An old client (no
+`plurals=cldr`) gets production's answer byte for byte.** And a gate that holds every later
+change to it: `harness/diff_gate.py` (below).
+
+Every fix was first seen failing on the round-4 heads (cli fee2152, server 4ed9257c): server
+`backend/tests/test_plurals_critic_round5.py` 26 failed / 7 passed when written
+(i18n_tool `docs/p047/r5/server-r5-test-red-4ed9257c.txt`), the final file 27 failed / 8 passed
+there (`server-r5-test-red-4ed9257c-final-tests.txt`: the 8 are guards that must hold on both);
+CLI `tests/test_only_new_charges_once.py` 8 failed / 1 passed (`r5/cli-b7-test-red-fee2152.txt`,
+same with the final file: `cli-b7-test-red-fee2152-final-tests.txt`).
+
+### B6: a Django / brace `.po` passes check 0.2.46 and 0.2.47
+
+Was: "One file" / "%(count)s files" (python-format; also `%(count)d`, python-brace `{count}`):
+ja/zh/ko/vi/th/id/ms got "%(count)s ファイル" in their one slot, Arabic a form with the number in
+msgstr[0] (zero) and one without it in msgstr[1]. `check` compares msgstr[0] with the msgid and the
+rest with msgid_plural, and leaves the number out only where it is a lone printf integer
+(`lone_count_to_hash`); so both 0.2.46 and 0.2.47 called the file translate had just written
+broken. The same held, found on the way, for c-format "One message from %s" / "%d messages from
+%s" (two printf conversions: `%d` is not lone).
+
+Choice: the server, not check (the critic's option b). Teaching check 0.2.47 to read `%(count)s`
+softly (option a) leaves every Action that pins `kaeris check` 0.2.46 red on a file it accepted
+before. Rule (`translator._po_slot_check_fault`, called from `_po_old_way`): an entry is laid out
+slot by slot only when every slot passes the placeholder comparison check makes for it —
+msgstr[0] against msgid, the rest against msgid_plural, a lone printf integer optional in
+msgstr[0] and in a slot one number picks (`_po_single_slots`). Otherwise the entry goes as before
+0.2.47 and the run says which slot and why ("msgstr[0] (zero) would not pass `kaeris check`
+(invented placeholder %(count)s (not in source)); written as before 0.2.47: …"). A one-slot
+language keeps the singular, as 0.2.46 ("…; msgstr[0] holds the singular, as before 0.2.47").
+Since 0.2.47's softer reading covers only the lone printf integer, a slot that passes here passes
+check 0.2.46 too — except a single-number slot without `%d` (Arabic msgstr[1]/[2], Hebrew
+msgstr[1]), which the notes tell (diff_gate tag `po-single-slot-046`). Polish/Russian/Hebrew
+Django entries keep their own forms (test).
+
+### B7: `--only-new` pays for completing a set once
+
+Was: a set the server cannot complete (unbalanced brace, ICU select inside, the model losing
+`many`, `#` where `{{count, number}}` cannot be named) was sent whole and charged on every run.
+
+Now (py; npm has no `--only-new`):
+- `check.plural_set_foldable`: a set is sent to be completed only when the server folds it —
+  every form plain text, balanced braces, no ICU block, no `#` of its own. Held to the server's
+  own `_fold_plurals` by `test_detector_parity.py::test_the_sets_only_new_completes_are_the_sets_the_server_folds`
+  (11 cases, beside the backend);
+- a set sent whole that still lacks a form after the merge is written into `kaeris.lock`
+  (`plural_incomplete`: {lang: {set: sha256 of its source forms}}) and not sent to be completed
+  again until its source changes; translate says so once ("the server did not add every form pl
+  needs to 1 plural set(s) (c); not sent again until its source changes — `kaeris check` names
+  the forms"). An older client ignores the field (and drops it on rewrite; so does the kaeris-mcp
+  incremental writer): the next 0.2.47 run then tries those sets once more;
+- a set beside an edited form goes whole only where that buys a form (the server adds forms,
+  the language needs one the set's source lacks): German or Japanese send the edited key alone,
+  as 0.2.46; so does any language on a server without `plural_forms` (before: the whole set,
+  more money than 0.2.46 on production).
+Critic `s16`/`s17` rerun (`r5/critic4/after-s16.txt`, `after-s17.txt`): runs 2 and 3 "up to
+date", 0 calls, as 0.2.46; notes ("What it costs") say it.
+
+### Before release, items 1–3
+
+1. **Old client, new server.** `_echoed` (the echo of the source fold) is only for the new folds
+   (JSON/YAML/ARB sets, `.po`): Android and Fluent keep production's rule for every client; ja
+   Android writes `other` only again. diff_gate: every old-client comparison identical (below).
+2. **A `#` of the source's own** ("{{count}} posts in #general"): the set (or `.po` entry) is not
+   folded — key by key, as 0.2.46, no new forms (`_fold_plurals`, `_fold_po_groups`). The CLI
+   does not send such a set to be completed (`plural_set_foldable`).
+3. **A language the second try translated is delivered.** The main pass no longer judges the new
+   folds (`_translate_lang(quality_skip=...)`): an answer that leaves one out goes form by form
+   anyway. After that second try fails, the language is judged on every source key as it now
+   stands — the verdict 0.2.46 gave the same keys sent one by one: a file of plurals left in
+   English is failed (not delivered, not charged, exit 3), two `_zero` keys among many are not
+   (round 3's s8 stays delivered). Critic `s18` missfold: exit 0, ja/zh/ko/ar/pl delivered, check 0.
+
+### Small things of round 4
+
+- A right answer equal to its source ("{{count}} km" in German): no "source text was kept" when
+  the set came back from its form-by-form try (`_plural_gaps(redone=...)`). The two extra calls
+  stay: an identical answer cannot be told from an echo.
+- `.po` `{count}` with a `#` answer: no false "placeholder {count} appears 2× in source" (QA words
+  drop the count's arity measured on the fold).
+- `%(num)d` in both forms with a `#` answer: not changed — the entry goes as before 0.2.47 and is
+  named (no new behaviour where it is not needed).
+- A second try that fails with HTTP 500: delivered and charged when the rest of the language is
+  translated (the forms keep the source text, named), failed and not charged when the language
+  reads as untranslated — in the notes now.
+- kaeris-mcp version and its `.mcpb` bundle: bumped and rebuilt at its own release (checklist
+  step 5), not in this package.
+
+### The gate: `harness/diff_gate.py`
+
+One script, three servers and three stubs started and stopped by PID, $0. Cells: 9 formats
+(i18next, nested JSON, Rails YAML, `.po` printf / python-format / brace, Android XML, Fluent, ICU
+in JSON; their sources hold `{{count}}`, `{{ count }}`, `{{count, number}}`, `%d`, `%1$d`,
+`%(count)s`/`%(count)d`/`%(num)d`, `{count}`, `%{count}`, `{ $count }`, a literal `#`, a second
+shared placeholder, a singular without the number, `_zero`, an ordinal set) × 9 languages (de pl
+ru ar lv he ja zh ko; cy is refused by the server and compared on its own) × 12 stub modes
+(normal, dropzero, drop:zero/one/two/few/many, hashall, missfold, echo:file, empty, fail500repeat
+= a request the stub has already answered in this cell fails with HTTP 500, i.e. every retry of the
+same request). Servers get the same env each: a keyless allowance large enough for the gate, and
+the provider breaker off (3 failures in a row close the process to every job for 60 s, which would
+carry one cell's 500s into the next cells). Each cell: new→new, 046→prod,
+046→new; the language's file byte for byte, `kaeris check --json` of 0.2.46 and of this tree, and
+per run the exit code and the receipt's metered characters. `--only-new` on JSON: twice from an
+empty target (the second run must charge 0 and change nothing), and the upgrade (this CLI twice
+on the target and lock 0.2.46 wrote: the first may complete sets, the second must charge 0).
+046→new must equal 046→prod in everything. new→new may differ from 046→prod only as one of the
+`INTENDED` entries, each with its guard (only plural keys/entries differ, header and other
+entries identical, no key lost, check 0.2.46 and 0.2.47 report nothing the 0.2.46 file did not).
+
+Result (`r5/diff-gate.txt`, cli 438d9cf + this harness, server 341cab93 vs 94114a89, 5005 s):
+
+    # intended by tag: {"cldr-forms": 252, "onlynew-complete": 22, "po-slots": 199, "po-slots+po-single-slot-046": 5}
+    # old client -> new server: 1449 comparisons, 0 differences
+    TOTAL 2916 cells + 486 runs, 478 intended, 0 unintended (5005s)
+
+Every `--only-new` second run (fresh and upgrade) charged 0 and changed nothing; cy was refused
+alike by all three. `po-single-slot-046` = Arabic c-format "One message" msgstr[1] without `%d`
+(check 0.2.46 only), the case the notes name.
+
+The first full run (`r5/diff-gate-run1-fail500after1.txt`) had a stricter 500 mode,
+`fail500after1` (every request of a language after its first fails) and the breaker on: 0
+unintended in the other 11 modes; in that mode the new path's second try (an entry going as
+before 0.2.47, e.g. Arabic "One message from %s") failed where 0.2.46 needed no second request,
+the entry kept the source text (named), and the extra 500s tripped the provider breaker, so the
+cells after it got HTTP 503. That is the known cost of the form-by-form fallback (notes: "When a
+plural has to be translated form by form and that second try fails…"), not hidden. Eight rows
+there were the harness's own sanity flag on 0.2.46 writing nothing with exit 0 (`--only-new`, ICU
+JSON, model leaving every plural out / empty replies — the same in all three pairings); the flag
+now fires only on a refused request.
+
+### Result (round 5)
+
+On cli 438d9cf (+ these docs and harness) and server 341cab93 (+ docs), raw in `docs/p047/r5/`:
+- diff gate: above, 0 unintended, old client 0 differences.
+- critic round 4 harness (`runner4.py`, $0) on the round-5 heads, `r5/critic4/after-s10..s18.txt`
+  (before: `before-*.txt` on fee2152 + 4ed9257c): s12 Django — every language check 0.2.46 and
+  0.2.47 exit 0 but Arabic c-format "One page" for check 0.2.46 (named in the notes); s16/s17 —
+  runs 2 and 3 "up to date", 0 calls; s18 — missfold delivered, exit 0, ja/zh/ko/ar/pl check 0;
+  s15 — 56/56 identical (was 54/56); s11 — de check 0 with "#general", no `#` left; s13 — no
+  "source text was kept" for "{{count}} km".
+- critic round 3 harness (`runner3.py`), `r5/critic3/after-s1..s9.txt`: s1 84 zero-own (12 = the
+  mode where the model never translates zero: source text, named); s2 96/96 check exit 0; s5 16/16
+  identical; s6/s7 8/8 check exit 0; s8 "Wrote 2", 260 = 260 charged; s9 the B4 line printed.
+- e2e `r5/e2e-matrix.txt` 134/134 GREEN; `r5/compat.txt` 54/54 GREEN (cand = new = these heads).
+- CLI py `r5/cli-py-full.txt`, npm `r5/cli-npm-full.txt`, parity beside the server
+  `r5/cli-parity-with-server.txt` (0 skipped).
+- Server (i18n_tool `docs/p047/r5/`): plural tests `server-plural-tests-green.txt` 134 passed, 3
+  xfailed; MCP `mcp-tests-green.txt` 98 passed / 8 skipped (no SDK) and kaeris-mcp 44 passed / 4
+  skipped; full pytest 4 groups `full-pytest-compare-94114a89-vs-branch.txt`: 942 vs 941 failing
+  ids, NEW 0, GONE 1 (the base worktree has no `cli/` beside its backend).
+- The ~165 ids (exactly 188 new, 23 gone between round 3 and round 4): i18n_tool
+  `docs/p047/r5/ids-new-since-r3.txt`, each with its status base/branch in the split run, the 31
+  files run alone (`rerun-*-files165.txt`) and the same with a made-up provider key; 148 say
+  "OPENROUTER_API_KEY not configured" (the shell of round 4 and 5 has no provider key; round 3's
+  raw output has none of these), 28 pass when their file runs alone, 2 are uvicorn log lines, 10
+  other (tier limits answered 500, fixture teardown); with the made-up key 186/188 pass on both
+  sides. Same status on base and branch in all three runs: 187/188, the one differing fails on
+  the base only (no `cli/` there).
+
+Not verified: a real model (how often it writes `#`, keeps `=0`, drops a form) — needs a paid
+probe; the refund path end to end; MCP with the real SDK; the server CI (off for billing); npm
+`--only-new` (not in the npm package).
+
 ## vs the leaders (missing plural forms when machine-translating)
 
 From the vendors' documentation (21.11, web; nothing run, no accounts):

@@ -1,0 +1,2 @@
+$ (cli 438d9cf as <i18n_tool 2d1bc510>/cli, KAERIS_BACKEND=../backend) venv-python -m pytest -q -rs tests/test_detector_parity.py tests/test_formats_match_the_server.py tests/test_po_single_number_slots.py tests/test_translate_completes_plural_sets.py tests/test_plural_tables_snapshot.py tests/test_only_new_charges_once.py
+99 passed in 5.71s

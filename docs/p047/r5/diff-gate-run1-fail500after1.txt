@@ -1,0 +1,553 @@
+# diff_gate 2026-11-21 15:34; langs ['de', 'pl', 'ru', 'ar', 'lv', 'he', 'ja', 'zh', 'ko'] (+cy refused); modes normal,dropzero,drop:zero,drop:one,drop:two,drop:few,drop:many,hashall,missfold,echo:file,empty,fail500after1; formats i18next,nested,rails,po-printf,po-python,po-brace,android,fluent,icu-json
+# intended differences (anything else is red):
+#   cldr-forms: a JSON/YAML plural set gets the forms its target language needs that the source lacks (pl/ru few+many, ar zero..many, lv zero, he two): new keys beside the set, the set's own forms written from the one folded answer. Guard: only keys of plural sets differ, no key is lost, check 0.2.46 and 0.2.47 report nothing the 0.2.46 file did not have
+#   po-slots: a .po plural entry laid out slot by slot in the target's Plural-Forms order (pl msgstr[2] is the many form; ar six own forms; ja/zh/ko one slot = the plural form where a lone %d lets check take it). Guard: header and every non-plural entry byte-identical, check 0.2.47 reports nothing new, check 0.2.46 nothing new but po-single-slot-046
+#   po-single-slot-046: Arabic/Hebrew msgstr[1]/[2] (a slot one number picks) without %d: check 0.2.46 calls it a lost placeholder, 0.2.47 reads it (release notes, 'The reverse is not true')
+#   onlynew-complete: --only-new by this CLI on a target 0.2.46 wrote: a set that lacks a form its language needs is sent once, whole, and charged; written with every form (cldr-forms guard on the file). The next run must charge nothing
+# pids 20668 22964 23456 15480 8184 22324
+# server nn (341cab93) up, plural_forms='cldr'
+# server on (341cab93) up, plural_forms='cldr'
+# server op (94114a89) up, plural_forms=None
+# cli new = C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121 (438d9cf)
+# cli 046 = C:\Users\Inzagi\AppData\Local\Temp\claude\a43205edf0b1eb40\903282ca-0cef-4a65-881b-d4ad1fba7558\scratchpad\r5\cli046 (d5535f0)
+## mode normal
+  [intended] cell normal        i18next   nn~op pl <cldr-forms>
+  [intended] cell normal        i18next   nn~op ru <cldr-forms>
+  [intended] cell normal        i18next   nn~op ar <cldr-forms>
+  [intended] cell normal        i18next   nn~op lv <cldr-forms>
+  [intended] cell normal        i18next   nn~op he <cldr-forms>
+  [intended] cell normal        i18next/on1   nn~op pl <cldr-forms>
+  [intended] cell normal        i18next/on1   nn~op ru <cldr-forms>
+  [intended] cell normal        i18next/on1   nn~op ar <cldr-forms>
+  [intended] cell normal        i18next/on1   nn~op lv <cldr-forms>
+  [intended] cell normal        i18next/on1   nn~op he <cldr-forms>
+  [intended] run normal        i18next/up1   nn~op <onlynew-complete>: exit 0 vs 0, charged 1242 vs 0
+  [intended] cell normal        i18next/up1   nn~op pl <cldr-forms>
+  [intended] cell normal        i18next/up1   nn~op ru <cldr-forms>
+  [intended] cell normal        i18next/up1   nn~op ar <cldr-forms>
+  [intended] cell normal        i18next/up1   nn~op lv <cldr-forms>
+  [intended] cell normal        i18next/up1   nn~op he <cldr-forms>
+  [intended] cell normal        nested    nn~op pl <cldr-forms>
+  [intended] cell normal        nested    nn~op ru <cldr-forms>
+  [intended] cell normal        nested    nn~op ar <cldr-forms>
+  [intended] cell normal        nested    nn~op lv <cldr-forms>
+  [intended] cell normal        nested    nn~op he <cldr-forms>
+  [intended] cell normal        nested/on1    nn~op pl <cldr-forms>
+  [intended] cell normal        nested/on1    nn~op ru <cldr-forms>
+  [intended] cell normal        nested/on1    nn~op ar <cldr-forms>
+  [intended] cell normal        nested/on1    nn~op lv <cldr-forms>
+  [intended] cell normal        nested/on1    nn~op he <cldr-forms>
+  [intended] run normal        nested/up1    nn~op <onlynew-complete>: exit 0 vs 0, charged 670 vs 0
+  [intended] cell normal        nested/up1    nn~op pl <cldr-forms>
+  [intended] cell normal        nested/up1    nn~op ru <cldr-forms>
+  [intended] cell normal        nested/up1    nn~op ar <cldr-forms>
+  [intended] cell normal        nested/up1    nn~op lv <cldr-forms>
+  [intended] cell normal        nested/up1    nn~op he <cldr-forms>
+  [intended] cell normal        rails     nn~op pl <cldr-forms>
+  [intended] cell normal        rails     nn~op ru <cldr-forms>
+  [intended] cell normal        rails     nn~op ar <cldr-forms>
+  [intended] cell normal        rails     nn~op lv <cldr-forms>
+  [intended] cell normal        rails     nn~op he <cldr-forms>
+  [intended] cell normal        po-printf nn~op pl <po-slots>
+  [intended] cell normal        po-printf nn~op ru <po-slots>
+  [intended] cell normal        po-printf nn~op ar <po-slots+po-single-slot-046>
+  [intended] cell normal        po-printf nn~op lv <po-slots>
+  [intended] cell normal        po-printf nn~op he <po-slots>
+  [intended] cell normal        po-printf nn~op ja <po-slots>
+  [intended] cell normal        po-printf nn~op zh <po-slots>
+  [intended] cell normal        po-printf nn~op ko <po-slots>
+  [intended] cell normal        po-python nn~op pl <po-slots>
+  [intended] cell normal        po-python nn~op ru <po-slots>
+  [intended] cell normal        po-python nn~op ar <po-slots>
+  [intended] cell normal        po-python nn~op lv <po-slots>
+  [intended] cell normal        po-python nn~op he <po-slots>
+  [intended] cell normal        po-python nn~op ja <po-slots>
+  [intended] cell normal        po-python nn~op zh <po-slots>
+  [intended] cell normal        po-python nn~op ko <po-slots>
+  [intended] cell normal        po-brace  nn~op pl <po-slots>
+  [intended] cell normal        po-brace  nn~op ru <po-slots>
+  [intended] cell normal        po-brace  nn~op ar <po-slots>
+  [intended] cell normal        po-brace  nn~op lv <po-slots>
+  [intended] cell normal        po-brace  nn~op he <po-slots>
+  [intended] cell normal        po-brace  nn~op ja <po-slots>
+  [intended] cell normal        po-brace  nn~op zh <po-slots>
+  [intended] cell normal        po-brace  nn~op ko <po-slots>
+## mode dropzero
+  [intended] cell dropzero      i18next   nn~op pl <cldr-forms>
+  [intended] cell dropzero      i18next   nn~op ru <cldr-forms>
+  [intended] cell dropzero      i18next   nn~op ar <cldr-forms>
+  [intended] cell dropzero      i18next   nn~op lv <cldr-forms>
+  [intended] cell dropzero      i18next   nn~op he <cldr-forms>
+  [intended] cell dropzero      i18next/on1   nn~op pl <cldr-forms>
+  [intended] cell dropzero      i18next/on1   nn~op ru <cldr-forms>
+  [intended] cell dropzero      i18next/on1   nn~op ar <cldr-forms>
+  [intended] cell dropzero      i18next/on1   nn~op lv <cldr-forms>
+  [intended] cell dropzero      i18next/on1   nn~op he <cldr-forms>
+  [intended] run dropzero      i18next/up1   nn~op <onlynew-complete>: exit 0 vs 0, charged 1242 vs 0
+  [intended] cell dropzero      i18next/up1   nn~op pl <cldr-forms>
+  [intended] cell dropzero      i18next/up1   nn~op ru <cldr-forms>
+  [intended] cell dropzero      i18next/up1   nn~op ar <cldr-forms>
+  [intended] cell dropzero      i18next/up1   nn~op lv <cldr-forms>
+  [intended] cell dropzero      i18next/up1   nn~op he <cldr-forms>
+  [intended] cell dropzero      nested    nn~op pl <cldr-forms>
+  [intended] cell dropzero      nested    nn~op ru <cldr-forms>
+  [intended] cell dropzero      nested    nn~op ar <cldr-forms>
+  [intended] cell dropzero      nested    nn~op lv <cldr-forms>
+  [intended] cell dropzero      nested    nn~op he <cldr-forms>
+  [intended] cell dropzero      nested/on1    nn~op pl <cldr-forms>
+  [intended] cell dropzero      nested/on1    nn~op ru <cldr-forms>
+  [intended] cell dropzero      nested/on1    nn~op ar <cldr-forms>
+  [intended] cell dropzero      nested/on1    nn~op lv <cldr-forms>
+  [intended] cell dropzero      nested/on1    nn~op he <cldr-forms>
+  [intended] run dropzero      nested/up1    nn~op <onlynew-complete>: exit 0 vs 0, charged 670 vs 0
+  [intended] cell dropzero      nested/up1    nn~op pl <cldr-forms>
+  [intended] cell dropzero      nested/up1    nn~op ru <cldr-forms>
+  [intended] cell dropzero      nested/up1    nn~op ar <cldr-forms>
+  [intended] cell dropzero      nested/up1    nn~op lv <cldr-forms>
+  [intended] cell dropzero      nested/up1    nn~op he <cldr-forms>
+  [intended] cell dropzero      rails     nn~op pl <cldr-forms>
+  [intended] cell dropzero      rails     nn~op ru <cldr-forms>
+  [intended] cell dropzero      rails     nn~op ar <cldr-forms>
+  [intended] cell dropzero      rails     nn~op lv <cldr-forms>
+  [intended] cell dropzero      rails     nn~op he <cldr-forms>
+  [intended] cell dropzero      po-printf nn~op pl <po-slots>
+  [intended] cell dropzero      po-printf nn~op ru <po-slots>
+  [intended] cell dropzero      po-printf nn~op ar <po-slots+po-single-slot-046>
+  [intended] cell dropzero      po-printf nn~op lv <po-slots>
+  [intended] cell dropzero      po-printf nn~op he <po-slots>
+  [intended] cell dropzero      po-printf nn~op ja <po-slots>
+  [intended] cell dropzero      po-printf nn~op zh <po-slots>
+  [intended] cell dropzero      po-printf nn~op ko <po-slots>
+  [intended] cell dropzero      po-python nn~op pl <po-slots>
+  [intended] cell dropzero      po-python nn~op ru <po-slots>
+  [intended] cell dropzero      po-python nn~op ar <po-slots>
+  [intended] cell dropzero      po-python nn~op lv <po-slots>
+  [intended] cell dropzero      po-python nn~op he <po-slots>
+  [intended] cell dropzero      po-python nn~op ja <po-slots>
+  [intended] cell dropzero      po-python nn~op zh <po-slots>
+  [intended] cell dropzero      po-python nn~op ko <po-slots>
+  [intended] cell dropzero      po-brace  nn~op pl <po-slots>
+  [intended] cell dropzero      po-brace  nn~op ru <po-slots>
+  [intended] cell dropzero      po-brace  nn~op ar <po-slots>
+  [intended] cell dropzero      po-brace  nn~op lv <po-slots>
+  [intended] cell dropzero      po-brace  nn~op he <po-slots>
+  [intended] cell dropzero      po-brace  nn~op ja <po-slots>
+  [intended] cell dropzero      po-brace  nn~op zh <po-slots>
+  [intended] cell dropzero      po-brace  nn~op ko <po-slots>
+## mode drop:zero
+  [intended] cell drop:zero     i18next   nn~op pl <cldr-forms>
+  [intended] cell drop:zero     i18next   nn~op ru <cldr-forms>
+  [intended] cell drop:zero     i18next   nn~op ar <cldr-forms>
+  [intended] cell drop:zero     i18next   nn~op he <cldr-forms>
+  [intended] cell drop:zero     i18next/on1   nn~op pl <cldr-forms>
+  [intended] cell drop:zero     i18next/on1   nn~op ru <cldr-forms>
+  [intended] cell drop:zero     i18next/on1   nn~op ar <cldr-forms>
+  [intended] cell drop:zero     i18next/on1   nn~op he <cldr-forms>
+  [intended] run drop:zero     i18next/up1   nn~op <onlynew-complete>: exit 0 vs 0, charged 1242 vs 0
+  [intended] cell drop:zero     i18next/up1   nn~op pl <cldr-forms>
+  [intended] cell drop:zero     i18next/up1   nn~op ru <cldr-forms>
+  [intended] cell drop:zero     i18next/up1   nn~op ar <cldr-forms>
+  [intended] cell drop:zero     i18next/up1   nn~op he <cldr-forms>
+  [intended] cell drop:zero     nested    nn~op pl <cldr-forms>
+  [intended] cell drop:zero     nested    nn~op ru <cldr-forms>
+  [intended] cell drop:zero     nested    nn~op ar <cldr-forms>
+  [intended] cell drop:zero     nested    nn~op he <cldr-forms>
+  [intended] cell drop:zero     nested/on1    nn~op pl <cldr-forms>
+  [intended] cell drop:zero     nested/on1    nn~op ru <cldr-forms>
+  [intended] cell drop:zero     nested/on1    nn~op ar <cldr-forms>
+  [intended] cell drop:zero     nested/on1    nn~op he <cldr-forms>
+  [intended] run drop:zero     nested/up1    nn~op <onlynew-complete>: exit 0 vs 0, charged 670 vs 0
+  [intended] cell drop:zero     nested/up1    nn~op pl <cldr-forms>
+  [intended] cell drop:zero     nested/up1    nn~op ru <cldr-forms>
+  [intended] cell drop:zero     nested/up1    nn~op ar <cldr-forms>
+  [intended] cell drop:zero     nested/up1    nn~op he <cldr-forms>
+  [intended] cell drop:zero     rails     nn~op pl <cldr-forms>
+  [intended] cell drop:zero     rails     nn~op ru <cldr-forms>
+  [intended] cell drop:zero     rails     nn~op ar <cldr-forms>
+  [intended] cell drop:zero     rails     nn~op he <cldr-forms>
+  [intended] cell drop:zero     po-printf nn~op pl <po-slots>
+  [intended] cell drop:zero     po-printf nn~op ru <po-slots>
+  [intended] cell drop:zero     po-printf nn~op he <po-slots>
+  [intended] cell drop:zero     po-printf nn~op ja <po-slots>
+  [intended] cell drop:zero     po-printf nn~op zh <po-slots>
+  [intended] cell drop:zero     po-printf nn~op ko <po-slots>
+  [intended] cell drop:zero     po-python nn~op pl <po-slots>
+  [intended] cell drop:zero     po-python nn~op ru <po-slots>
+  [intended] cell drop:zero     po-python nn~op he <po-slots>
+  [intended] cell drop:zero     po-python nn~op ja <po-slots>
+  [intended] cell drop:zero     po-python nn~op zh <po-slots>
+  [intended] cell drop:zero     po-python nn~op ko <po-slots>
+  [intended] cell drop:zero     po-brace  nn~op pl <po-slots>
+  [intended] cell drop:zero     po-brace  nn~op ru <po-slots>
+  [intended] cell drop:zero     po-brace  nn~op he <po-slots>
+  [intended] cell drop:zero     po-brace  nn~op ja <po-slots>
+  [intended] cell drop:zero     po-brace  nn~op zh <po-slots>
+  [intended] cell drop:zero     po-brace  nn~op ko <po-slots>
+## mode drop:one
+  [intended] run drop:one      i18next/up1   nn~op <onlynew-complete>: exit 0 vs 0, charged 1242 vs 0
+  [intended] run drop:one      nested/up1    nn~op <onlynew-complete>: exit 0 vs 0, charged 670 vs 0
+  [intended] cell drop:one      po-printf nn~op ja <po-slots>
+  [intended] cell drop:one      po-printf nn~op zh <po-slots>
+  [intended] cell drop:one      po-printf nn~op ko <po-slots>
+  [intended] cell drop:one      po-python nn~op ja <po-slots>
+  [intended] cell drop:one      po-python nn~op zh <po-slots>
+  [intended] cell drop:one      po-python nn~op ko <po-slots>
+  [intended] cell drop:one      po-brace  nn~op ja <po-slots>
+  [intended] cell drop:one      po-brace  nn~op zh <po-slots>
+  [intended] cell drop:one      po-brace  nn~op ko <po-slots>
+## mode drop:two
+  [intended] cell drop:two      i18next   nn~op pl <cldr-forms>
+  [intended] cell drop:two      i18next   nn~op ru <cldr-forms>
+  [intended] cell drop:two      i18next   nn~op lv <cldr-forms>
+  [intended] cell drop:two      i18next/on1   nn~op pl <cldr-forms>
+  [intended] cell drop:two      i18next/on1   nn~op ru <cldr-forms>
+  [intended] cell drop:two      i18next/on1   nn~op lv <cldr-forms>
+  [intended] run drop:two      i18next/up1   nn~op <onlynew-complete>: exit 0 vs 0, charged 1242 vs 0
+  [intended] cell drop:two      i18next/up1   nn~op pl <cldr-forms>
+  [intended] cell drop:two      i18next/up1   nn~op ru <cldr-forms>
+  [intended] cell drop:two      i18next/up1   nn~op lv <cldr-forms>
+  [intended] cell drop:two      nested    nn~op pl <cldr-forms>
+  [intended] cell drop:two      nested    nn~op ru <cldr-forms>
+  [intended] cell drop:two      nested    nn~op lv <cldr-forms>
+  [intended] cell drop:two      nested/on1    nn~op pl <cldr-forms>
+  [intended] cell drop:two      nested/on1    nn~op ru <cldr-forms>
+  [intended] cell drop:two      nested/on1    nn~op lv <cldr-forms>
+  [intended] run drop:two      nested/up1    nn~op <onlynew-complete>: exit 0 vs 0, charged 670 vs 0
+  [intended] cell drop:two      nested/up1    nn~op pl <cldr-forms>
+  [intended] cell drop:two      nested/up1    nn~op ru <cldr-forms>
+  [intended] cell drop:two      nested/up1    nn~op lv <cldr-forms>
+  [intended] cell drop:two      rails     nn~op pl <cldr-forms>
+  [intended] cell drop:two      rails     nn~op ru <cldr-forms>
+  [intended] cell drop:two      rails     nn~op lv <cldr-forms>
+  [intended] cell drop:two      po-printf nn~op pl <po-slots>
+  [intended] cell drop:two      po-printf nn~op ru <po-slots>
+  [intended] cell drop:two      po-printf nn~op lv <po-slots>
+  [intended] cell drop:two      po-printf nn~op ja <po-slots>
+  [intended] cell drop:two      po-printf nn~op zh <po-slots>
+  [intended] cell drop:two      po-printf nn~op ko <po-slots>
+  [intended] cell drop:two      po-python nn~op pl <po-slots>
+  [intended] cell drop:two      po-python nn~op ru <po-slots>
+  [intended] cell drop:two      po-python nn~op lv <po-slots>
+  [intended] cell drop:two      po-python nn~op ja <po-slots>
+  [intended] cell drop:two      po-python nn~op zh <po-slots>
+  [intended] cell drop:two      po-python nn~op ko <po-slots>
+  [intended] cell drop:two      po-brace  nn~op pl <po-slots>
+  [intended] cell drop:two      po-brace  nn~op ru <po-slots>
+  [intended] cell drop:two      po-brace  nn~op lv <po-slots>
+  [intended] cell drop:two      po-brace  nn~op ja <po-slots>
+  [intended] cell drop:two      po-brace  nn~op zh <po-slots>
+  [intended] cell drop:two      po-brace  nn~op ko <po-slots>
+## mode drop:few
+  [intended] cell drop:few      i18next   nn~op lv <cldr-forms>
+  [intended] cell drop:few      i18next   nn~op he <cldr-forms>
+  [intended] cell drop:few      i18next/on1   nn~op lv <cldr-forms>
+  [intended] cell drop:few      i18next/on1   nn~op he <cldr-forms>
+  [intended] run drop:few      i18next/up1   nn~op <onlynew-complete>: exit 0 vs 0, charged 1242 vs 0
+  [intended] cell drop:few      i18next/up1   nn~op lv <cldr-forms>
+  [intended] cell drop:few      i18next/up1   nn~op he <cldr-forms>
+  [intended] cell drop:few      nested    nn~op lv <cldr-forms>
+  [intended] cell drop:few      nested    nn~op he <cldr-forms>
+  [intended] cell drop:few      nested/on1    nn~op lv <cldr-forms>
+  [intended] cell drop:few      nested/on1    nn~op he <cldr-forms>
+  [intended] run drop:few      nested/up1    nn~op <onlynew-complete>: exit 0 vs 0, charged 670 vs 0
+  [intended] cell drop:few      nested/up1    nn~op lv <cldr-forms>
+  [intended] cell drop:few      nested/up1    nn~op he <cldr-forms>
+  [intended] cell drop:few      rails     nn~op lv <cldr-forms>
+  [intended] cell drop:few      rails     nn~op he <cldr-forms>
+  [intended] cell drop:few      po-printf nn~op lv <po-slots>
+  [intended] cell drop:few      po-printf nn~op he <po-slots>
+  [intended] cell drop:few      po-printf nn~op ja <po-slots>
+  [intended] cell drop:few      po-printf nn~op zh <po-slots>
+  [intended] cell drop:few      po-printf nn~op ko <po-slots>
+  [intended] cell drop:few      po-python nn~op lv <po-slots>
+  [intended] cell drop:few      po-python nn~op he <po-slots>
+  [intended] cell drop:few      po-python nn~op ja <po-slots>
+  [intended] cell drop:few      po-python nn~op zh <po-slots>
+  [intended] cell drop:few      po-python nn~op ko <po-slots>
+  [intended] cell drop:few      po-brace  nn~op lv <po-slots>
+  [intended] cell drop:few      po-brace  nn~op he <po-slots>
+  [intended] cell drop:few      po-brace  nn~op ja <po-slots>
+  [intended] cell drop:few      po-brace  nn~op zh <po-slots>
+  [intended] cell drop:few      po-brace  nn~op ko <po-slots>
+## mode drop:many
+  [intended] cell drop:many     i18next   nn~op lv <cldr-forms>
+  [intended] cell drop:many     i18next   nn~op he <cldr-forms>
+  [intended] cell drop:many     i18next/on1   nn~op lv <cldr-forms>
+  [intended] cell drop:many     i18next/on1   nn~op he <cldr-forms>
+  [intended] run drop:many     i18next/up1   nn~op <onlynew-complete>: exit 0 vs 0, charged 1242 vs 0
+  [intended] cell drop:many     i18next/up1   nn~op lv <cldr-forms>
+  [intended] cell drop:many     i18next/up1   nn~op he <cldr-forms>
+  [intended] cell drop:many     nested    nn~op lv <cldr-forms>
+  [intended] cell drop:many     nested    nn~op he <cldr-forms>
+  [intended] cell drop:many     nested/on1    nn~op lv <cldr-forms>
+  [intended] cell drop:many     nested/on1    nn~op he <cldr-forms>
+  [intended] run drop:many     nested/up1    nn~op <onlynew-complete>: exit 0 vs 0, charged 670 vs 0
+  [intended] cell drop:many     nested/up1    nn~op lv <cldr-forms>
+  [intended] cell drop:many     nested/up1    nn~op he <cldr-forms>
+  [intended] cell drop:many     rails     nn~op lv <cldr-forms>
+  [intended] cell drop:many     rails     nn~op he <cldr-forms>
+  [intended] cell drop:many     po-printf nn~op lv <po-slots>
+  [intended] cell drop:many     po-printf nn~op he <po-slots>
+  [intended] cell drop:many     po-printf nn~op ja <po-slots>
+  [intended] cell drop:many     po-printf nn~op zh <po-slots>
+  [intended] cell drop:many     po-printf nn~op ko <po-slots>
+  [intended] cell drop:many     po-python nn~op lv <po-slots>
+  [intended] cell drop:many     po-python nn~op he <po-slots>
+  [intended] cell drop:many     po-python nn~op ja <po-slots>
+  [intended] cell drop:many     po-python nn~op zh <po-slots>
+  [intended] cell drop:many     po-python nn~op ko <po-slots>
+  [intended] cell drop:many     po-brace  nn~op lv <po-slots>
+  [intended] cell drop:many     po-brace  nn~op he <po-slots>
+  [intended] cell drop:many     po-brace  nn~op ja <po-slots>
+  [intended] cell drop:many     po-brace  nn~op zh <po-slots>
+  [intended] cell drop:many     po-brace  nn~op ko <po-slots>
+## mode hashall
+  [intended] cell hashall       i18next   nn~op pl <cldr-forms>
+  [intended] cell hashall       i18next   nn~op ru <cldr-forms>
+  [intended] cell hashall       i18next   nn~op ar <cldr-forms>
+  [intended] cell hashall       i18next   nn~op lv <cldr-forms>
+  [intended] cell hashall       i18next   nn~op he <cldr-forms>
+  [intended] cell hashall       i18next/on1   nn~op pl <cldr-forms>
+  [intended] cell hashall       i18next/on1   nn~op ru <cldr-forms>
+  [intended] cell hashall       i18next/on1   nn~op ar <cldr-forms>
+  [intended] cell hashall       i18next/on1   nn~op lv <cldr-forms>
+  [intended] cell hashall       i18next/on1   nn~op he <cldr-forms>
+  [intended] run hashall       i18next/up1   nn~op <onlynew-complete>: exit 0 vs 0, charged 1242 vs 0
+  [intended] cell hashall       i18next/up1   nn~op pl <cldr-forms>
+  [intended] cell hashall       i18next/up1   nn~op ru <cldr-forms>
+  [intended] cell hashall       i18next/up1   nn~op ar <cldr-forms>
+  [intended] cell hashall       i18next/up1   nn~op lv <cldr-forms>
+  [intended] cell hashall       i18next/up1   nn~op he <cldr-forms>
+  [intended] cell hashall       nested    nn~op pl <cldr-forms>
+  [intended] cell hashall       nested    nn~op ru <cldr-forms>
+  [intended] cell hashall       nested    nn~op ar <cldr-forms>
+  [intended] cell hashall       nested    nn~op lv <cldr-forms>
+  [intended] cell hashall       nested    nn~op he <cldr-forms>
+  [intended] cell hashall       nested/on1    nn~op pl <cldr-forms>
+  [intended] cell hashall       nested/on1    nn~op ru <cldr-forms>
+  [intended] cell hashall       nested/on1    nn~op ar <cldr-forms>
+  [intended] cell hashall       nested/on1    nn~op lv <cldr-forms>
+  [intended] cell hashall       nested/on1    nn~op he <cldr-forms>
+  [intended] run hashall       nested/up1    nn~op <onlynew-complete>: exit 0 vs 0, charged 670 vs 0
+  [intended] cell hashall       nested/up1    nn~op pl <cldr-forms>
+  [intended] cell hashall       nested/up1    nn~op ru <cldr-forms>
+  [intended] cell hashall       nested/up1    nn~op ar <cldr-forms>
+  [intended] cell hashall       nested/up1    nn~op lv <cldr-forms>
+  [intended] cell hashall       nested/up1    nn~op he <cldr-forms>
+  [intended] cell hashall       rails     nn~op pl <cldr-forms>
+  [intended] cell hashall       rails     nn~op ru <cldr-forms>
+  [intended] cell hashall       rails     nn~op ar <cldr-forms>
+  [intended] cell hashall       rails     nn~op lv <cldr-forms>
+  [intended] cell hashall       rails     nn~op he <cldr-forms>
+  [intended] cell hashall       po-printf nn~op pl <po-slots>
+  [intended] cell hashall       po-printf nn~op ru <po-slots>
+  [intended] cell hashall       po-printf nn~op ar <po-slots+po-single-slot-046>
+  [intended] cell hashall       po-printf nn~op lv <po-slots>
+  [intended] cell hashall       po-printf nn~op he <po-slots>
+  [intended] cell hashall       po-printf nn~op ja <po-slots>
+  [intended] cell hashall       po-printf nn~op zh <po-slots>
+  [intended] cell hashall       po-printf nn~op ko <po-slots>
+  [intended] cell hashall       po-python nn~op pl <po-slots>
+  [intended] cell hashall       po-python nn~op ru <po-slots>
+  [intended] cell hashall       po-python nn~op ar <po-slots>
+  [intended] cell hashall       po-python nn~op lv <po-slots>
+  [intended] cell hashall       po-python nn~op he <po-slots>
+  [intended] cell hashall       po-python nn~op ja <po-slots>
+  [intended] cell hashall       po-python nn~op zh <po-slots>
+  [intended] cell hashall       po-python nn~op ko <po-slots>
+  [intended] cell hashall       po-brace  nn~op pl <po-slots>
+  [intended] cell hashall       po-brace  nn~op ru <po-slots>
+  [intended] cell hashall       po-brace  nn~op ar <po-slots>
+  [intended] cell hashall       po-brace  nn~op lv <po-slots>
+  [intended] cell hashall       po-brace  nn~op he <po-slots>
+  [intended] cell hashall       po-brace  nn~op ja <po-slots>
+  [intended] cell hashall       po-brace  nn~op zh <po-slots>
+  [intended] cell hashall       po-brace  nn~op ko <po-slots>
+## mode missfold
+  [intended] run missfold      i18next/up1   nn~op <onlynew-complete>: exit 0 vs 0, charged 1242 vs 0
+  [intended] run missfold      nested/up1    nn~op <onlynew-complete>: exit 0 vs 0, charged 670 vs 0
+  [intended] cell missfold      po-printf nn~op ja <po-slots>
+  [intended] cell missfold      po-printf nn~op zh <po-slots>
+  [intended] cell missfold      po-printf nn~op ko <po-slots>
+  [intended] cell missfold      po-python nn~op ja <po-slots>
+  [intended] cell missfold      po-python nn~op zh <po-slots>
+  [intended] cell missfold      po-python nn~op ko <po-slots>
+  [intended] cell missfold      po-brace  nn~op ja <po-slots>
+  [intended] cell missfold      po-brace  nn~op zh <po-slots>
+  [intended] cell missfold      po-brace  nn~op ko <po-slots>
+  [RED] run missfold      icu-json/on1  op sane <harness>: exit 0, files ['kaeris.lock']; ✗ ja: no output returned | → 100%  zh  zh | ✗ zh: no output returned | ✗ ko: no output returned
+  [RED] run missfold      icu-json/up1  op sane <harness>: exit 0, files ['kaeris.lock']; ✗ ja: no output returned | → 100%  zh  zh | ✗ zh: no output returned | ✗ ko: no output returned
+## mode echo:file
+  [intended] cell echo:file     i18next   nn~op pl <cldr-forms>
+  [intended] cell echo:file     i18next   nn~op ru <cldr-forms>
+  [intended] cell echo:file     i18next   nn~op ar <cldr-forms>
+  [intended] cell echo:file     i18next   nn~op lv <cldr-forms>
+  [intended] cell echo:file     i18next   nn~op he <cldr-forms>
+  [intended] cell echo:file     i18next/on1   nn~op pl <cldr-forms>
+  [intended] cell echo:file     i18next/on1   nn~op ru <cldr-forms>
+  [intended] cell echo:file     i18next/on1   nn~op ar <cldr-forms>
+  [intended] cell echo:file     i18next/on1   nn~op lv <cldr-forms>
+  [intended] cell echo:file     i18next/on1   nn~op he <cldr-forms>
+  [intended] run echo:file     i18next/up1   nn~op <onlynew-complete>: exit 0 vs 0, charged 1242 vs 0
+  [intended] cell echo:file     i18next/up1   nn~op pl <cldr-forms>
+  [intended] cell echo:file     i18next/up1   nn~op ru <cldr-forms>
+  [intended] cell echo:file     i18next/up1   nn~op ar <cldr-forms>
+  [intended] cell echo:file     i18next/up1   nn~op lv <cldr-forms>
+  [intended] cell echo:file     i18next/up1   nn~op he <cldr-forms>
+  [intended] cell echo:file     nested    nn~op pl <cldr-forms>
+  [intended] cell echo:file     nested    nn~op ru <cldr-forms>
+  [intended] cell echo:file     nested    nn~op ar <cldr-forms>
+  [intended] cell echo:file     nested    nn~op lv <cldr-forms>
+  [intended] cell echo:file     nested    nn~op he <cldr-forms>
+  [intended] cell echo:file     nested/on1    nn~op pl <cldr-forms>
+  [intended] cell echo:file     nested/on1    nn~op ru <cldr-forms>
+  [intended] cell echo:file     nested/on1    nn~op ar <cldr-forms>
+  [intended] cell echo:file     nested/on1    nn~op lv <cldr-forms>
+  [intended] cell echo:file     nested/on1    nn~op he <cldr-forms>
+  [intended] run echo:file     nested/up1    nn~op <onlynew-complete>: exit 0 vs 0, charged 670 vs 0
+  [intended] cell echo:file     nested/up1    nn~op pl <cldr-forms>
+  [intended] cell echo:file     nested/up1    nn~op ru <cldr-forms>
+  [intended] cell echo:file     nested/up1    nn~op ar <cldr-forms>
+  [intended] cell echo:file     nested/up1    nn~op lv <cldr-forms>
+  [intended] cell echo:file     nested/up1    nn~op he <cldr-forms>
+  [intended] cell echo:file     rails     nn~op pl <cldr-forms>
+  [intended] cell echo:file     rails     nn~op ru <cldr-forms>
+  [intended] cell echo:file     rails     nn~op ar <cldr-forms>
+  [intended] cell echo:file     rails     nn~op lv <cldr-forms>
+  [intended] cell echo:file     rails     nn~op he <cldr-forms>
+  [intended] cell echo:file     po-printf nn~op pl <po-slots>
+  [intended] cell echo:file     po-printf nn~op ru <po-slots>
+  [intended] cell echo:file     po-printf nn~op ar <po-slots+po-single-slot-046>
+  [intended] cell echo:file     po-printf nn~op lv <po-slots>
+  [intended] cell echo:file     po-printf nn~op he <po-slots>
+  [intended] cell echo:file     po-printf nn~op ja <po-slots>
+  [intended] cell echo:file     po-printf nn~op zh <po-slots>
+  [intended] cell echo:file     po-printf nn~op ko <po-slots>
+  [intended] cell echo:file     po-python nn~op pl <po-slots>
+  [intended] cell echo:file     po-python nn~op ru <po-slots>
+  [intended] cell echo:file     po-python nn~op ar <po-slots>
+  [intended] cell echo:file     po-python nn~op lv <po-slots>
+  [intended] cell echo:file     po-python nn~op he <po-slots>
+  [intended] cell echo:file     po-python nn~op ja <po-slots>
+  [intended] cell echo:file     po-python nn~op zh <po-slots>
+  [intended] cell echo:file     po-python nn~op ko <po-slots>
+  [intended] cell echo:file     po-brace  nn~op pl <po-slots>
+  [intended] cell echo:file     po-brace  nn~op ru <po-slots>
+  [intended] cell echo:file     po-brace  nn~op ar <po-slots>
+  [intended] cell echo:file     po-brace  nn~op lv <po-slots>
+  [intended] cell echo:file     po-brace  nn~op he <po-slots>
+  [intended] cell echo:file     po-brace  nn~op ja <po-slots>
+  [intended] cell echo:file     po-brace  nn~op zh <po-slots>
+  [intended] cell echo:file     po-brace  nn~op ko <po-slots>
+## mode empty
+  [RED] run empty         i18next/on1   op sane <harness>: exit 0, files ['kaeris.lock']; ✗ ja: no output returned | ✗ zh: no output returned | → 100%  ko  ko | ✗ ko: no output returned
+  [RED] run empty         i18next/up1   op sane <harness>: exit 0, files ['kaeris.lock']; ✗ ja: no output returned | → 100%  ko  ko | ✗ zh: no output returned | ✗ ko: no output returned
+  [RED] run empty         nested/on1    op sane <harness>: exit 0, files ['kaeris.lock']; ✗ he: no output returned | ✗ ja: no output returned | ✗ zh: no output returned | ✗ ko: no output returned
+  [RED] run empty         nested/up1    op sane <harness>: exit 0, files ['kaeris.lock']; → 100%  ko  ko | → 100%  zh  zh | ✗ zh: no output returned | ✗ ko: no output returned
+  [RED] run empty         icu-json/on1  op sane <harness>: exit 0, files ['kaeris.lock']; → 100%  ja  ja | ✗ ja: no output returned | ✗ zh: no output returned | ✗ ko: no output returned
+  [RED] run empty         icu-json/up1  op sane <harness>: exit 0, files ['kaeris.lock']; ✗ ja: no output returned | ✗ zh: no output returned | → 100%  ko  ko | ✗ ko: no output returned
+## mode fail500after1
+  [intended] cell fail500after1 i18next   nn~op pl <cldr-forms>
+  [intended] cell fail500after1 i18next   nn~op ru <cldr-forms>
+  [intended] cell fail500after1 i18next   nn~op ar <cldr-forms>
+  [intended] cell fail500after1 i18next   nn~op lv <cldr-forms>
+  [intended] cell fail500after1 i18next   nn~op he <cldr-forms>
+  [intended] cell fail500after1 i18next/on1   nn~op pl <cldr-forms>
+  [intended] cell fail500after1 i18next/on1   nn~op ru <cldr-forms>
+  [intended] cell fail500after1 i18next/on1   nn~op ar <cldr-forms>
+  [intended] cell fail500after1 i18next/on1   nn~op lv <cldr-forms>
+  [intended] cell fail500after1 i18next/on1   nn~op he <cldr-forms>
+  [intended] run fail500after1 i18next/up1   nn~op <onlynew-complete>: exit 0 vs 0, charged 1242 vs 0
+  [intended] cell fail500after1 i18next/up1   nn~op pl <cldr-forms>
+  [intended] cell fail500after1 i18next/up1   nn~op ru <cldr-forms>
+  [intended] cell fail500after1 i18next/up1   nn~op ar <cldr-forms>
+  [intended] cell fail500after1 i18next/up1   nn~op lv <cldr-forms>
+  [intended] cell fail500after1 i18next/up1   nn~op he <cldr-forms>
+  [intended] cell fail500after1 nested    nn~op pl <cldr-forms>
+  [intended] cell fail500after1 nested    nn~op ru <cldr-forms>
+  [intended] cell fail500after1 nested    nn~op ar <cldr-forms>
+  [intended] cell fail500after1 nested    nn~op lv <cldr-forms>
+  [intended] cell fail500after1 nested    nn~op he <cldr-forms>
+  [intended] cell fail500after1 nested/on1    nn~op pl <cldr-forms>
+  [intended] cell fail500after1 nested/on1    nn~op ru <cldr-forms>
+  [intended] cell fail500after1 nested/on1    nn~op ar <cldr-forms>
+  [intended] cell fail500after1 nested/on1    nn~op lv <cldr-forms>
+  [intended] cell fail500after1 nested/on1    nn~op he <cldr-forms>
+  [intended] run fail500after1 nested/up1    nn~op <onlynew-complete>: exit 0 vs 0, charged 670 vs 0
+  [intended] cell fail500after1 nested/up1    nn~op pl <cldr-forms>
+  [intended] cell fail500after1 nested/up1    nn~op ru <cldr-forms>
+  [intended] cell fail500after1 nested/up1    nn~op ar <cldr-forms>
+  [intended] cell fail500after1 nested/up1    nn~op lv <cldr-forms>
+  [intended] cell fail500after1 nested/up1    nn~op he <cldr-forms>
+  [intended] cell fail500after1 rails     nn~op pl <cldr-forms>
+  [intended] cell fail500after1 rails     nn~op ru <cldr-forms>
+  [intended] cell fail500after1 rails     nn~op ar <cldr-forms>
+  [intended] cell fail500after1 rails     nn~op lv <cldr-forms>
+  [intended] cell fail500after1 rails     nn~op he <cldr-forms>
+  [RED] run fail500after1 po-printf nn~op <run>: exit 1 vs 0, charged 770 vs 1386; out: 770 charged | ✓ Run receipt written to receipt.json | using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47 | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key | → Translating en.po → he, ja, zh, ko | ✗ HTTP 503: The translation provider is not responding right now. Nothing was started and nothing was charged — please try again in a minute.
+  [intended] cell fail500after1 po-printf nn~op pl <po-slots>
+  [intended] cell fail500after1 po-printf nn~op ru <po-slots>
+  [RED] cell fail500after1 po-printf nn~op ar <check047>: new findings: ['warnings: {"key": "One message from %s", "lang": "ar", "msg": "may be untranslated — no target-language script, still reads as source text", "severity": "warn"}', 'warnings: {"key": "One message from %s⟦plural:2⟧", "lang": "ar", "msg": "may be untranslated — no target-language script, still reads as source text", "severity": "warn"}', 'warnings: {"key": "One message from %s⟦plural:3⟧", "lang": "ar", "msg": "may be untranslated — no target-language script, still reads as source text", "severity": "warn"}', 'warnings: {"key": "One message from %s⟦plural:4⟧", "lang": "ar", "msg": "may be untranslated — no target-language script, still reads as source text", "severity": "warn"}', 'warnings: {"key": "One message from %s⟦plural:5⟧", "lang": "ar", "msg": "may be untranslated — no target-language script, still reads as source text", "severity": "warn"}', 'warnings: {"key": "One message from %s⟦plural⟧", "lang": "ar", "msg": "may be untranslated — no target-language script, still reads as source text", "severity": "warn"}'] | -msgstr[0] "%d حذسج" -msgstr[1] "%d حذسجغ" -msgstr[2] "%d حذسجغ" -msgstr[3] "%d حذسجغ" -msgstr[4] "%d حذسجغ" -msgstr[0] "ضصج شجغغاخج" +msgstr[0] "%d حذسجغ ze" +msgstr[1] "%d حذسج" +msgstr[2] "%d حذسجغ tw" +msgstr[3] "%d حذسجغ fe" +msgstr[4] "%d حذسجغ ma" +msgstr[0] "%d شجغغاخجغ ze"
+  [RED] cell fail500after1 po-printf nn~op lv <check047>: new findings: ['warnings: {"key": "One message from %s", "lang": "lv", "msg": "may be untranslated — identical to the source text", "severity": "warn"}'] | -msgstr[0] "%d elify" -msgstr[1] "%d selify" -msgstr[0] "enoy egassemy" -msgstr[1] "%d segassemy" -msgstr[2] "%d segassemy" -msgstr[0] "enoy egassemy morfy %s" +msgstr[0] "%d selify ze" +msgstr[1] "%d elify" +msgstr[0] "One message" +msgstr[1] "%d messages" +msgstr[2] "%d messages" +msgstr[0] "One message from %s"
+  [RED] cell fail500after1 po-printf nn~op he <delivery>: file missing in new->new | -# Generated by KAERIS i18n Tool -# Language: he -msgid "" -msgstr "" -"Content-Type: text/plain; charset=UTF-8\n" -"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n==2 ? 1 : 2);\n" +None
+  [RED] cell fail500after1 po-printf nn~op ja <delivery>: file missing in new->new | -# Generated by KAERIS i18n Tool -# Language: ja -msgid "" -msgstr "" -"Content-Type: text/plain; charset=UTF-8\n" -"Plural-Forms: nplurals=1; plural=0;\n" +None
+  [RED] cell fail500after1 po-printf nn~op zh <delivery>: file missing in new->new | -# Generated by KAERIS i18n Tool -# Language: zh -msgid "" -msgstr "" -"Content-Type: text/plain; charset=UTF-8\n" -"Plural-Forms: nplurals=1; plural=0;\n" +None
+  [RED] cell fail500after1 po-printf nn~op ko <delivery>: file missing in new->new | -# Generated by KAERIS i18n Tool -# Language: ko -msgid "" -msgstr "" -"Content-Type: text/plain; charset=UTF-8\n" -"Plural-Forms: nplurals=1; plural=0;\n" +None
+  [RED] run fail500after1 po-python nn~op <run>: exit 1 vs 0, charged 0 vs 1728; out: → Translating en.po → de, pl, ru, ar, lv | ✗ HTTP 503: The translation provider is not responding right now. Nothing was started and nothing was charged — please try again in a minute. | using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47 | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key | → Translating en.po → he, ja, zh, ko | ✗ HTTP 503: The translation provider is not responding right now. Nothing was started and nothing was charged — please try again in a minute.
+  [RED] cell fail500after1 po-python nn~op de <delivery>: file missing in new->new | -# Generated by KAERIS i18n Tool -# Language: de -msgid "" -msgstr "" -"Content-Type: text/plain; charset=UTF-8\n" -"Plural-Forms: nplurals=2; plural=(n != 1);\n" +None
+  [RED] cell fail500after1 po-python nn~op pl <delivery>: file missing in new->new | -# Generated by KAERIS i18n Tool -# Language: pl -msgid "" -msgstr "" -"Content-Type: text/plain; charset=UTF-8\n" -"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n" +None
+  [RED] cell fail500after1 po-python nn~op ru <delivery>: file missing in new->new | -# Generated by KAERIS i18n Tool -# Language: ru -msgid "" -msgstr "" -"Content-Type: text/plain; charset=UTF-8\n" -"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n" +None
+  [RED] cell fail500after1 po-python nn~op ar <delivery>: file missing in new->new | -# Generated by KAERIS i18n Tool -# Language: ar -msgid "" -msgstr "" -"Content-Type: text/plain; charset=UTF-8\n" -"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5);\n" +None
+  [RED] cell fail500after1 po-python nn~op lv <delivery>: file missing in new->new | -# Generated by KAERIS i18n Tool -# Language: lv -msgid "" -msgstr "" -"Content-Type: text/plain; charset=UTF-8\n" -"Plural-Forms: nplurals=3; plural=(n%10==0 || (n%100>=11 && n%100<=19) ? 0 : n%10==1 && n%100!=11 ? 1 : 2);\n" +None
+  [RED] cell fail500after1 po-python nn~op he <delivery>: file missing in new->new | -# Generated by KAERIS i18n Tool -# Language: he -msgid "" -msgstr "" -"Content-Type: text/plain; charset=UTF-8\n" -"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n==2 ? 1 : 2);\n" +None
+  [RED] cell fail500after1 po-python nn~op ja <delivery>: file missing in new->new | -# Generated by KAERIS i18n Tool -# Language: ja -msgid "" -msgstr "" -"Content-Type: text/plain; charset=UTF-8\n" -"Plural-Forms: nplurals=1; plural=0;\n" +None
+  [RED] cell fail500after1 po-python nn~op zh <delivery>: file missing in new->new | -# Generated by KAERIS i18n Tool -# Language: zh -msgid "" -msgstr "" -"Content-Type: text/plain; charset=UTF-8\n" -"Plural-Forms: nplurals=1; plural=0;\n" +None
+  [RED] cell fail500after1 po-python nn~op ko <delivery>: file missing in new->new | -# Generated by KAERIS i18n Tool -# Language: ko -msgid "" -msgstr "" -"Content-Type: text/plain; charset=UTF-8\n" -"Plural-Forms: nplurals=1; plural=0;\n" +None
+  [RED] run fail500after1 po-brace  nn~op <run>: exit 1 vs 0, charged 0 vs 1341; out: → Translating en.po → de, pl, ru, ar, lv | ✗ HTTP 503: The translation provider is not responding right now. Nothing was started and nothing was charged — please try again in a minute. | using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47 | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key | → Translating en.po → he, ja, zh, ko | ✗ HTTP 503: The translation provider is not responding right now. Nothing was started and nothing was charged — please try again in a minute.
+  [RED] cell fail500after1 po-brace  nn~op de <delivery>: file missing in new->new | -# Generated by KAERIS i18n Tool -# Language: de -msgid "" -msgstr "" -"Content-Type: text/plain; charset=UTF-8\n" -"Plural-Forms: nplurals=2; plural=(n != 1);\n" +None
+  [RED] cell fail500after1 po-brace  nn~op pl <delivery>: file missing in new->new | -# Generated by KAERIS i18n Tool -# Language: pl -msgid "" -msgstr "" -"Content-Type: text/plain; charset=UTF-8\n" -"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n" +None
+  [RED] cell fail500after1 po-brace  nn~op ru <delivery>: file missing in new->new | -# Generated by KAERIS i18n Tool -# Language: ru -msgid "" -msgstr "" -"Content-Type: text/plain; charset=UTF-8\n" -"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n" +None
+  [RED] cell fail500after1 po-brace  nn~op ar <delivery>: file missing in new->new | -# Generated by KAERIS i18n Tool -# Language: ar -msgid "" -msgstr "" -"Content-Type: text/plain; charset=UTF-8\n" -"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5);\n" +None
+  [RED] cell fail500after1 po-brace  nn~op lv <delivery>: file missing in new->new | -# Generated by KAERIS i18n Tool -# Language: lv -msgid "" -msgstr "" -"Content-Type: text/plain; charset=UTF-8\n" -"Plural-Forms: nplurals=3; plural=(n%10==0 || (n%100>=11 && n%100<=19) ? 0 : n%10==1 && n%100!=11 ? 1 : 2);\n" +None
+  [RED] cell fail500after1 po-brace  nn~op he <delivery>: file missing in new->new | -# Generated by KAERIS i18n Tool -# Language: he -msgid "" -msgstr "" -"Content-Type: text/plain; charset=UTF-8\n" -"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n==2 ? 1 : 2);\n" +None
+  [RED] cell fail500after1 po-brace  nn~op ja <delivery>: file missing in new->new | -# Generated by KAERIS i18n Tool -# Language: ja -msgid "" -msgstr "" -"Content-Type: text/plain; charset=UTF-8\n" -"Plural-Forms: nplurals=1; plural=0;\n" +None
+  [RED] cell fail500after1 po-brace  nn~op zh <delivery>: file missing in new->new | -# Generated by KAERIS i18n Tool -# Language: zh -msgid "" -msgstr "" -"Content-Type: text/plain; charset=UTF-8\n" -"Plural-Forms: nplurals=1; plural=0;\n" +None
+  [RED] cell fail500after1 po-brace  nn~op ko <delivery>: file missing in new->new | -# Generated by KAERIS i18n Tool -# Language: ko -msgid "" -msgstr "" -"Content-Type: text/plain; charset=UTF-8\n" -"Plural-Forms: nplurals=1; plural=0;\n" +None
+  [RED] run fail500after1 android   nn~op <run>: exit 1 vs 0, charged 0 vs 1044; out: → Translating strings.xml → de, pl, ru, ar, lv | ✗ HTTP 503: The translation provider is not responding right now. Nothing was started and nothing was charged — please try again in a minute. | using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47 | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key | → Translating strings.xml → he, ja, zh, ko | ✗ HTTP 503: The translation provider is not responding right now. Nothing was started and nothing was charged — please try again in a minute
+  [RED] cell fail500after1 android   nn~op de <delivery>: file missing in new->new | -<?xml version="1.0" encoding="utf-8"?> -<!-- Generated by KAERIS i18n Tool — de --> -<resources> -    <string name="title">xobniy</string> -    <plurals name="files"> -        <item quantity="one">%d elify</item> +None
+  [RED] cell fail500after1 android   nn~op pl <delivery>: file missing in new->new | -<?xml version="1.0" encoding="utf-8"?> -<!-- Generated by KAERIS i18n Tool — pl --> -<resources> -    <string name="title">xobniy</string> -    <plurals name="files"> -        <item quantity="one">%d elify</item> +None
+  [RED] cell fail500after1 android   nn~op ru <delivery>: file missing in new->new | -<?xml version="1.0" encoding="utf-8"?> -<!-- Generated by KAERIS i18n Tool — ru --> -<resources> -    <string name="title">инбоч</string> -    <plurals name="files"> -        <item quantity="one">%d еилд</item> +None
+  [RED] cell fail500after1 android   nn~op ar <delivery>: file missing in new->new | -<?xml version="1.0" encoding="utf-8"?> -<!-- Generated by KAERIS i18n Tool — ar --> -<resources> -    <string name="title">ذصبضم</string> -    <plurals name="files"> -        <item quantity="zero">%d حذسجغ ze</item> +None
+  [RED] cell fail500after1 android   nn~op lv <delivery>: file missing in new->new | -<?xml version="1.0" encoding="utf-8"?> -<!-- Generated by KAERIS i18n Tool — lv --> -<resources> -    <string name="title">xobniy</string> -    <plurals name="files"> -        <item quantity="zero">%d selify ze</item> +None
+  [RED] cell fail500after1 android   nn~op he <delivery>: file missing in new->new | -<?xml version="1.0" encoding="utf-8"?> -<!-- Generated by KAERIS i18n Tool — he --> -<resources> -    <string name="title">טנבסב</string> -    <plurals name="files"> -        <item quantity="one">%d וטלה</item> +None
+  [RED] cell fail500after1 android   nn~op ja <delivery>: file missing in new->new | -<?xml version="1.0" encoding="utf-8"?> -<!-- Generated by KAERIS i18n Tool — ja --> -<resources> -    <string name="title">ケセイソエ</string> -    <plurals name="files"> -        <item quantity="other">%d カケシオテ</item> +None
+  [RED] cell fail500after1 android   nn~op zh <delivery>: file missing in new->new | -<?xml version="1.0" encoding="utf-8"?> -<!-- Generated by KAERIS i18n Tool — zh --> -<resources> -    <string name="title">有来一上你</string> -    <plurals name="files"> -        <item quantity="other">%d 人有中了说</item> +None
+  [RED] cell fail500after1 android   nn~op ko <delivery>: file missing in new->new | -<?xml version="1.0" encoding="utf-8"?> -<!-- Generated by KAERIS i18n Tool — ko --> -<resources> -    <string name="title">자하나거처</string> -    <plurals name="files"> -        <item quantity="other">%d 바자타마머</item> +None
+  [RED] run fail500after1 fluent    nn~op <run>: exit 1 vs 0, charged 0 vs 1089; out: → Translating en.ftl → de, pl, ru, ar, lv | ✗ HTTP 503: The translation provider is not responding right now. Nothing was started and nothing was charged — please try again in a minute. | using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47 | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key | → Translating en.ftl → he, ja, zh, ko | ✗ HTTP 503: The translation provider is not responding right now. Nothing was started and nothing was charged — please try again in a minute.
+  [RED] cell fail500after1 fluent    nn~op de <delivery>: file missing in new->new | -title = xobniy -files = -    { $count -> -        [one] { $count } elify -       *[other] { $count } selify -    } +None
+  [RED] cell fail500after1 fluent    nn~op pl <delivery>: file missing in new->new | -title = xobniy -files = -    { $count -> -        [one] { $count } elify -        [few] { $count } selify fe -        [many] { $count } selify ma +None
+  [RED] cell fail500after1 fluent    nn~op ru <delivery>: file missing in new->new | -title = инбоч -files = -    { $count -> -        [one] { $count } еилд -        [few] { $count } еилдт fe -        [many] { $count } еилдт ma +None
+  [RED] cell fail500after1 fluent    nn~op ar <delivery>: file missing in new->new | -title = ذصبضم -files = -    { $count -> -        [zero] { $count } حذسجغ ze -        [one] { $count } حذسج -        [two] { $count } حذسجغ tw +None
+  [RED] cell fail500after1 fluent    nn~op lv <delivery>: file missing in new->new | -title = xobniy -files = -    { $count -> -        [zero] { $count } selify ze -        [one] { $count } elify -       *[other] { $count } selify +None
+  [RED] cell fail500after1 fluent    nn~op he <delivery>: file missing in new->new | -title = טנבסב -files = -    { $count -> -        [one] { $count } וטלה -        [two] { $count } וטלהק tw -       *[other] { $count } וטלהק +None
+  [RED] cell fail500after1 fluent    nn~op ja <delivery>: file missing in new->new | -title = ケセイソエ -files = -    { $count -> -        [one] { $count } file -       *[other] { $count } カケシオテ -    } +None
+  [RED] cell fail500after1 fluent    nn~op zh <delivery>: file missing in new->new | -title = 有来一上你 -files = -    { $count -> -        [one] { $count } file -       *[other] { $count } 人有中了说 -    } +None
+  [RED] cell fail500after1 fluent    nn~op ko <delivery>: file missing in new->new | -title = 자하나거처 -files = -    { $count -> -        [one] { $count } file -       *[other] { $count } 바자타마머 -    } +None
+  [RED] run fail500after1 icu-json  nn~op <run>: exit 1 vs 0, charged 0 vs 1701; out: → Translating en.json → de, pl, ru, ar, lv | ✗ HTTP 503: The translation provider is not responding right now. Nothing was started and nothing was charged — please try again in a minute. | using C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47 | → no key: free demo limits 10,000 chars per file, 8 languages per run, get a key: https://kaeris.dev/docs/key | → Translating en.json → he, ja, zh, ko | ✗ HTTP 503: The translation provider is not responding right now. Nothing was started and nothing was charged — please try again in a minute.
+  [RED] cell fail500after1 icu-json  nn~op de <delivery>: file missing in new->new | -{ -  "title": "xobniy", -  "files": "{count, plural, one {# elify} other {# selify}}", -  "msg": "{count, plural, =0 {ony segassemy} one {enoy egassemy morfy {name}} other {# segassemy morfy {name}}}", -  "items": "{n, plural, one {{n} metiy} other {{n} smetiy}}" -} +None
+  [RED] cell fail500after1 icu-json  nn~op pl <delivery>: file missing in new->new | -{ -  "title": "xobniy", -  "files": "{count, plural, one {# elify} few {# selify fe} many {# selify ma} other {# selify}}", -  "msg": "{count, plural, =0 {ony segassemy} one {enoy egassemy morfy {name}} few {# segassemy morfy {name} fe} many {# segassemy morfy {name} ma} other {# segassemy morfy {name}}}", -  "items": "{n, plural, one {{n} metiy} few {{n} smetiy fe} many {{n} smetiy ma} other {{n} smetiy}}" -} +None
+  [RED] cell fail500after1 icu-json  nn~op ru <delivery>: file missing in new->new | -{ -  "title": "инбоч", -  "files": "{count, plural, one {# еилд} few {# еилдт fe} many {# еилдт ma} other {# еилдт}}", -  "msg": "{count, plural, =0 {но мдттаждт} one {онд мдттажд есом {name}} few {# мдттаждт есом {name} fe} many {# мдттаждт есом {name} ma} other {# мдттаждт есом {name}}}", -  "items": "{n, plural, one {{n} иудм} few {{n} иудмт fe} many {{n} иудмт ma} other {{n} иудмт}}" -} +None
+  [RED] cell fail500after1 icu-json  nn~op ar <delivery>: file missing in new->new | -{ -  "title": "ذصبضم", -  "files": "{count, plural, zero {# حذسجغ ze} one {# حذسج} two {# حذسجغ tw} few {# حذسجغ fe} many {# حذسجغ ma} other {# حذسجغ}}", -  "msg": "{count, plural, =0 {صض شجغغاخجغ} zero {# شجغغاخجغ حعضش {name} ze} one {ضصج شجغغاخج حعضش {name}} two {# شجغغاخجغ حعضش {name} tw} few {# شجغغاخجغ حعضش {name} fe} many {# شجغغاخجغ حعضش {name} ma} other {# شجغغاخجغ حعضش {name}}}", -  "items": "{n, plural, ze
+  [RED] cell fail500after1 icu-json  nn~op lv <delivery>: file missing in new->new | -{ -  "title": "xobniy", -  "files": "{count, plural, zero {# selify ze} one {# elify} other {# selify}}", -  "msg": "{count, plural, =0 {ony segassemy} zero {# segassemy morfy {name} ze} one {enoy egassemy morfy {name}} other {# segassemy morfy {name}}}", -  "items": "{n, plural, zero {{n} smetiy ze} one {{n} metiy} other {{n} smetiy}}" -} +None
+  [RED] cell fail500after1 icu-json  nn~op he <delivery>: file missing in new->new | -{ -  "title": "טנבסב", -  "files": "{count, plural, one {# וטלה} two {# וטלהק tw} other {# וטלהק}}", -  "msg": "{count, plural, =0 {נס מהקקאזהק} one {סנה מהקקאזה וצסמ {name}} two {# מהקקאזהק וצסמ {name} tw} other {# מהקקאזהק וצסמ {name}}}", -  "items": "{n, plural, one {{n} טרהמ} two {{n} טרהמק tw} other {{n} טרהמק}}" -} +None
+  [RED] cell fail500after1 icu-json  nn~op ja <delivery>: file missing in new->new | -{ -  "title": "ケセイソエ", -  "files": "{count, plural, other {# カケシオテ}}", -  "msg": "{count, plural, =0 {セソ スオテテアキオテ} other {# スオテテアキオテ カツソス {name}}}", -  "items": "{n, plural, other {{n} ケトオステ}}" -} +None
+  [RED] cell fail500after1 icu-json  nn~op zh <delivery>: file missing in new->new | -{ -  "title": "有来一上你", -  "files": "{count, plural, other {# 人有中了说}}", -  "msg": "{count, plural, =0 {来上 大了说说的我了说} other {# 大了说说的我了说 人到上大 {name}}}", -  "items": "{n, plural, other {{n} 有们了大说}}" -} +None
+  [RED] cell fail500after1 icu-json  nn~op ko <delivery>: file missing in new->new | -{ -  "title": "자하나거처", -  "files": "{count, plural, other {# 바자타마머}}", -  "msg": "{count, plural, =0 {하거 파마머머가사마머} other {# 파마머머가사마머 바러거파 {name}}}", -  "items": "{n, plural, other {{n} 자버마파머}}" -} +None
+  [RED] run fail500after1 icu-json/on1  nn~op <run>: exit 1 vs 0, charged 1512 vs 1701; out: ✓ zh: merged 4 key(s) → zh.json | → Run: openai/gpt-6-luna · Free · 1/1 languages · 4 strings · 0.0s | 189 charged | ✓ Translation QA: no placeholder loss, no overflow risks | ✓ ko: merged 4 key(s) → ko.json | ✓ Run receipt written to receipt.json
+  [RED] cell fail500after1 icu-json/on1  nn~op ar <delivery>: file missing in new->new | -{ -  "title": "ذصبضم", -  "files": "{count, plural, zero {# حذسجغ ze} one {# حذسج} two {# حذسجغ tw} few {# حذسجغ fe} many {# حذسجغ ma} other {# حذسجغ}}", -  "msg": "{count, plural, =0 {صض شجغغاخجغ} zero {# شجغغاخجغ حعضش {name} ze} one {ضصج شجغغاخج حعضش {name}} two {# شجغغاخجغ حعضش {name} tw} few {# شجغغاخجغ حعضش {name} fe} many {# شجغغاخجغ حعضش {name} ma} other {# شجغغاخجغ حعضش {name}}}", -  "items": "{n, plural, ze
+  [RED] run fail500after1 icu-json/on2  nn up to date <money>: exit 0, charged 189, files changed ['ar.json', 'kaeris.lock']; → Run: openai/gpt-6-luna · Free · 1/1 languages · 4 strings · 0.0s | 189 charged | ✓ Translation QA: no placeholder loss, no overflow risks | ✓ ar: merged 4 key(s) → ar.json | ✓ Run receipt written to receipt.json
+# stopped pids 20668 22964 23456 15480 8184 22324: rc [1, 1, 1, 1, 1, 1]
+
+# intended by tag: {"cldr-forms": 252, "onlynew-complete": 22, "po-slots": 178, "po-slots+po-single-slot-046": 4}
+# old client -> new server: 1449 comparisons, 0 differences
+TOTAL 2916 cells + 494 runs, 456 intended, 68 unintended (5102s)
