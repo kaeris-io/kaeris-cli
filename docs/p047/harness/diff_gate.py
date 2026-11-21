@@ -199,6 +199,9 @@ class Gate:
             env = dict(os.environ, PYTHONUTF8="1", OPENROUTER_API_KEY="ci-not-a-real-key",
                        OPENROUTER_URL=f"http://127.0.0.1:{PORTS['stub-' + pair]}/api/v1/chat/completions",
                        AUTO_TERMS="0", MAX_RETRIES="1", PYTHONDONTWRITEBYTECODE="1",
+                       # ~1500 keyless runs in one gate: the day's free allowance of one
+                       # address would run out halfway (HTTP 429), the same on every server
+                       ANON_DAILY_CHAR_CAP="1000000000", ANON_DAILY_CHAR_CAP_PER_IP="1000000000",
                        KAERIS_DATA_DIR=os.path.join(self.runs, f"_srvdata-{pair}"))
             self.procs.append(subprocess.Popen(
                 [VENV_PY, "-m", "uvicorn", "main:app", "--host", "127.0.0.1", "--port", str(PORTS[pair]),

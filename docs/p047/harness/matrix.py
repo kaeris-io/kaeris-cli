@@ -21,7 +21,7 @@ ONLY = set(sys.argv[5].split(",")) if len(sys.argv) > 5 else None
 # cy (Welsh) is not one of the 46 languages the server translates: it is tried once below and
 # refused before anything is sent.
 LANGS = ["pl", "ru", "ar", "ja"]
-STUB_PORT, API_PORT = 18990, 18991
+STUB_PORT, API_PORT = 18996, 18997      # 18990-18995: diff_gate.py, which may run beside it
 VENV_PY = r"C:\Users\Inzagi\projects\kaeris\i18n_tool\.venv\Scripts\python.exe"
 
 XC = {"sourceLanguage": "en", "version": "1.0", "strings": {"%lld files": {"localizations": {"en": {
