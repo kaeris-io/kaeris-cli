@@ -1,0 +1,118 @@
+$ (cd C:/Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121) python -m pytest tests/test_translate_completes_plural_sets.py -q
+.FFF.F                                                                   [100%]
+================================== FAILURES ===================================
+___________ OnlyNew.test_a_target_missing_polish_forms_is_completed ___________
+
+self = <test_translate_completes_plural_sets.OnlyNew testMethod=test_a_target_missing_polish_forms_is_completed>
+
+    def test_a_target_missing_polish_forms_is_completed(self):
+        inc.dump_json(SRC, self.en)
+        inc.dump_json(PL_OLD, self.pl)
+        self.assertEqual(self._run("--assume-current"), 0)
+>       self.assertEqual(len(PolishServer.calls), 1, "the incomplete set is work")
+E       AssertionError: 0 != 1 : the incomplete set is work
+
+tests\test_translate_completes_plural_sets.py:93: AssertionError
+---------------------------- Captured stderr call -----------------------------
+✓ pl: up to date (3 keys)
+✓ Everything already up to date — nothing to translate
+____________ OnlyNew.test_an_edit_to_one_form_sends_the_whole_set _____________
+
+self = <test_translate_completes_plural_sets.OnlyNew testMethod=test_an_edit_to_one_form_sends_the_whole_set>
+
+    def test_an_edit_to_one_form_sends_the_whole_set(self):
+        inc.dump_json(SRC, self.en)
+>       self.assertEqual(self._run(), 0)                      # first run: everything
+                         ^^^^^^^^^^^
+
+tests\test_translate_completes_plural_sets.py:110: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\test_translate_completes_plural_sets.py:83: in _run
+    return cli.cmd_translate(args)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+kaeris\cli.py:1247: in cmd_translate
+    else _translate_one(client, path, langs, args))
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+kaeris\cli.py:1843: in _translate_one
+    return _translate_incremental(client, path, args.out, langs, args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+kaeris\cli.py:2204: in _translate_incremental
+    result, error = _outcome(future)
+                    ^^^^^^^^^^^^^^^^
+kaeris\cli.py:1117: in _outcome
+    return future.result(), None
+           ^^^^^^^^^^^^^^^
+C:\Users\Inzagi\AppData\Local\Python\pythoncore-3.14-64\Lib\concurrent\futures\_base.py:447: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+C:\Users\Inzagi\AppData\Local\Python\pythoncore-3.14-64\Lib\concurrent\futures\_base.py:396: in __get_result
+    raise self._exception
+C:\Users\Inzagi\AppData\Local\Python\pythoncore-3.14-64\Lib\concurrent\futures\thread.py:86: in run
+    result = ctx.run(self.task)
+             ^^^^^^^^^^^^^^^^^^
+C:\Users\Inzagi\AppData\Local\Python\pythoncore-3.14-64\Lib\concurrent\futures\thread.py:73: in run
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+client = <test_translate_completes_plural_sets.PolishServer object at 0x0000023A8A717390>
+fname = 'en.json'
+content = b'{"cart": {"items_one": "{{count}} item", "items_other": "{{count}} items"}, "title": "Inbox"}'
+langs = ['pl']
+args = Namespace(api_url='https://kaeris.dev', key=None, openrouter_key=None, config=None, command='translate', files=['C:\\U...=False, json=False, func=<function cmd_translate at 0x0000023A8A69DC70>, term_glossary=None, models={}, verify_back={})
+reuse = None, label = '', verify_reused = None
+
+    def _run_job(client, fname, content, langs, args, reuse=None, label="", verify_reused=None):
+        """Submit one job, wait for it, fetch the archive: the part that only waits on the server,
+        so it can run beside other jobs. Returns (job, status, members)."""
+        for attempt in range(RESTART_RETRIES + 1):
+>           job = client.submit(fname, content, langs, _glossary(args), reuse=reuse,
+                                **_verify_opts(args, verify_reused, reuse),
+                                verify=args.verify, back_lang=args.back_lang,
+                                tone=_tone(args), icu=args.icu,
+                                app_context=_app_context(args),
+                                **_service_keys_opt(args), **_model_opts(args, langs),
+                                **_terms_opt(args, langs))
+E           TypeError: PolishServer.submit() takes 4 positional arguments but 5 were given
+
+kaeris\cli.py:1090: TypeError
+---------------------------- Captured stderr call -----------------------------
+→ pl: 3 new key(s) to translate
+_____________ OnlyNew.test_ordinals_and_japanese_owe_nothing_more _____________
+
+self = <test_translate_completes_plural_sets.OnlyNew testMethod=test_ordinals_and_japanese_owe_nothing_more>
+
+    def test_ordinals_and_japanese_owe_nothing_more(self):
+        """An ordinal set owes `_ordinal_other` only; Japanese has one form."""
+        src = {"place_ordinal_one": "{{count}}st", "place_ordinal_other": "{{count}}th"}
+        target = {"place_ordinal_one": "{{count}}.", "place_ordinal_other": "{{count}}."}
+>       self.assertEqual(chk.plural_set_work(src, target, {}, "pl"), {})
+                         ^^^^^^^^^^^^^^^^^^^
+E       AttributeError: module 'kaeris.check' has no attribute 'plural_set_work'
+
+tests\test_translate_completes_plural_sets.py:122: AttributeError
+_______________ Merge.test_a_new_form_lands_beside_its_siblings _______________
+
+self = <test_translate_completes_plural_sets.Merge testMethod=test_a_new_form_lands_beside_its_siblings>
+
+    def test_a_new_form_lands_beside_its_siblings(self):
+        src = {"cart": {"items_one": "a", "items_other": "b"},
+               "box": {"files": {"one": "a", "other": "b"}}}
+        got = inc.merge_translation({}, {"cart": {"items_few": "F"}, "box.files.many": "M"}, src)
+>       self.assertEqual(got, {"cart": {"items_few": "F"}, "box": {"files": {"many": "M"}}})
+E       AssertionError: {'cart.items_few': 'F', 'box.files.many': 'M'} != {'cart': {'items_few': 'F'}, 'box': {'files': {'many': 'M'}}}
+E       - {'box.files.many': 'M', 'cart.items_few': 'F'}
+E       ?      ^     ^                 ^
+E       
+E       + {'box': {'files': {'many': 'M'}}, 'cart': {'items_few': 'F'}}
+E       ?      ^^^^^     ^^^^^          ++       ^^^^^                +
+
+tests\test_translate_completes_plural_sets.py:132: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/test_translate_completes_plural_sets.py::OnlyNew::test_a_target_missing_polish_forms_is_completed
+FAILED tests/test_translate_completes_plural_sets.py::OnlyNew::test_an_edit_to_one_form_sends_the_whole_set
+FAILED tests/test_translate_completes_plural_sets.py::OnlyNew::test_ordinals_and_japanese_owe_nothing_more
+FAILED tests/test_translate_completes_plural_sets.py::Merge::test_a_new_form_lands_beside_its_siblings
+4 failed, 2 passed in 0.25s
+
+exit 1
