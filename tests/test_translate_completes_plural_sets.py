@@ -41,7 +41,7 @@ class PolishServer:
     def __init__(self, *a, **kw):
         pass
 
-    def submit(self, filename, content, languages, **kw):
+    def submit(self, filename, content, languages, glossary=None, **kw):
         PolishServer.calls.append(json.loads(content.decode("utf-8")))
         return f"job-{len(PolishServer.calls)}"
 

@@ -211,6 +211,24 @@ def _language_forms(lang):
     return (required | {"other"} if required else None), False
 
 
+def plural_set_work(source_flat, target_flat, todo, lang):
+    """{key: source text} of every plural set `translate --only-new` must send WHOLE, beyond
+    `todo`: a set one of whose keys is in `todo` (the server folds a set into one ICU string only
+    when it gets all of it), and a set the target lacks a form of that `lang` needs — the forms
+    this module asks for (a Polish file with `items_one/items_other` only is not up to date).
+    Ordinal sets owe only `_ordinal_other` and are translated form by form: never added."""
+    forms, single = _language_forms(lang)
+    need = set() if single or not forms else forms
+    work = {}
+    for (base, sep), src_forms in _plural_sets(source_flat).items():
+        if sep == "_" and base.endswith(_ORDINAL):
+            continue
+        keys = [f"{base}{sep}{c}" for c in CLDR_ORDER_LOCAL if c in src_forms]
+        if any(k in todo for k in keys) or any(f"{base}{sep}{c}" not in target_flat for c in need):
+            work.update((k, source_flat[k]) for k in keys if k not in todo)
+    return work
+
+
 def _plural_set_faults(source_flat, target_flat, missing, extra, lang):
     """(faults, missing, extra) once every plural set is read by the TARGET language's forms.
 

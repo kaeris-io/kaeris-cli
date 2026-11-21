@@ -13,6 +13,7 @@ the target) — see changed_or_missing_keys().
 import copy
 import hashlib
 import json
+import re
 
 from .encoding import read_text
 import os
@@ -279,13 +280,28 @@ def merge_translation(existing_obj, translated_obj, source_obj=None):
     paths = {k: p for k, p, _ in _leaves(source_obj)}
     merged = copy.deepcopy(existing_obj) if existing_obj else {}
     for key, value in flatten_all(translated_obj).items():
-        path = paths.get(key)
+        path = paths.get(key) or _plural_form_path(key, paths)
         if path is None:
             merged[key] = value
         else:
             _set_path(merged, path, value, source_obj)
     _align_lists(merged, source_obj)
     return merged
+
+
+_FORM_KEY_RE = re.compile(r"^(.*[._])(zero|one|two|few|many|other)$")
+
+
+def _plural_form_path(key, paths):
+    """Where a plural form the source does not have goes (the server adds Polish `items_few`
+    to `items_one/items_other`): beside the set's `other` form. Before 0.2.47 such a key was
+    merged at the root under its dotted name, `{"cart.items_few": ...}`. None when the key is
+    not a form of a set the source has."""
+    m = _FORM_KEY_RE.match(key)
+    sibling = paths.get(m.group(1) + "other") if m else None
+    if not sibling or not isinstance(sibling[-1], str) or not sibling[-1].endswith("other"):
+        return None
+    return sibling[:-1] + (sibling[-1][:-len("other")] + m.group(2),)
 
 
 def _get(node, seg):

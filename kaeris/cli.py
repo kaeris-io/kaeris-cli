@@ -2175,6 +2175,14 @@ def _translate_incremental(client, path, out_dir, langs, args):
                      f"say it the new way yet — re-translating them")
                 todo.update({k: source_flat[k] for k in stale})
         new_terms[lang] = term_fps
+        # A plural set goes whole: when one of its forms is due, and when the target lacks a
+        # form this language needs (what `check` asks for) — the server adds those forms only to
+        # a set it gets entire (0.2.47).
+        plural = chk.plural_set_work(source_flat, existing_flat, todo, lang)
+        if plural:
+            info(f"{lang}: {len(plural)} more key(s) of plural sets sent with them, so every "
+                 f"form {lang} needs is written")
+            todo.update(plural)
         if not todo:
             ok(f"{lang}: up to date ({len(existing_flat)} keys)")
             continue
