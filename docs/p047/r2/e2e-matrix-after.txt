@@ -1,5 +1,5 @@
-# e2e-matrix-after: stub pid 14760, api pid 26536
-# cli C:/Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121 @ cd82e25 fix(p047): 0.2.47 says it takes new plural forms (plurals=cldr, py + npm) and comp; server C:/Users/Inzagi/projects/kaeris/i18n_tool/.claude/worktrees/plural-translate-1121 @ 59bf5fde fix(p047): critic round 1 - one-form languages (ja/zh/ko/vi/th/id/ms) get a JSON 
+# e2e-matrix-after: stub pid 19192, api pid 18108
+# cli C:/Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121 @ d9b0689 docs(p047): round 2 - release notes 0.2.47, doc says what changed and the release ; server C:/Users/Inzagi/projects/kaeris/i18n_tool/.claude/worktrees/plural-translate-1121 @ 636c089a fix(p047): a JSON source form the answer lacks takes the other text only when it 
 # kaeris run from: C:\Users\Inzagi\projects\kaeris\cli\.claude\worktrees\plural-translate-1121\kaeris\__init__.py 0.2.47
 $ kaeris translate en.json --langs cy -> exit 1
   | [stderr] ✗ Unknown language code: cy. Run 'kaeris languages' for the list (codes like de, ja, pt-PT, zh-Hant).
@@ -1040,4 +1040,4 @@ emails =
        *[other] { $count } sliamey
     }
 
-# stopped pids 26536 14760: api rc=1 stub rc=1
+# stopped pids 18108 19192: api rc=1 stub rc=1

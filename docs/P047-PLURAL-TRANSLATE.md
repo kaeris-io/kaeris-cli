@@ -344,9 +344,22 @@ branch merge together, server deployed first, then the CLI published.
 
 ### Result
 
-Commits: see the branch log after e721b68 (CLI) and 88ee3052 (server). e2e: `r2/e2e-matrix-after.txt`
-134/134 GREEN (the 134 earlier rows: every format, py + npm, `--only-new`, `.po` slots);
-`r2/compat.txt` (the cases above).
+Commits: see the branch log after e721b68 (CLI) and 88ee3052 (server). e2e on CLI d9b0689 +
+server 636c089a: `r2/e2e-matrix-after.txt` 134/134 GREEN (the 134 earlier rows: every format,
+py + npm, `--only-new`, `.po` slots); `r2/compat.txt` 36/36 GREEN (the cases above; "info" rows
+are recorded, not judged).
+
+Full suites: CLI py 881 passed, 37 skipped (the one new skip: the server-table parity test, which
+runs beside the backend: 4 passed there); npm 350/350. Server pytest, 4 groups
+(`--splits 4 --group N`, Windows, same `.venv`), 94114a89 with `cli/` = d5535f0 vs 636c089a with
+`cli/` = this branch: 777 failing ids each, 0 new, 0 gone (the failures and errors are this
+machine's browser/env tests, the same on both; i18n_tool
+`docs/p047/r2/full-pytest-compare-94114a89-vs-636c089a.txt`).
+
+Server change after the e2e found nothing but a review did: a JSON source form the answer lacks
+first always sent the set form by form, which would have dropped i18next `_zero` sets in Polish
+to the fallback; now `other` stands in when it says the same placeholders
+(`_missing_form_unsafe`, test `test_a_dropped_form_with_the_same_placeholders_takes_other`).
 
 ## vs the leaders (missing plural forms when machine-translating)
 
