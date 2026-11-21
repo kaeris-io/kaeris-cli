@@ -1,5 +1,5 @@
-# after: stub pid 24712, api pid 25316
-# cli C:/Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121 @ 5655796 test(p047): parity - the server's plural-set finder agrees with check._plural_sets; server C:/Users/Inzagi/projects/kaeris/i18n_tool/.claude/worktrees/plural-translate-1121 @ 72d90db9 chore(p047): carry the accepted variant-B server patch (p23-docs-inputs-1119 docs
+# after: stub pid 11640, api pid 13500
+# cli C:/Users/Inzagi/projects/kaeris/cli/.claude/worktrees/plural-translate-1121 @ 243a9f2 docs(p047): result, what is left as it is; server C:/Users/Inzagi/projects/kaeris/i18n_tool/.claude/worktrees/plural-translate-1121 @ 9826f884 fix(p047): a folded JSON plural whose answer broke is named in the run's QA in ev
 $ kaeris translate en.json --langs cy -> exit 1
   | [stderr] ✗ Unknown language code: cy. Run 'kaeris languages' for the list (codes like de, ja, pt-PT, zh-Hant).
 
@@ -854,4 +854,4 @@ emails =
        *[other] { $count } sliamey
     }
 
-# stopped pids 25316 24712: api rc=1 stub rc=1
+# stopped pids 13500 11640: api rc=1 stub rc=1
